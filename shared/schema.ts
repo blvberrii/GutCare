@@ -14,8 +14,8 @@ export const userProfiles = pgTable("user_profiles", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }).unique(),
   age: integer("age"),
-  gender: text("gender"),
-  conditions: text("conditions").array(), // IBS, SIBO, etc.
+  gender: text("gender"), // Female, Male, Neither
+  conditions: text("conditions").array(),
   symptoms: text("symptoms").array(),
   struggles: text("struggles").array(),
   allergies: text("allergies").array(),
