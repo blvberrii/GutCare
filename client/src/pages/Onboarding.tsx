@@ -17,7 +17,6 @@ const conditionsList = ["IBS", "SIBO", "Crohn's", "Celiac", "Lactose Intolerance
 const symptomsList = ["Bloating", "Fatigue", "Brain Fog", "Skin Issues", "Stomach Pain"];
 const allergiesList = ["Gluten", "Dairy", "Nuts", "Soy", "Eggs", "Shellfish"];
 
-// Step schema logic would go here, simplifying for generation
 type FormData = z.infer<typeof insertUserProfileSchema>;
 
 export default function Onboarding() {
@@ -27,7 +26,6 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState(0);
 
-  // If profile exists and has conditions set, skip onboarding
   if (profile && profile.conditions && profile.conditions.length > 0) {
     return <Redirect to="/" />;
   }
@@ -36,6 +34,8 @@ export default function Onboarding() {
     resolver: zodResolver(insertUserProfileSchema),
     defaultValues: {
       userId: user?.id,
+      age: 0,
+      gender: "",
       conditions: [],
       symptoms: [],
       allergies: [],
@@ -48,14 +48,29 @@ export default function Onboarding() {
       title: "Tell us about you",
       subtitle: "Let's get to know each other!",
       content: (
-        <div className="space-y-4">
-          <div>
+        <div className="space-y-6">
+          <div className="space-y-2">
             <Label>How old are you?</Label>
-            <Input type="number" {...form.register("age", { valueAsNumber: true })} className="rounded-xl h-12" placeholder="e.g. 28" />
+            <Input type="number" {...form.register("age", { valueAsNumber: true })} className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" placeholder="e.g. 28" />
           </div>
-          <div>
+          <div className="space-y-2">
             <Label>Gender</Label>
-            <Input {...form.register("gender")} className="rounded-xl h-12" placeholder="How do you identify?" />
+            <div className="grid grid-cols-3 gap-3">
+              {["Female", "Male", "Neither"].map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => form.setValue("gender", g)}
+                  className={`h-14 rounded-2xl border-2 font-bold transition-all ${
+                    form.watch("gender") === g
+                      ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
+                      : "bg-white border-primary/10 text-muted-foreground hover:border-primary/30"
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )
@@ -66,7 +81,11 @@ export default function Onboarding() {
       content: (
         <div className="grid grid-cols-2 gap-3">
           {conditionsList.map((item) => (
-            <label key={item} className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-border shadow-sm cursor-pointer hover:border-primary transition-colors">
+            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+              form.watch("conditions")?.includes(item)
+                ? "bg-primary/5 border-primary"
+                : "bg-white border-primary/10 hover:border-primary/30"
+            }`}>
               <Checkbox 
                 checked={form.watch("conditions")?.includes(item)}
                 onCheckedChange={(checked) => {
@@ -74,8 +93,9 @@ export default function Onboarding() {
                   if (checked) form.setValue("conditions", [...current, item]);
                   else form.setValue("conditions", current.filter(c => c !== item));
                 }}
+                className="w-5 h-5 rounded-md border-2 border-primary"
               />
-              <span className="font-medium text-sm">{item}</span>
+              <span className={`font-bold text-sm ${form.watch("conditions")?.includes(item) ? "text-primary" : "text-foreground"}`}>{item}</span>
             </label>
           ))}
         </div>
@@ -87,7 +107,11 @@ export default function Onboarding() {
       content: (
         <div className="grid grid-cols-2 gap-3">
           {symptomsList.map((item) => (
-            <label key={item} className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-border shadow-sm cursor-pointer hover:border-primary transition-colors">
+            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+              form.watch("symptoms")?.includes(item)
+                ? "bg-secondary/5 border-secondary"
+                : "bg-white border-primary/10 hover:border-primary/30"
+            }`}>
               <Checkbox 
                 checked={form.watch("symptoms")?.includes(item)}
                 onCheckedChange={(checked) => {
@@ -95,8 +119,9 @@ export default function Onboarding() {
                   if (checked) form.setValue("symptoms", [...current, item]);
                   else form.setValue("symptoms", current.filter(c => c !== item));
                 }}
+                className="w-5 h-5 rounded-md border-2 border-secondary"
               />
-              <span className="font-medium text-sm">{item}</span>
+              <span className={`font-bold text-sm ${form.watch("symptoms")?.includes(item) ? "text-secondary-foreground" : "text-foreground"}`}>{item}</span>
             </label>
           ))}
         </div>
@@ -108,7 +133,11 @@ export default function Onboarding() {
       content: (
         <div className="grid grid-cols-2 gap-3">
           {allergiesList.map((item) => (
-            <label key={item} className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-border shadow-sm cursor-pointer hover:border-primary transition-colors">
+            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+              form.watch("allergies")?.includes(item)
+                ? "bg-red-50 border-red-500"
+                : "bg-white border-primary/10 hover:border-primary/30"
+            }`}>
               <Checkbox 
                 checked={form.watch("allergies")?.includes(item)}
                 onCheckedChange={(checked) => {
@@ -116,8 +145,9 @@ export default function Onboarding() {
                   if (checked) form.setValue("allergies", [...current, item]);
                   else form.setValue("allergies", current.filter(c => c !== item));
                 }}
+                className="w-5 h-5 rounded-md border-2 border-red-500"
               />
-              <span className="font-medium text-sm">{item}</span>
+              <span className={`font-bold text-sm ${form.watch("allergies")?.includes(item) ? "text-red-600" : "text-foreground"}`}>{item}</span>
             </label>
           ))}
         </div>
@@ -148,12 +178,12 @@ export default function Onboarding() {
           <TotoAvatar mood="happy" size="lg" />
         </motion.div>
         
-        <div className="mb-8 text-center">
+        <div className="mb-10 text-center">
           <motion.h2 
             key={`title-${step}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-display font-bold text-primary mb-2"
+            className="text-3xl font-bold text-primary mb-3"
           >
             {steps[step].title}
           </motion.h2>
@@ -161,7 +191,7 @@ export default function Onboarding() {
              key={`subtitle-${step}`}
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
-             className="text-muted-foreground"
+             className="text-muted-foreground text-lg"
           >
             {steps[step].subtitle}
           </motion.p>
@@ -171,9 +201,9 @@ export default function Onboarding() {
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
               {steps[step].content}
@@ -181,28 +211,27 @@ export default function Onboarding() {
           </AnimatePresence>
         </div>
 
-        <div className="mt-8 flex justify-between items-center">
-          {step > 0 && (
-            <Button variant="ghost" onClick={() => setStep(step - 1)}>
+        <div className="mt-12 flex justify-between items-center gap-4">
+          {step > 0 ? (
+            <Button variant="ghost" onClick={() => setStep(step - 1)} className="rounded-full h-14 px-8 font-bold">
               Back
             </Button>
-          )}
-          <div className="flex-1" />
+          ) : <div className="w-24" />}
+          
           <Button 
             onClick={handleNext} 
-            disabled={updateProfile.isPending}
-            className="bg-primary text-white rounded-full px-8 shadow-lg shadow-primary/25"
+            disabled={updateProfile.isPending || (step === 0 && (!form.watch("age") || !form.watch("gender")))}
+            className="flex-1 bg-primary text-white rounded-full h-14 font-bold text-lg shadow-xl shadow-primary/25 hover:shadow-2xl transition-all"
           >
             {step === steps.length - 1 ? (updateProfile.isPending ? "Saving..." : "Finish") : "Next"}
           </Button>
         </div>
 
-        {/* Progress Dots */}
-        <div className="flex justify-center gap-2 mt-8">
+        <div className="flex justify-center gap-3 mt-10">
           {steps.map((_, i) => (
             <div 
               key={i} 
-              className={`w-2 h-2 rounded-full transition-colors ${i === step ? 'bg-primary' : 'bg-primary/20'}`} 
+              className={`h-2 rounded-full transition-all ${i === step ? 'w-8 bg-primary' : 'w-2 bg-primary/20'}`} 
             />
           ))}
         </div>

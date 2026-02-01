@@ -11,8 +11,11 @@ export function Navigation() {
     { href: "/profile", icon: User, label: "Profile" },
   ];
 
-  // Only show nav on main pages
-  if (["/", "/chat", "/profile"].indexOf(location) === -1 && !location.startsWith("/scan")) {
+  // Hide nav on specific pages: Landing, ScanPage, Settings (if it's a separate route)
+  // Also check if it's the root landing page (when user is null, App.tsx handles that but Navigation is still rendered)
+  const isHidden = ["/scan", "/onboarding"].some(path => location.startsWith(path)) || location === "/landing" || location === "/settings";
+
+  if (isHidden) {
     return null;
   }
 

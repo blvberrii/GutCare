@@ -11,6 +11,7 @@ import ScanPage from "@/pages/ScanPage";
 import ResultsPage from "@/pages/ResultsPage";
 import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
+import SettingsPage from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/scan/:id" component={ResultsPage} />
       <Route path="/chat" component={Chat} />
       <Route path="/profile" component={Profile} />
+      <Route path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -46,7 +48,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="font-body text-foreground antialiased selection:bg-primary/20">
+      <div className="font-sans text-foreground antialiased selection:bg-primary/20">
         <Router />
         <Navigation />
         <Toaster />

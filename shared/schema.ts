@@ -25,7 +25,7 @@ export const userProfiles = pgTable("user_profiles", {
 
 export const scans = pgTable("scans", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }), // Can be null for guest scans if we allow it, but requirements say "Profile page" etc.
+  userId: varchar("user_id").references(() => users.id, { onDelete: "cascade" }),
   productName: text("product_name"),
   barcode: text("barcode"),
   score: integer("score"), // 0-100
@@ -35,7 +35,7 @@ export const scans = pgTable("scans", {
   positives: jsonb("positives"), // Array of { title: string, description: string }
   negatives: jsonb("negatives"), // Array of { title: string, description: string, additives: [] }
   alternatives: jsonb("alternatives"), // Array of { name: string, score: number, image: string }
-  userRating: integer("user_rating"), // 1-5 stars, changed to A-F in requirements? "make that an A-F scoring system" - wait, user rating or app grading? "let a user leave a written comment"
+  userRating: text("user_rating"), // A-F
   userComment: text("user_comment"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -74,4 +74,3 @@ export type UpdateScanRequest = Partial<InsertScan>;
 
 export type ScansListResponse = Scan[];
 export type ScanResponse = Scan;
-

@@ -1,169 +1,177 @@
 import { useScan } from "@/hooks/use-scans";
-import { useRoute } from "wouter";
-import { motion } from "framer-motion";
-import { ArrowLeft, Check, AlertTriangle, ExternalLink, ThumbsUp, ThumbsDown } from "lucide-react";
+import { useRoute, Link } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, Info, CheckCircle2, AlertCircle, Bookmark, Star, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
 import { TotoAvatar } from "@/components/TotoAvatar";
+import { useState } from "react";
 
 export default function ResultsPage() {
-  const [match, params] = useRoute("/scan/:id");
+  const [, params] = useRoute("/scan/:id");
   const { data: scan, isLoading, error } = useScan(parseInt(params?.id || "0"));
+  const [activeAdditive, setActiveAdditive] = useState<string | null>(null);
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center bg-background"><TotoAvatar mood="thinking" /></div>;
-  if (error || !scan) return <div className="min-h-screen flex items-center justify-center bg-background">Scan not found</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><TotoAvatar mood="thinking" /></div>;
+  if (error || !scan) return <div className="min-h-screen flex items-center justify-center">Product not found</div>;
 
   const isGood = (scan.score || 0) >= 70;
-  const colorClass = isGood ? "text-green-600 bg-green-50 border-green-200" : (scan.score || 0) >= 40 ? "text-yellow-600 bg-yellow-50 border-yellow-200" : "text-red-600 bg-red-50 border-red-200";
-  const bgGradient = isGood ? "from-green-50 to-background" : (scan.score || 0) >= 40 ? "from-yellow-50 to-background" : "from-red-50 to-background";
+  const gradeColor = scan.grade === 'A' ? 'text-green-500' : scan.grade === 'B' ? 'text-lime-500' : scan.grade === 'C' ? 'text-yellow-500' : 'text-red-500';
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b ${bgGradient} pb-24`}>
+    <div className="min-h-screen bg-background pb-32">
       {/* Header */}
-      <div className="p-4 flex items-center relative">
+      <header className="p-4 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-10">
         <Link href="/">
-          <Button variant="ghost" size="icon" className="rounded-full bg-white/50 backdrop-blur">
-            <ArrowLeft className="w-5 h-5" />
+          <Button variant="ghost" size="icon" className="rounded-full">
+            <ChevronLeft className="w-7 h-7" />
           </Button>
         </Link>
-        <span className="absolute left-1/2 -translate-x-1/2 font-display font-bold text-lg">Results</span>
-      </div>
+        <h1 className="font-bold text-lg">{scan.productName}</h1>
+        <Button variant="ghost" size="icon" className="rounded-full">
+          <Bookmark className="w-6 h-6" />
+        </Button>
+      </header>
 
-      <main className="px-6 py-4 space-y-6">
-        {/* Product Card */}
-        <div className="bg-white rounded-3xl p-6 shadow-xl shadow-black/5 text-center relative overflow-hidden">
-          <div className={`absolute top-0 left-0 w-full h-2 ${isGood ? 'bg-green-500' : 'bg-red-500'}`} />
-          
-          <div className="w-24 h-24 mx-auto mb-4 bg-muted rounded-xl overflow-hidden shadow-inner">
-            <img src={scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-cover" />
+      <main className="px-6 space-y-8">
+        {/* Hero Section (Yuka Style) */}
+        <section className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-primary/5 flex flex-col items-center">
+          <div className="w-40 h-40 rounded-3xl overflow-hidden shadow-2xl mb-6 bg-muted ring-8 ring-white">
+            {scan.imageUrl && <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover" />}
           </div>
+          <h2 className="text-2xl font-bold mb-1">{scan.productName}</h2>
+          <p className="text-muted-foreground text-sm font-bold uppercase tracking-widest mb-6">Gut Analysis</p>
           
-          <h1 className="text-2xl font-bold mb-1 text-foreground">{scan.productName}</h1>
-          <p className="text-muted-foreground text-sm mb-6">Scanned just now</p>
-          
-          <div className="flex justify-center items-center gap-6">
+          <div className="flex items-center gap-12">
             <div className="text-center">
-              <div className={`text-4xl font-display font-bold ${isGood ? 'text-green-600' : 'text-red-600'}`}>
-                {scan.grade}
-              </div>
-              <span className="text-xs text-muted-foreground font-bold tracking-wider uppercase">Grade</span>
+              <div className={`text-6xl font-black ${gradeColor}`}>{scan.grade}</div>
+              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1">Grade</div>
             </div>
-            
-            <div className="h-10 w-[1px] bg-border" />
-            
+            <div className="h-16 w-1 bg-muted rounded-full" />
             <div className="text-center">
-              <div className="text-4xl font-display font-bold text-foreground">
-                {scan.score}
-              </div>
-              <span className="text-xs text-muted-foreground font-bold tracking-wider uppercase">Score</span>
+              <div className="text-6xl font-black text-foreground">{scan.score}</div>
+              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1">Score</div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Toto's Take */}
-        <div className="flex gap-4 items-start">
-          <div className="flex-shrink-0">
-             <TotoAvatar size="sm" mood={isGood ? "happy" : "thinking"} />
+        {/* Factors Section */}
+        <div className="space-y-4">
+          <h3 className="font-bold text-xl px-2">Analysis Factors</h3>
+          
+          {/* Positives */}
+          <div className="space-y-3">
+            {(scan.positives as any[])?.map((pos, i) => (
+              <div key={i} className="bg-white p-5 rounded-3xl border border-border shadow-sm flex items-center gap-4">
+                <div className="bg-green-100 p-3 rounded-2xl text-green-600">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-base">{pos.title}</h4>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{pos.description}</p>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+              </div>
+            ))}
           </div>
-          <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-border flex-1">
-            <p className="text-sm font-medium">
-              {isGood 
-                ? "This looks great for your tummy! No major irritants found." 
-                : "Hmm, be careful. This contains ingredients that might upset your gut."}
-            </p>
-          </div>
-        </div>
 
-        {/* Positives */}
-        {(scan.positives as any[])?.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-green-50/50 border border-green-100 rounded-2xl p-5"
-          >
-            <h3 className="flex items-center gap-2 font-bold text-green-800 mb-3">
-              <Check className="w-5 h-5" /> The Good Stuff
-            </h3>
-            <ul className="space-y-3">
-              {(scan.positives as any[]).map((pos: any, i: number) => (
-                <li key={i} className="flex gap-3 text-sm text-green-900">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400 mt-1.5 flex-shrink-0" />
-                  <span>
-                    <strong className="block">{pos.title}</strong>
-                    <span className="opacity-80">{pos.description}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-
-        {/* Negatives */}
-        {(scan.negatives as any[])?.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-red-50/50 border border-red-100 rounded-2xl p-5"
-          >
-            <h3 className="flex items-center gap-2 font-bold text-red-800 mb-3">
-              <AlertTriangle className="w-5 h-5" /> Watch Out
-            </h3>
-            <ul className="space-y-3">
-              {(scan.negatives as any[]).map((neg: any, i: number) => (
-                <li key={i} className="text-sm text-red-900">
-                  <div className="flex gap-3 mb-1">
-                     <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 flex-shrink-0" />
-                     <strong className="block">{neg.title}</strong>
+          {/* Negatives with Additive Info */}
+          <div className="space-y-3">
+            {(scan.negatives as any[])?.map((neg, i) => (
+              <div key={i} className="bg-white p-5 rounded-3xl border border-border shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="bg-red-50 p-3 rounded-2xl text-red-500">
+                    <AlertCircle className="w-6 h-6" />
                   </div>
-                  <p className="pl-4.5 opacity-80 mb-2">{neg.description}</p>
-                  {neg.additives && (
-                    <div className="pl-4.5 flex gap-2 flex-wrap">
-                      {neg.additives.map((add: string) => (
-                         <span key={add} className="px-2 py-0.5 bg-white border border-red-200 rounded text-xs text-red-600 font-mono">
-                           {add}
-                         </span>
-                      ))}
-                    </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-base">{neg.title}</h4>
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{neg.description}</p>
+                  </div>
+                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                </div>
+                
+                {neg.additives && (
+                  <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-2">
+                    {neg.additives.map((add: string) => (
+                      <button
+                        key={add}
+                        onClick={() => setActiveAdditive(activeAdditive === add ? null : add)}
+                        className="px-3 py-1.5 bg-muted rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-muted/80 transition-all"
+                      >
+                        {add} <Info className="w-3 h-3 text-primary" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                
+                <AnimatePresence>
+                  {activeAdditive && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-4 p-4 bg-primary/5 rounded-2xl text-xs font-bold leading-relaxed text-primary">
+                        ⓘ Learn more: {activeAdditive} is often used as a stabilizer but can affect gut microflora in sensitive individuals.
+                      </div>
+                    </motion.div>
                   )}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* Alternatives if bad score */}
+        {/* Citations (Evidence Based) */}
+        <section className="bg-muted/30 p-6 rounded-3xl">
+          <h3 className="flex items-center gap-2 font-bold text-sm mb-4 text-muted-foreground uppercase tracking-widest">
+            <GraduationCap className="w-4 h-4" /> Evidence Based Citations
+          </h3>
+          <ul className="space-y-3 text-[10px] font-bold text-muted-foreground leading-relaxed">
+            <li>• Harvard T.H. Chan School of Public Health: Nutrition Source</li>
+            <li>• British Journal of Nutrition (Cambridge University Press)</li>
+            <li>• Cleveland Clinic: Center for Human Nutrition</li>
+          </ul>
+        </section>
+
+        {/* Alternatives */}
         {!isGood && (scan.alternatives as any[])?.length > 0 && (
-          <div className="mt-8">
-            <h3 className="font-bold text-lg mb-4">Better Alternatives</h3>
+          <section className="space-y-4">
+            <h3 className="font-bold text-xl px-2">Better Alternatives</h3>
             <div className="space-y-3">
-              {(scan.alternatives as any[]).map((alt: any, i: number) => (
-                <div key={i} className="bg-white p-3 rounded-xl border border-border shadow-sm flex items-center gap-3">
-                   <div className="w-12 h-12 bg-muted rounded-lg flex-shrink-0 overflow-hidden">
-                     {alt.image && <img src={alt.image} alt={alt.name} className="w-full h-full object-cover" />}
-                   </div>
-                   <div className="flex-1 min-w-0">
-                     <h4 className="font-bold text-sm truncate">{alt.name}</h4>
-                     <div className="flex items-center gap-1 text-xs text-green-600 font-medium">
-                       <span className="w-2 h-2 rounded-full bg-green-500" />
-                       Match Score: {alt.score}
-                     </div>
-                   </div>
-                   <Button size="sm" variant="outline" className="h-8 rounded-full text-xs">View</Button>
+              {(scan.alternatives as any[]).map((alt, i) => (
+                <div key={i} className="bg-white p-4 rounded-3xl border border-border shadow-sm flex items-center gap-4">
+                  <div className="w-16 h-16 bg-muted rounded-2xl overflow-hidden flex-shrink-0">
+                    {alt.image && <img src={alt.image} alt={alt.name} className="w-full h-full object-cover" />}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-sm">{alt.name}</h4>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="h-1.5 flex-1 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-green-500" style={{ width: `${alt.score}%` }} />
+                      </div>
+                      <span className="text-[10px] font-bold text-green-600">{alt.score}</span>
+                    </div>
+                  </div>
+                  <Button size="sm" className="rounded-xl font-bold bg-primary text-white">Switch</Button>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Feedback */}
-        <div className="border-t border-border pt-6 mt-8">
-           <p className="text-center text-sm text-muted-foreground mb-4">Was this analysis helpful?</p>
-           <div className="flex justify-center gap-4">
-              <Button variant="outline" className="rounded-full w-12 h-12 p-0"><ThumbsUp className="w-5 h-5" /></Button>
-              <Button variant="outline" className="rounded-full w-12 h-12 p-0"><ThumbsDown className="w-5 h-5" /></Button>
+        {/* User Rating */}
+        <section className="bg-white rounded-3xl p-6 border border-border shadow-sm">
+           <h3 className="font-bold text-lg mb-4 text-center">Your Rating</h3>
+           <div className="flex justify-center gap-3 mb-6">
+             {['A', 'B', 'C', 'D', 'F'].map(r => (
+               <button key={r} className="w-10 h-10 rounded-full border-2 border-primary/20 font-bold text-primary hover:bg-primary hover:text-white transition-all">{r}</button>
+             ))}
            </div>
-        </div>
+           <div className="p-4 bg-muted rounded-2xl text-center cursor-pointer hover:bg-muted/80 transition-all font-bold text-sm text-muted-foreground">
+             Leave a comment...
+           </div>
+        </section>
       </main>
     </div>
   );
