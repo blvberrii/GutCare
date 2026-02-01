@@ -13,7 +13,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Header */}
-      <div className="bg-primary text-white pt-12 pb-24 px-6 relative overflow-hidden rounded-b-[3rem]">
+      <div className="bg-primary text-white px-6 relative overflow-hidden rounded-b-[3rem] pl-[24px] pr-[24px] pt-[0px] pb-[0px]">
         <div className="absolute top-0 right-0 p-6">
            <Link href="/settings">
              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
@@ -43,7 +43,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-
       {/* Gut Profile Section */}
       <div className="px-6 -mt-10 space-y-6">
         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-primary/10">
