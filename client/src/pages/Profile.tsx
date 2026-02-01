@@ -105,7 +105,7 @@ export default function Profile() {
                 <Bookmark className="w-6 h-6 fill-current" />
               </div>
               <div className="flex-1">
-                <h4 className="font-black text-base">Saved Products</h4>
+                <h4 className="font-black text-base">Favorites</h4>
                 <p className="text-xs font-bold text-muted-foreground">Items you want to try</p>
               </div>
               <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
@@ -115,7 +115,7 @@ export default function Profile() {
                 <Heart className="w-6 h-6 fill-current" />
               </div>
               <div className="flex-1">
-                <h4 className="font-black text-base">Liked Items</h4>
+                <h4 className="font-black text-base">Previously Reviewed Items</h4>
                 <p className="text-xs font-bold text-muted-foreground">Your gut-friendly favorites</p>
               </div>
               <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
