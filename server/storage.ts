@@ -1,38 +1,78 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
+import { db } from "./db";
+import {
+  userProfiles,
+  scans,
+  users,
+  type UserProfile,
+  type InsertUserProfile,
+  type Scan,
+  type InsertScan,
+  type UpdateProfileRequest,
+  type UpdateScanRequest
+} from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Profiles
+  getProfile(userId: string): Promise<UserProfile | undefined>;
+  createProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  updateProfile(userId: string, updates: UpdateProfileRequest): Promise<UserProfile>;
+
+  // Scans
+  getScans(userId: string): Promise<Scan[]>;
+  getScan(id: number): Promise<Scan | undefined>;
+  createScan(scan: InsertScan): Promise<Scan>;
+  updateScan(id: number, updates: UpdateScanRequest): Promise<Scan>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  // Profiles
+  async getProfile(userId: string): Promise<UserProfile | undefined> {
+    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return profile;
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async createProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    const [newProfile] = await db.insert(userProfiles).values(profile).returning();
+    return newProfile;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async updateProfile(userId: string, updates: UpdateProfileRequest): Promise<UserProfile> {
+    const [updated] = await db
+      .update(userProfiles)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(userProfiles.userId, userId))
+      .returning();
+    return updated;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  // Scans
+  async getScans(userId: string): Promise<Scan[]> {
+    return await db
+      .select()
+      .from(scans)
+      .where(eq(scans.userId, userId))
+      .orderBy(desc(scans.createdAt));
+  }
+
+  async getScan(id: number): Promise<Scan | undefined> {
+    const [scan] = await db.select().from(scans).where(eq(scans.id, id));
+    return scan;
+  }
+
+  async createScan(scan: InsertScan): Promise<Scan> {
+    const [newScan] = await db.insert(scans).values(scan).returning();
+    return newScan;
+  }
+
+  async updateScan(id: number, updates: UpdateScanRequest): Promise<Scan> {
+    const [updated] = await db
+      .update(scans)
+      .set(updates)
+      .where(eq(scans.id, id))
+      .returning();
+    return updated;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
