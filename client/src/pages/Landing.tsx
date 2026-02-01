@@ -57,11 +57,13 @@ export default function Landing() {
         >
           <Button 
             size="lg" 
-            onClick={handleLogin}
+            asChild
             className="w-full bg-primary hover:bg-primary/90 text-white rounded-2xl h-14 text-lg font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all"
           >
-            Get Started
-            <ArrowRight className="ml-2 w-5 h-5" />
+            <a href="/api/login">
+              Get Started
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </a>
           </Button>
           
           <p className="text-xs text-muted-foreground mt-4">
