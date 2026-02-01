@@ -17,7 +17,9 @@ const conditionsList = ["IBS", "SIBO", "Crohn's", "Celiac", "Lactose Intolerance
 const symptomsList = ["Bloating", "Fatigue", "Brain Fog", "Skin Issues", "Stomach Pain"];
 const allergiesList = ["Gluten", "Dairy", "Nuts", "Soy", "Eggs", "Shellfish"];
 
-type FormData = z.infer<typeof insertUserProfileSchema>;
+// Extension schema to include name if needed, though Replit Auth usually has it
+// We'll just capture what we need for the profile
+type FormData = z.infer<typeof insertUserProfileSchema> & { firstName?: string };
 
 export default function Onboarding() {
   const { user } = useAuth();
@@ -31,9 +33,12 @@ export default function Onboarding() {
   }
 
   const form = useForm<FormData>({
-    resolver: zodResolver(insertUserProfileSchema),
+    resolver: zodResolver(insertUserProfileSchema.extend({
+      firstName: z.string().min(2, "Name is required")
+    })),
     defaultValues: {
       userId: user?.id,
+      firstName: user?.firstName || "",
       age: 0,
       gender: "",
       conditions: [],
@@ -45,8 +50,24 @@ export default function Onboarding() {
 
   const steps = [
     {
+      title: "Welcome Friend!",
+      subtitle: "What should we call you?",
+      content: (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Your Name</Label>
+            <Input 
+              {...form.register("firstName")} 
+              className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" 
+              placeholder="e.g. Alex" 
+            />
+          </div>
+        </div>
+      )
+    },
+    {
       title: "Tell us about you",
-      subtitle: "Let's get to know each other!",
+      subtitle: "Help us personalize your experience!",
       content: (
         <div className="space-y-6">
           <div className="space-y-2">
@@ -135,7 +156,7 @@ export default function Onboarding() {
           {allergiesList.map((item) => (
             <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
               form.watch("allergies")?.includes(item)
-                ? "bg-red-50 border-red-500"
+                ? "bg-red-5 border-red-500"
                 : "bg-white border-primary/10 hover:border-primary/30"
             }`}>
               <Checkbox 
@@ -160,9 +181,17 @@ export default function Onboarding() {
       setStep(step + 1);
     } else {
       try {
+        const values = form.getValues();
+        // Since Replit Auth manages name, we might not be able to update it via API without extra endpoints,
+        // but we'll update the profile fields first.
         await updateProfile.mutateAsync({
-          ...form.getValues(),
-          userId: user?.id
+          userId: user?.id,
+          age: values.age,
+          gender: values.gender,
+          conditions: values.conditions,
+          symptoms: values.symptoms,
+          allergies: values.allergies,
+          struggles: values.struggles,
         });
         setLocation("/");
       } catch (e) {
@@ -174,16 +203,16 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen bg-background flex flex-col p-6">
       <div className="flex-1 max-w-md mx-auto w-full flex flex-col justify-center">
-        <motion.div className="flex justify-center mb-8">
+        <motion.div className="flex justify-center mb-12">
           <TotoAvatar mood="happy" size="lg" />
         </motion.div>
         
-        <div className="mb-10 text-center">
+        <div className="mb-12 text-center">
           <motion.h2 
             key={`title-${step}`}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-3xl font-bold text-primary mb-3"
+            className="text-4xl font-black text-primary mb-4 tracking-tight"
           >
             {steps[step].title}
           </motion.h2>
@@ -191,7 +220,7 @@ export default function Onboarding() {
              key={`subtitle-${step}`}
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
-             className="text-muted-foreground text-lg"
+             className="text-muted-foreground text-xl font-medium"
           >
             {steps[step].subtitle}
           </motion.p>
@@ -213,25 +242,25 @@ export default function Onboarding() {
 
         <div className="mt-12 flex justify-between items-center gap-4">
           {step > 0 ? (
-            <Button variant="ghost" onClick={() => setStep(step - 1)} className="rounded-full h-14 px-8 font-bold">
+            <Button variant="ghost" onClick={() => setStep(step - 1)} className="rounded-full h-16 px-10 font-black text-lg">
               Back
             </Button>
           ) : <div className="w-24" />}
           
           <Button 
             onClick={handleNext} 
-            disabled={updateProfile.isPending || (step === 0 && (!form.watch("age") || !form.watch("gender")))}
-            className="flex-1 bg-primary text-white rounded-full h-14 font-bold text-lg shadow-xl shadow-primary/25 hover:shadow-2xl transition-all"
+            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && (!form.watch("age") || !form.watch("gender")))}
+            className="flex-1 bg-primary text-white rounded-full h-16 font-black text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all active:scale-95"
           >
             {step === steps.length - 1 ? (updateProfile.isPending ? "Saving..." : "Finish") : "Next"}
           </Button>
         </div>
 
-        <div className="flex justify-center gap-3 mt-10">
+        <div className="flex justify-center gap-3 mt-12">
           {steps.map((_, i) => (
             <div 
               key={i} 
-              className={`h-2 rounded-full transition-all ${i === step ? 'w-8 bg-primary' : 'w-2 bg-primary/20'}`} 
+              className={`h-2.5 rounded-full transition-all ${i === step ? 'w-10 bg-primary' : 'w-2.5 bg-primary/20'}`} 
             />
           ))}
         </div>

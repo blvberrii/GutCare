@@ -1,9 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { Home, User, MessageCircle, Scan } from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/use-auth";
 
 export function Navigation() {
   const [location] = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
@@ -11,9 +13,8 @@ export function Navigation() {
     { href: "/profile", icon: User, label: "Profile" },
   ];
 
-  // Hide nav on specific pages: Landing, ScanPage, Settings (if it's a separate route)
-  // Also check if it's the root landing page (when user is null, App.tsx handles that but Navigation is still rendered)
-  const isHidden = ["/scan", "/onboarding"].some(path => location.startsWith(path)) || location === "/landing" || location === "/settings";
+  // Hide nav on specific pages: Landing (root when not logged in), ScanPage, Settings, Onboarding
+  const isHidden = !user || ["/scan", "/onboarding", "/settings"].some(path => location.startsWith(path));
 
   if (isHidden) {
     return null;
