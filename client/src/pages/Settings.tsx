@@ -137,11 +137,11 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-2 gap-6 pt-2">
               <div className="space-y-2">
-                <Label className="font-bold text-sm pl-1">Age</Label>
+                <Label className="font-bold text-sm pl-1">DOB</Label>
                 <Input 
-                  type="number" 
-                  defaultValue={profile?.age || 0}
-                  onBlur={(e) => handleUpdate("age", parseInt(e.target.value))}
+                  type="date" 
+                  defaultValue={profile?.dob ? new Date(profile.dob).toISOString().split('T')[0] : ""}
+                  onBlur={(e) => handleUpdate("dob", e.target.value ? new Date(e.target.value) : null)}
                   className="rounded-2xl h-12 bg-muted/30 border-none font-bold"
                 />
               </div>

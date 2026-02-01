@@ -37,7 +37,7 @@ export default function Profile() {
           </div>
           <h1 className="text-3xl font-black mb-1">{user.firstName} {user.lastName}</h1>
           <div className="flex items-center gap-3 opacity-90 text-sm font-bold bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-sm">
-            <span>{profile?.age} yrs</span>
+            <span>{profile?.dob ? new Date().getFullYear() - new Date(profile.dob).getFullYear() : '?'} yrs</span>
             <div className="w-1.5 h-1.5 rounded-full bg-white/40" />
             <span>{profile?.gender}</span>
           </div>
@@ -112,7 +112,7 @@ export default function Profile() {
             </div>
             <div className="flex items-center gap-4 p-5 hover:bg-muted/30 transition-colors cursor-pointer group">
               <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
-                <Heart className="w-6 h-6 fill-current" />
+                <Star className="w-6 h-6 fill-current" />
               </div>
               <div className="flex-1">
                 <h4 className="font-black text-base">Previously Reviewed Items</h4>

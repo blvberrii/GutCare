@@ -34,12 +34,13 @@ export default function Onboarding() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(insertUserProfileSchema.extend({
-      firstName: z.string().min(2, "Name is required")
+      firstName: z.string().min(2, "Name is required"),
+      dob: z.string().min(1, "DOB is required")
     })),
     defaultValues: {
       userId: user?.id,
       firstName: user?.firstName || "",
-      age: 0,
+      dob: "",
       gender: "",
       conditions: [],
       symptoms: [],
@@ -48,13 +49,15 @@ export default function Onboarding() {
     }
   });
 
+  const [otherAllergy, setOtherAllergy] = useState("");
+
   const steps = [
     {
       title: "Welcome Friend!",
       subtitle: "What should we call you?",
       content: (
-        <div className="space-y-6">
-          <div className="space-y-2">
+        <div className="space-y-6 flex flex-col items-center">
+          <div className="space-y-2 w-full">
             <Label>Your Name</Label>
             <Input 
               {...form.register("firstName")} 
@@ -71,8 +74,8 @@ export default function Onboarding() {
       content: (
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label>How old are you?</Label>
-            <Input type="number" {...form.register("age", { valueAsNumber: true })} className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" placeholder="e.g. 28" />
+            <Label>Date of Birth</Label>
+            <Input type="date" {...form.register("dob")} className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" />
           </div>
           <div className="space-y-2">
             <Label>Gender</Label>
@@ -153,23 +156,43 @@ export default function Onboarding() {
       subtitle: "We'll strictly avoid these.",
       content: (
         <div className="grid grid-cols-2 gap-3">
-          {allergiesList.map((item) => (
-            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-              form.watch("allergies")?.includes(item)
-                ? "bg-red-5 border-red-500"
-                : "bg-white border-primary/10 hover:border-primary/30"
-            }`}>
-              <Checkbox 
-                checked={form.watch("allergies")?.includes(item)}
-                onCheckedChange={(checked) => {
-                  const current = form.getValues("allergies") || [];
-                  if (checked) form.setValue("allergies", [...current, item]);
-                  else form.setValue("allergies", current.filter(c => c !== item));
-                }}
-                className="w-5 h-5 rounded-md border-2 border-red-500"
-              />
-              <span className={`font-bold text-sm ${form.watch("allergies")?.includes(item) ? "text-red-600" : "text-foreground"}`}>{item}</span>
-            </label>
+          {["None", ...allergiesList, "Others"].map((item) => (
+            <div key={item} className="space-y-2">
+              <label className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                form.watch("allergies")?.includes(item) || (item === "Others" && otherAllergy)
+                  ? "bg-red-5 border-red-500"
+                  : "bg-white border-primary/10 hover:border-primary/30"
+              }`}>
+                <Checkbox 
+                  checked={form.watch("allergies")?.includes(item)}
+                  onCheckedChange={(checked) => {
+                    const current = form.getValues("allergies") || [];
+                    if (item === "None" && checked) {
+                      form.setValue("allergies", ["None"]);
+                      setOtherAllergy("");
+                      return;
+                    }
+                    if (checked) {
+                      const next = current.filter(i => i !== "None");
+                      form.setValue("allergies", [...next, item]);
+                    } else {
+                      form.setValue("allergies", current.filter(c => c !== item));
+                      if (item === "Others") setOtherAllergy("");
+                    }
+                  }}
+                  className="w-5 h-5 rounded-md border-2 border-red-500"
+                />
+                <span className={`font-bold text-sm ${form.watch("allergies")?.includes(item) ? "text-red-600" : "text-foreground"}`}>{item}</span>
+              </label>
+              {item === "Others" && form.watch("allergies")?.includes("Others") && (
+                <Input 
+                  value={otherAllergy}
+                  onChange={(e) => setOtherAllergy(e.target.value)}
+                  placeholder="Specify other allergies"
+                  className="rounded-xl h-10 bg-white border-2 border-primary/10 focus:border-red-500"
+                />
+              )}
+            </div>
           ))}
         </div>
       )
@@ -182,15 +205,18 @@ export default function Onboarding() {
     } else {
       try {
         const values = form.getValues();
-        // Since Replit Auth manages name, we might not be able to update it via API without extra endpoints,
-        // but we'll update the profile fields first.
+        let allergies = values.allergies || [];
+        if (allergies.includes("Others") && otherAllergy) {
+          allergies = [...allergies.filter(a => a !== "Others"), `Other: ${otherAllergy}`];
+        }
+
         await updateProfile.mutateAsync({
           userId: user?.id,
-          age: values.age,
+          dob: values.dob ? new Date(values.dob) : null,
           gender: values.gender,
           conditions: values.conditions,
           symptoms: values.symptoms,
-          allergies: values.allergies,
+          allergies: allergies,
           struggles: values.struggles,
         });
         setLocation("/");
@@ -240,17 +266,17 @@ export default function Onboarding() {
           </AnimatePresence>
         </div>
 
-        <div className="mt-12 flex justify-between items-center gap-4">
-          {step > 0 ? (
+        <div className="mt-12 flex justify-center items-center gap-4">
+          {step > 0 && (
             <Button variant="ghost" onClick={() => setStep(step - 1)} className="rounded-full h-16 px-10 font-black text-lg">
               Back
             </Button>
-          ) : <div className="w-24" />}
+          )}
           
           <Button 
             onClick={handleNext} 
-            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && (!form.watch("age") || !form.watch("gender")))}
-            className="flex-1 bg-primary text-white rounded-full h-16 font-black text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all active:scale-95"
+            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && (!form.watch("dob") || !form.watch("gender")))}
+            className={`${step === 0 ? "w-full" : "flex-1"} bg-primary text-white rounded-full h-16 font-black text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all active:scale-95`}
           >
             {step === steps.length - 1 ? (updateProfile.isPending ? "Saving..." : "Finish") : "Next"}
           </Button>
