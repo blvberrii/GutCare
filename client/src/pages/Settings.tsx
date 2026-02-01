@@ -5,7 +5,8 @@ import { ChevronLeft, LogOut, User, Shield, Heart, AlertCircle } from "lucide-re
 import { Link, Redirect } from "wouter";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,18 @@ export default function SettingsPage() {
 
   const handleUpdate = (field: string, value: any) => {
     updateProfile.mutate({ [field]: value });
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Clear profile to trigger re-onboarding on next login
+      await apiRequest("DELETE", "/api/profile");
+      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      logout();
+    } catch (e) {
+      console.error("Failed to reset profile", e);
+      logout();
+    }
   };
 
   const toggleArray = (field: "conditions" | "allergies" | "symptoms", item: string) => {
@@ -178,7 +191,7 @@ export default function SettingsPage() {
                 </AlertDialogHeader>
                 <AlertDialogFooter className="pt-6 gap-3">
                   <AlertDialogCancel className="rounded-full h-14 font-bold border-muted">Stay Logged In</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => logout()} className="rounded-full h-14 font-black bg-red-500 hover:bg-red-600 text-white shadow-xl shadow-red-500/20">Yes, Log Out</AlertDialogAction>
+                  <AlertDialogAction onClick={handleLogout} className="rounded-full h-14 font-black bg-red-500 hover:bg-red-600 text-white shadow-xl shadow-red-500/20">Yes, Log Out</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

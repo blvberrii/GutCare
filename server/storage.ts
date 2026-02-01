@@ -17,6 +17,7 @@ export interface IStorage {
   getProfile(userId: string): Promise<UserProfile | undefined>;
   createProfile(profile: InsertUserProfile): Promise<UserProfile>;
   updateProfile(userId: string, updates: UpdateProfileRequest): Promise<UserProfile>;
+  deleteProfile(userId: string): Promise<void>;
 
   // Scans
   getScans(userId: string): Promise<Scan[]>;
@@ -44,6 +45,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userProfiles.userId, userId))
       .returning();
     return updated;
+  }
+
+  async deleteProfile(userId: string): Promise<void> {
+    await db.delete(userProfiles).where(eq(userProfiles.userId, userId));
   }
 
   // Scans

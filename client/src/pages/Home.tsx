@@ -2,15 +2,17 @@ import { useAuth } from "@/hooks/use-auth";
 import { useScans } from "@/hooks/use-scans";
 import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
-import { Redirect, Link } from "wouter";
-import { motion } from "framer-motion";
-import { Scan, Star, ShoppingBag, Carrot, Soup } from "lucide-react";
+import { Redirect, Link, useLocation } from "wouter";
+import { motion, AnimatePresence } from "framer-motion";
+import { Scan, Star, ShoppingBag, Carrot, Soup, X, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function Home() {
   const { user } = useAuth();
   const { data: profile, isLoading: isProfileLoading } = useProfile();
   const { data: scans, isLoading: isScansLoading } = useScans(5);
+  const [selectedRec, setSelectedRec] = useState<any>(null);
 
   if (isProfileLoading) return <div className="flex items-center justify-center min-h-screen"><TotoAvatar mood="thinking" /></div>;
   if (!profile || !profile.conditions || profile.conditions.length === 0) return <Redirect to="/onboarding" />;
@@ -23,9 +25,33 @@ export default function Home() {
   };
 
   const recommendations = [
-    { title: "Grass-fed Ghee", category: "Cooking Oil", icon: Carrot, color: "bg-orange-100 text-orange-600" },
-    { title: "Kefir Water", category: "Probiotic", icon: Soup, color: "bg-blue-100 text-blue-600" },
-    { title: "Bone Broth", category: "Supplement", icon: ShoppingBag, color: "bg-primary/10 text-primary" },
+    { 
+      title: "Grass-fed Ghee", 
+      category: "Cooking Oil", 
+      icon: Carrot, 
+      color: "bg-orange-100 text-orange-600",
+      score: 95,
+      description: "A rich source of butyrate, which supports the gut barrier and reduces inflammation.",
+      benefits: ["Lactose-free", "High smoke point", "Supports digestion"]
+    },
+    { 
+      title: "Kefir Water", 
+      category: "Probiotic", 
+      icon: Soup, 
+      color: "bg-blue-100 text-blue-600",
+      score: 88,
+      description: "Packed with live cultures that help balance your gut microbiome.",
+      benefits: ["Dairy-free", "Probiotic rich", "Low sugar"]
+    },
+    { 
+      title: "Bone Broth", 
+      category: "Supplement", 
+      icon: ShoppingBag, 
+      color: "bg-primary/10 text-primary",
+      score: 92,
+      description: "Contains amino acids like glutamine that help heal and seal the gut lining.",
+      benefits: ["Collagen rich", "Anti-inflammatory", "Easy to digest"]
+    },
   ];
 
   return (
@@ -114,6 +140,7 @@ export default function Home() {
             <motion.div 
               key={i}
               whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedRec(item)}
               className="bg-white p-5 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary transition-all"
             >
               <div className={`${item.color} p-4 rounded-2xl`}>
@@ -128,6 +155,83 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Recommendation Details Modal */}
+      <AnimatePresence>
+        {selectedRec && (
+          <div className="fixed inset-0 z-[100] flex items-end justify-center px-4 pb-10">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedRec(null)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-md bg-white rounded-[2.5rem] p-8 shadow-2xl overflow-hidden"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className={`${selectedRec.color} p-5 rounded-[1.5rem]`}>
+                  <selectedRec.icon className="w-8 h-8" />
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setSelectedRec(null)}
+                  className="rounded-full"
+                >
+                  <X className="w-6 h-6" />
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1">{selectedRec.category}</h4>
+                  <h2 className="text-3xl font-black tracking-tight">{selectedRec.title}</h2>
+                </div>
+
+                <div className="flex items-center gap-6 py-6 border-y border-border/50">
+                  <div className="text-center">
+                    <div className="text-4xl font-black text-primary">{selectedRec.score}</div>
+                    <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-1">Match Score</div>
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${selectedRec.score}%` }}
+                        className="h-full bg-primary"
+                      />
+                    </div>
+                    <p className="text-xs font-bold text-primary">Highly compatible with your gut profile</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-sm font-medium leading-relaxed text-muted-foreground">
+                    {selectedRec.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRec.benefits.map((benefit: string) => (
+                      <span key={benefit} className="px-3 py-1.5 bg-primary/5 text-primary rounded-xl text-xs font-bold">
+                        {benefit}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <Button className="w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20 mt-4">
+                  Add to Favorites
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

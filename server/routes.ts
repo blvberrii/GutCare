@@ -42,12 +42,11 @@ export async function registerRoutes(
       if (existing) {
         profile = await storage.updateProfile(userId, input);
       } else {
-        // Create if not exists (upsert logic basically)
         profile = await storage.createProfile({ ...input, userId } as any);
       }
       res.json(profile);
     } catch (err) {
-       if (err instanceof z.ZodError) {
+      if (err instanceof z.ZodError) {
         res.status(400).json({
           message: err.errors[0].message,
           field: err.errors[0].path.join('.'),
@@ -55,6 +54,16 @@ export async function registerRoutes(
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
+    }
+  });
+
+  app.delete(api.profile.delete.path, isAuthenticated, async (req: any, res) => {
+    const userId = req.user.claims.sub;
+    try {
+      await storage.deleteProfile(userId);
+      res.status(204).send();
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 

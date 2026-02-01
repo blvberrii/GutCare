@@ -44,6 +44,14 @@ export const api = {
         401: errorSchemas.unauthorized,
       },
     },
+    delete: {
+      method: 'DELETE' as const,
+      path: '/api/profile',
+      responses: {
+        204: z.null(),
+        401: errorSchemas.unauthorized,
+      },
+    },
   },
   scans: {
     list: {
