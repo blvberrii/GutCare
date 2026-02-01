@@ -1,0 +1,90 @@
+What: Scanning wellness and grocery products, only for gut health; a webapp
+Assistive character on the side, plushie called toto
+Quiz at the start to give them a more personalized experience
+Scanning a product code
+Talk to AI assistant using Gemini 
+Once they scan, the user sees a grade from A-F and a number out of 100
+Target audience: We’re grading for how good X product is for their condition
+People that struggle with their gut health: 
+IBS 
+SIBO
+IBD
+Crohn's Disease
+Celiac Disease
+Lactose Intolerance
+GERD
+Adults, age 40+
+
+Somewhat technologically literate 
+Only for people that struggle with gut health
+Free 
+Screens: 
+Homepage:
+Recently viewed
+Top products
+For you
+Scan button (bottom right of home page)
+AI chatbot 
+Questionnaire Form
+Questionnaire form 
+Name 
+Age 
+Gender
+Symptoms 
+Condition(s) with multiple choice answers 
+What do you struggle with in terms of finding foods and wellness products with multiple options
+Allergies
+Scanning page (Button should be bottom right of the homepage)
+Results page with the grade
+Metrics to grading: 
+See below
+Positives and negatives 
+Rating the product on a 5-star scale   
+Settings page (button on the top right of the profile page)
+Profile page:
+Header section: 
+Profile picture (Circular avatar, Default: friendly illustrated placeholder (neutral, non-gendered), if uploaded then user photo, small edit icon )
+Name (From onboarding, editable)
+Age (Autocalculated from DOB, editable in settings)
+Gender (From onboarding, display subtly)
+Body section: 
+Gut profile (Conditions, allergies, symptoms)
+Footer:
+Saved products, liked products
+Settings button on the top right
+Settings page:
+Account settings:
+Name
+Profile picture
+Email
+Password
+Health profile:
+Edit conditions
+Edit symptoms
+Edit allergies
+Legal & Support:
+Help Center / FAQ
+Contact support
+Privacy Policy
+Terms of use
+Bottom bar:
+Home page (Default)
+Profile page
+AI chat bot
+Cartoonish, colourful, not monotonous, slightly minimalistic like Headspace https://apps.apple.com/us/app/headspace-meditation-health/id493145008 
+
+
+Convert the screen into a desktop version. When I open the webapp link on my phone, I should see it in the mobile version. 
+To the scan page, add a highlighted bubble saying “Take a clear photo of the product”
+Across the application, improve the UI and UX; add vectors and graphics to each page; add images as well to make it visually rich and appealing. Look at Yuka screenshot attached and Prove it supplement scanner as a base to make my app UI look the same
+To our Homepage, add a section on Recently Viewed / History along with the score and grade you gave it 
+On the scoring page, if the score is below 70/100, show 3 alternatives which are within the same food type that are 80/100+
+Change Toto’s logo and picture to a cartoon whale that looks like Duolingo’s owl and ensure that it is a smart AI-assistive character 
+Make the AI assistant Toto’s responses to questions under 5 lines and provide points in bullet points
+To the Profile page, add name + profile picture (along with dummy picture if the user hasn’t uploaded it) and save gender results from onboarding survey
+Results page with score and grade should have bullet points for positive and negative aspects. For these negative & positive aspects, add a down arrow which where they clickthere is an option for “ⓘ Learn more” which will lead to, for example, if this negative aspect is the additives and you click on more info, the more info page will be the list of additives. For each additive, give information when the user clicks on it, give a key label of what the additive is, and each additive should be labelled on the list with dangerous, risky, safe, and put this guide on the place that appears after the user clicks on the down arrow in the negative aspect. For each additive, give another learn more option for the info. For each aspect, show the amount of that, e.g., Protein, then 3.5g, Additives, 9, Calories, 350cal, etc. Also below each aspect give a small description e.g. Sodium: too salty, Calories: Too caloric Sodium: Too salty.
+To the Results page, add citations with validated, evidence based scientific information. Use resources like Harvard School of Public Health, Oxford and Cambridge’s Schools of Nutrition, John’s Hopkins’s, the FDA, The Nutri-Score front-of-pack label made by Oxford and United Kingdom's Food Standards Agency, Mayo Clinic, Cleveland Clinic, etc. Do not share public health / nutritional information that has not been scientifically validated in peer-reviewed research studies
+
+On the Results page, right now a user can only give a rating out of 5; make that an A-F scoring system and also let a user leave a written comment
+Look at the image I’ve uploaded for the Yuka Results page - please ensure my page looks just like this - see how they have vectors and graphics for each category of negative and positive like calories protein fibre etc. Also, for the picture you display don’t just pick up a picture for eg of prebiotic yogurt; if I’ve scanned an image of Chobani yogurt, use Google Images to display a picture of the exact SKU that I’ve uploaded so in this case for Chobani Strawberry Yogurt
+
