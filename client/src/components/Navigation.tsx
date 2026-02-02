@@ -45,17 +45,19 @@ export function Navigation() {
       </div>
 
       {/* Floating Scan Button */}
-      <div className="fixed bottom-24 right-6 z-50">
-        <Link href="/scan">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-accent text-white p-4 rounded-full shadow-lg shadow-accent/30 cursor-pointer flex items-center justify-center w-16 h-16"
-          >
-            <Scan className="w-8 h-8" />
-          </motion.div>
-        </Link>
-      </div>
+      {location === "/" && (
+        <div className="fixed bottom-24 right-6 z-50">
+          <Link href="/scan">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-accent text-white p-4 rounded-full shadow-lg shadow-accent/30 cursor-pointer flex items-center justify-center w-16 h-16"
+            >
+              <Scan className="w-8 h-8" />
+            </motion.div>
+          </Link>
+        </div>
+      )}
     </>
   );
 }

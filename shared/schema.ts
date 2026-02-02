@@ -19,6 +19,7 @@ export const userProfiles = pgTable("user_profiles", {
   symptoms: text("symptoms").array(),
   struggles: text("struggles").array(),
   allergies: text("allergies").array(),
+  language: text("language").default("English"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

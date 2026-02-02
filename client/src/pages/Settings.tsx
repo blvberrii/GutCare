@@ -159,6 +159,18 @@ export default function SettingsPage() {
                 </select>
               </div>
             </div>
+
+            <div className="space-y-2">
+              <Label className="font-bold text-sm pl-1">Language</Label>
+              <select 
+                className="w-full h-12 px-4 rounded-2xl bg-muted/30 border-none font-bold text-sm appearance-none"
+                value={profile?.language || "English"}
+                onChange={(e) => handleUpdate("language", e.target.value)}
+              >
+                <option value="English">English</option>
+                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+              </select>
+            </div>
           </div>
         </section>
 

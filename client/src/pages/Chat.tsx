@@ -105,7 +105,7 @@ export default function Chat() {
           <Button 
             type="submit" 
             size="icon" 
-            className="rounded-full h-12 w-12 shrink-0 bg-accent hover:bg-accent/90 shadow-md shadow-accent/20"
+            className="rounded-full h-12 w-12 shrink-0 bg-primary hover:bg-primary/90 shadow-md shadow-primary/20"
           >
             <Send className="w-5 h-5 text-white" />
           </Button>
