@@ -140,6 +140,7 @@ export default function SettingsPage() {
                 <Label className="font-bold text-sm pl-1">DOB</Label>
                 <Input 
                   type="date" 
+                  max={new Date().toISOString().split('T')[0]}
                   defaultValue={profile?.dob ? new Date(profile.dob).toISOString().split('T')[0] : ""}
                   onBlur={(e) => handleUpdate("dob", e.target.value ? new Date(e.target.value) : null)}
                   className="rounded-2xl h-12 bg-muted/30 border-none font-bold"

@@ -35,12 +35,12 @@ export default function Onboarding() {
   const form = useForm<FormData>({
     resolver: zodResolver(insertUserProfileSchema.extend({
       firstName: z.string().min(2, "Name is required"),
-      dob: z.string().min(1, "DOB is required")
+      dob: z.any().refine((val) => val && val !== "", "DOB is required")
     })),
     defaultValues: {
       userId: user?.id,
       firstName: user?.firstName || "",
-      dob: "",
+      dob: "" as any,
       gender: "",
       conditions: [],
       symptoms: [],
@@ -75,7 +75,12 @@ export default function Onboarding() {
         <div className="space-y-6">
           <div className="space-y-2">
             <Label>Date of Birth</Label>
-            <Input type="date" {...form.register("dob")} className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" />
+            <Input 
+              type="date" 
+              max={new Date().toISOString().split('T')[0]}
+              {...form.register("dob")} 
+              className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" 
+            />
           </div>
           <div className="space-y-2">
             <Label>Gender</Label>

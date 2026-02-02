@@ -57,7 +57,13 @@ export const scansRelations = relations(scans, ({ one }) => ({
 }));
 
 // === BASE SCHEMAS ===
-export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertUserProfileSchema = createInsertSchema(userProfiles, {
+  dob: z.union([z.string(), z.date(), z.null()]).transform((val) => val ? new Date(val) : null),
+  conditions: z.array(z.string()).optional(),
+  symptoms: z.array(z.string()).optional(),
+  allergies: z.array(z.string()).optional(),
+  struggles: z.array(z.string()).optional(),
+}).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertScanSchema = createInsertSchema(scans).omit({ id: true, createdAt: true });
 
 // === EXPLICIT API CONTRACT TYPES ===
