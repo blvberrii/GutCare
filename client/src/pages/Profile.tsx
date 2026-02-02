@@ -10,6 +10,8 @@ export default function Profile() {
 
   if (!user) return <Redirect to="/" />;
 
+  const displayName = profile?.firstName || user.firstName;
+
   return (
     <div className="min-h-screen bg-background pb-32">
       {/* Header */}
@@ -35,7 +37,7 @@ export default function Profile() {
                <Edit2 className="w-4 h-4 text-white" />
              </div>
           </div>
-          <h1 className="text-3xl font-black mb-1">{user.firstName} {user.lastName}</h1>
+          <h1 className="text-3xl font-black mb-1">{displayName} {user.lastName}</h1>
           <div className="flex items-center gap-3 opacity-90 text-sm font-bold bg-white/10 px-4 py-1.5 rounded-full backdrop-blur-sm">
             <span>{profile?.dob ? new Date().getFullYear() - new Date(profile.dob).getFullYear() : '?'} yrs</span>
             <div className="w-1.5 h-1.5 rounded-full bg-white/40" />

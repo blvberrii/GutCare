@@ -38,6 +38,7 @@ export const scans = pgTable("scans", {
   alternatives: jsonb("alternatives"), // Array of { name: string, score: number, image: string }
   userRating: text("user_rating"), // A-F
   userComment: text("user_comment"),
+  isFavorite: boolean("is_favorite").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

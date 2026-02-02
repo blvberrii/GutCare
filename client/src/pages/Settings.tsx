@@ -75,9 +75,9 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <Label className="font-bold text-sm pl-1">Name</Label>
               <Input 
-                defaultValue={`${user.firstName} ${user.lastName}`} 
+                defaultValue={profile?.firstName || user.firstName} 
                 className="rounded-2xl h-12 bg-muted/30 border-none font-bold"
-                readOnly
+                onBlur={(e) => handleUpdate("firstName", e.target.value)}
               />
             </div>
             <div className="space-y-2">

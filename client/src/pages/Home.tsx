@@ -59,7 +59,7 @@ export default function Home() {
       <header className="flex justify-between items-center mb-10">
         <div>
           <h1 className="text-3xl font-bold text-primary">{getGreeting()},</h1>
-          <p className="text-xl font-bold opacity-80">{user?.firstName || 'Friend'}!</p>
+          <p className="text-xl font-bold opacity-80">{profile?.firstName || user?.firstName || 'Friend'}!</p>
         </div>
         <Link href="/profile">
           <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
