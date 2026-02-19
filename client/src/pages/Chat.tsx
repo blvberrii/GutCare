@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Send, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "model";
@@ -77,7 +78,9 @@ export default function Chat() {
                 ? "bg-primary text-white rounded-tr-none" 
                 : "bg-white border border-border rounded-tl-none"
             }`}>
-              <p className="text-sm leading-relaxed">{msg.content}</p>
+              <div className="text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-li:my-0">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
             </div>
           </motion.div>
         ))}
