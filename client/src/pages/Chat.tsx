@@ -35,20 +35,22 @@ export default function Chat() {
     setIsTyping(true);
 
     try {
-      // Mocking the chat endpoint call since I don't have the full conversation ID logic here
-      // In production, this would use the /api/conversations/... endpoints
+      const response = await apiRequest("POST", "/api/chat", {
+        message: userMsg
+      });
+      const data = await response.json();
       
-      // Temporary: Simulate network delay for effect
-      setTimeout(() => {
-        setMessages(prev => [...prev, { 
-          role: "model", 
-          content: "I'm still learning, but try eating more fiber like oats or bananas if you're feeling sluggish! Remember to drink water too." 
-        }]);
-        setIsTyping(false);
-      }, 1500);
-
+      setMessages(prev => [...prev, { 
+        role: "model", 
+        content: data.message
+      }]);
     } catch (e) {
       console.error(e);
+      setMessages(prev => [...prev, { 
+        role: "model", 
+        content: "I'm having trouble connecting right now. Please try again later!" 
+      }]);
+    } finally {
       setIsTyping(false);
     }
   };

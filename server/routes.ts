@@ -132,34 +132,35 @@ export async function registerRoutes(
 
   // Analyze Product (Gemini)
   app.post(api.analyze.product.path, isAuthenticated, async (req: any, res) => {
+    // ... existing analyze logic
+  });
+
+  // Chat with Toto (Gemini)
+  app.post("/api/chat", isAuthenticated, async (req: any, res) => {
     try {
-      const { image } = req.body; // Base64 string
-      if (!image) {
-        return res.status(400).json({ message: "Image is required" });
+      const { message } = req.body;
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+
+      if (!message) {
+        return res.status(400).json({ message: "Message is required" });
       }
 
-      // Construct prompt for Gut Health analysis
-      const prompt = `
-        Analyze this product image for a gut health app. 
-        Identify the product.
-        Extract ingredients.
-        Analyze the ingredients for gut health issues (IBS, SIBO, Lactose, Gluten, etc.).
+      const systemPrompt = `
+        You are Toto, a friendly and knowledgeable whale mascot for "GutCheck", a gut health app.
+        Your goal is to help users with conditions like IBS, SIBO, Crohn's, and Celiac disease.
         
-        Return a JSON object with this structure:
-        {
-          "productName": "string",
-          "ingredients": "string (comma separated)",
-          "score": number (0-100),
-          "grade": "string (A, B, C, D, or F)",
-          "positives": [{ "title": "string", "description": "string" }],
-          "negatives": [{ "title": "string", "description": "string", "additives": ["string"] }],
-          "alternatives": [{ "name": "string", "score": number }] (Provide 3 alternatives if score < 70, otherwise empty array)
-        }
+        User Profile:
+        - Name: ${profile?.firstName || "Friend"}
+        - Conditions: ${profile?.conditions?.join(", ") || "None specified"}
+        - Allergies: ${profile?.allergies?.join(", ") || "None specified"}
         
-        Be strict about gut health. 
-        High Fodmap = negative. 
-        Additives/Emulsifiers = negative.
-        Whole foods = positive.
+        Guidelines:
+        1. Be encouraging, empathetic, and professional.
+        2. Provide science-based information but keep it easy to understand.
+        3. Always remind users to consult with a medical professional for specific medical advice.
+        4. Focus on gut-friendly foods and lifestyle tips.
+        5. If the user mentions a specific product, try to explain how it might affect their specific conditions.
       `;
 
       const response = await ai.models.generateContent({
@@ -168,8 +169,8 @@ export async function registerRoutes(
           {
             role: "user",
             parts: [
-              { text: prompt },
-              { inlineData: { mimeType: "image/jpeg", data: image.split(",")[1] || image } } // Handle data:image/jpeg;base64, prefix
+              { text: systemPrompt },
+              { text: `User message: ${message}` }
             ]
           }
         ],
@@ -178,20 +179,16 @@ export async function registerRoutes(
         },
       });
 
-      const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) {
-        throw new Error("No response from AI");
+      const reply = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!reply) {
+        throw new Error("No response from Toto");
       }
 
-      // Clean markdown code blocks if present
-      const jsonStr = text.replace(/```json/g, "").replace(/```/g, "").trim();
-      const result = JSON.parse(jsonStr);
-
-      res.json(result);
+      res.json({ message: reply });
 
     } catch (error) {
-      console.error("Analysis failed:", error);
-      res.status(500).json({ message: "Analysis failed" });
+      console.error("Chat failed:", error);
+      res.status(500).json({ message: "Toto is taking a quick nap. Please try again in a moment!" });
     }
   });
 
