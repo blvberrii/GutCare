@@ -161,6 +161,8 @@ export async function registerRoutes(
         3. Always remind users to consult with a medical professional for specific medical advice.
         4. Focus on gut-friendly foods and lifestyle tips.
         5. If the user mentions a specific product, try to explain how it might affect their specific conditions.
+        6. Keep your response concise (under 5 lines).
+        7. Use bullet points for key information.
       `;
 
       const response = await ai.models.generateContent({
