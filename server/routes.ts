@@ -132,7 +132,74 @@ export async function registerRoutes(
 
   // Analyze Product (Gemini)
   app.post(api.analyze.product.path, isAuthenticated, async (req: any, res) => {
-    // ... existing analyze logic
+    try {
+      const { image } = req.body;
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+
+      if (!image) {
+        return res.status(400).json({ message: "Image is required" });
+      }
+
+      const systemPrompt = `
+        You are an expert gut health nutritionist. Analyze the provided food product image.
+        Consider the user's profile:
+        - Conditions: ${profile?.conditions?.join(", ") || "None"}
+        - Allergies: ${profile?.allergies?.join(", ") || "None"}
+
+        Return a JSON object with:
+        {
+          "productName": "Name of the product",
+          "ingredients": "List of ingredients",
+          "score": number (0-100),
+          "grade": "A-F",
+          "positives": [{ "title": "...", "description": "..." }],
+          "negatives": [{ "title": "...", "description": "...", "additives": [] }],
+          "alternatives": [{ "name": "Alternative name", "score": number }]
+        }
+      `;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          {
+            role: "user",
+            parts: [
+              { text: systemPrompt },
+              { inlineData: { data: image, mimeType: "image/jpeg" } }
+            ]
+          }
+        ],
+        config: {
+          responseMimeType: "application/json",
+        },
+      });
+
+      const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!analysisText) throw new Error("Failed to analyze product");
+      
+      const analysis = JSON.parse(analysisText);
+
+      // Generate images for the main product and alternatives
+      const productImgPrompt = `Professional product photography of ${analysis.productName}, white background, studio lighting, high quality`;
+      const productImageUrl = await generateImage(productImgPrompt);
+
+      const alternativesWithImages = await Promise.all((analysis.alternatives || []).map(async (alt: any) => {
+        const altImgPrompt = `Professional product photography of ${alt.name}, white background, studio lighting, high quality`;
+        const altImageUrl = await generateImage(altImgPrompt);
+        return { ...alt, image: altImageUrl };
+      }));
+
+      res.json({
+        ...analysis,
+        imageUrl: productImageUrl,
+        alternatives: alternativesWithImages
+      });
+
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      res.status(500).json({ message: "Failed to analyze product. Please try again." });
+    }
   });
 
   // Chat with Toto (Gemini)

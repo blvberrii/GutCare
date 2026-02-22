@@ -39,7 +39,7 @@ export default function ScanPage() {
       // 2. Save to DB
       const savedScan = await createScan.mutateAsync({
         productName: result.productName,
-        imageUrl: image, // Ideally upload to storage first, but for now storing base64 or assuming url
+        imageUrl: result.imageUrl, // Use the AI generated image URL
         grade: result.grade,
         score: result.score,
         ingredients: result.ingredients,
