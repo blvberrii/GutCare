@@ -214,7 +214,7 @@ export async function registerRoutes(
       }
 
       const systemPrompt = `
-        You are Toto, a friendly and knowledgeable whale mascot for "GutCheck", a gut health app.
+        You are Toto, a friendly and knowledgeable whale mascot for "GutCare", a gut health app.
         Your goal is to help users with conditions like IBS, SIBO, Crohn's, and Celiac disease.
         
         User Profile:

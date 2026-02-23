@@ -30,7 +30,7 @@ export default function Landing() {
       <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto sticky top-0 bg-[#FFFDF9]/80 backdrop-blur-md z-50">
         <div className="flex items-center gap-2">
           <TotoAvatar size="sm" mood="happy" />
-          <span className="font-display font-bold text-2xl text-teal-700">GutCheck</span>
+          <span className="font-display font-bold text-2xl text-teal-700">GutCare</span>
         </div>
         <div className="flex gap-4">
           <Link href="/home">
@@ -88,7 +88,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-display font-bold mb-4">Precision for your unique gut.</h2>
-            <p className="text-gray-500 max-w-xl mx-auto">Unlike generic apps, GutCheck translates complex science into insights tailored to your sensitivities.</p>
+            <p className="text-gray-500 max-w-xl mx-auto">Unlike generic apps, GutCare translates complex science into insights tailored to your sensitivities.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
@@ -160,7 +160,7 @@ export default function Landing() {
               </div>
               <h3 className="text-3xl font-display font-bold">Smart Alternatives</h3>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Found something that isn't right for your gut? GutCheck suggests safer, healthier alternatives that won't compromise your comfort or your cravings.
+                Found something that isn't right for your gut? GutCare suggests safer, healthier alternatives that won't compromise your comfort or your cravings.
               </p>
             </motion.div>
           </div>
@@ -217,7 +217,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="space-y-8">
-            <h2 className="text-4xl font-display font-bold">Why I’m building GutCheck</h2>
+            <h2 className="text-4xl font-display font-bold">Why I’m building GutCare</h2>
             <div className="prose prose-invert prose-lg max-w-none text-teal-50 space-y-6">
               <p>
                 My interest in gut health began during a period when I had to rethink how I evaluated my food. I had to research fibre types, probiotic strains, fermentation, and how specific ingredients interacted with different gut conditions.
@@ -289,7 +289,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-gray-100 text-center text-gray-400 text-sm">
-        <p>© 2026 GutCheck. Built for gut clarity.</p>
+        <p>© 2026 GutCare. Built for gut clarity.</p>
       </footer>
     </div>
   );

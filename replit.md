@@ -1,8 +1,8 @@
-# GutCheck - Gut Health Product Scanner
+# GutCare - Gut Health Product Scanner
 
 ## Overview
 
-GutCheck is a mobile-first web application that helps users with gut health conditions (IBS, SIBO, Crohn's, Celiac, etc.) evaluate wellness and grocery products. Users can scan product barcodes or images to receive personalized gut health grades (A-F scale with 0-100 scores) based on their specific conditions, symptoms, and allergies. The app features an AI assistant mascot named "Toto" (a friendly whale) for guidance and recommendations.
+GutCare is a mobile-first web application that helps users with gut health conditions (IBS, SIBO, Crohn's, Celiac, etc.) evaluate wellness and grocery products. Users can scan product barcodes or images to receive personalized gut health grades (A-F scale with 0-100 scores) based on their specific conditions, symptoms, and allergies. The app features an AI assistant mascot named "Toto" (a friendly whale) for guidance and recommendations.
 
 ## User Preferences
 
