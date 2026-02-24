@@ -5,7 +5,7 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 import { setupAuth, registerAuthRoutes, isAuthenticated } from "./replit_integrations/auth";
 import { registerChatRoutes } from "./replit_integrations/chat";
-import { registerImageRoutes } from "./replit_integrations/image";
+import { registerImageRoutes, generateImage } from "./replit_integrations/image";
 import { ai } from "./replit_integrations/image/client"; // Use the client from integration
 import { Modality } from "@google/genai";
 
