@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
-import { Settings, Edit2, ChevronRight, Bookmark, Heart, Star } from "lucide-react";
+import { Settings, Edit2, ChevronRight, Bookmark, Heart, Star, User } from "lucide-react";
 import { Redirect, Link } from "wouter";
 
 export default function Profile() {

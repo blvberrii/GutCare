@@ -220,8 +220,8 @@ export default function ResultsPage() {
               <section className="space-y-6">
                 <div className="flex items-center justify-between px-2">
                   <h3 className="font-black text-lg">Better Choices</h3>
-                  <Link href="/scan">
-                    <Button variant="link" className="text-primary font-black text-xs uppercase tracking-widest">See all</Button>
+                  <Link href="/scan" className="block">
+                    <Button variant="ghost" className="text-primary font-black text-xs uppercase tracking-widest p-0 h-auto hover:bg-transparent">See all</Button>
                   </Link>
                 </div>
                 <div className="space-y-3">

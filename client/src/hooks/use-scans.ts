@@ -61,3 +61,24 @@ export function useAnalyzeProduct() {
     },
   });
 }
+
+export function useUpdateScan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...data }: { id: number } & Partial<InsertScan>) => {
+      const url = buildUrl(api.scans.update.path, { id });
+      const res = await fetch(url, {
+        method: api.scans.update.method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to update scan");
+      return api.scans.update.responses[200].parse(await res.json());
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });
+      queryClient.invalidateQueries({ queryKey: [api.scans.get.path, variables.id] });
+    },
+  });
+}
