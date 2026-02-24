@@ -153,10 +153,14 @@ export async function registerRoutes(
           "ingredients": "List of ingredients",
           "score": number (0-100),
           "grade": "A-F",
-          "positives": [{ "title": "...", "description": "..." }],
-          "negatives": [{ "title": "...", "description": "...", "additives": [] }],
+          "positives": [{ "title": "...", "description": "...", "type": "calories|protein|fiber|etc" }],
+          "negatives": [{ "title": "...", "description": "...", "type": "sugar|sodium|additives|etc" }],
+          "additivesDetails": [{ "name": "...", "risk": "Low|Medium|High", "description": "...", "label": "..." }],
+          "citations": [{ "source": "Harvard School of Public Health|FDA|Mayo Clinic|etc", "text": "..." }],
           "alternatives": [{ "name": "Alternative name", "score": number }]
         }
+        
+        CRITICAL: For scientific citations, use ONLY validated, evidence-based information from sources like Harvard School of Public Health, Oxford, Cambridge, Johns Hopkins, FDA, Mayo Clinic, or Cleveland Clinic.
       `;
 
       const response = await ai.models.generateContent({
