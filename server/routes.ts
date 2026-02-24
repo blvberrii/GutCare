@@ -185,11 +185,11 @@ export async function registerRoutes(
       const analysis = JSON.parse(analysisText);
 
       // Generate images for the main product and alternatives
-      const productImgPrompt = `Professional product photography of ${analysis.productName}, white background, studio lighting, high quality`;
+      const productImgPrompt = `Exact product photography of ${analysis.productName} SKU, high resolution, white background, studio lighting, professional commercial shot`;
       const productImageUrl = await generateImage(productImgPrompt);
 
       const alternativesWithImages = await Promise.all((analysis.alternatives || []).map(async (alt: any) => {
-        const altImgPrompt = `Professional product photography of ${alt.name}, white background, studio lighting, high quality`;
+        const altImgPrompt = `Exact product photography of ${alt.name} SKU, high resolution, white background, studio lighting, professional commercial shot`;
         const altImageUrl = await generateImage(altImgPrompt);
         return { ...alt, image: altImageUrl };
       }));

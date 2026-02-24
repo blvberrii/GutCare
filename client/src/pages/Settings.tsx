@@ -211,7 +211,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <p className="text-center text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">GutCheck v1.0</p>
+        <p className="text-center text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">GutCare v1.0</p>
       </div>
     </div>
   );

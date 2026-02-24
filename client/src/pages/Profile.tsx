@@ -29,11 +29,11 @@ export default function Profile() {
              {user.profileImageUrl ? (
                <img src={user.profileImageUrl} alt="Profile" className="w-28 h-28 rounded-full border-4 border-white shadow-2xl object-cover" />
              ) : (
-               <div className="w-28 h-28 rounded-full bg-secondary border-4 border-white shadow-2xl flex items-center justify-center text-3xl font-black">
-                 {user.firstName?.[0]}{user.lastName?.[0]}
+               <div className="w-28 h-28 rounded-full bg-[#E0F2F1] border-4 border-white shadow-2xl flex items-center justify-center text-primary">
+                 <User className="w-14 h-14" />
                </div>
              )}
-             <div className="absolute bottom-1 right-1 bg-accent p-2 rounded-full border-2 border-white shadow-lg">
+             <div className="absolute bottom-1 right-1 bg-accent p-2 rounded-full border-2 border-white shadow-lg cursor-pointer hover:scale-110 transition-transform">
                <Edit2 className="w-4 h-4 text-white" />
              </div>
           </div>

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
 
 export default function ResultsPage() {
   const [, params] = useRoute("/scan/:id");
@@ -23,7 +22,6 @@ export default function ResultsPage() {
 
   const isGood = (scan.score || 0) >= 70;
   const gradeColor = scan.grade === 'A' ? 'text-green-500' : scan.grade === 'B' ? 'text-lime-500' : scan.grade === 'C' ? 'text-yellow-500' : 'text-red-500';
-  const gradeBg = scan.grade === 'A' ? 'bg-green-500' : scan.grade === 'B' ? 'bg-lime-500' : scan.grade === 'C' ? 'bg-yellow-500' : 'bg-red-500';
 
   const handleRate = async (rating: string) => {
     try {
