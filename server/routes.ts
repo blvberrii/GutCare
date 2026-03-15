@@ -167,6 +167,30 @@ export async function registerRoutes(
     }
   });
 
+  // Recommendation scan: creates a pre-populated scan with an AI-generated product image
+  app.post("/api/recommendation-scan", isAuthenticated, async (req: any, res) => {
+    const userId = req.user.claims.sub;
+    try {
+      const { productName, ...rest } = req.body;
+      if (!productName) return res.status(400).json({ message: "productName is required" });
+
+      // Generate product image with AI
+      const imagePrompt = `Product photography of ${productName}: a clean, professional studio shot on a white background, no text, no labels, realistic food product`;
+      const imageUrl = await generateImage(imagePrompt).catch(() => null);
+
+      const scan = await storage.createScan({
+        ...rest,
+        productName,
+        imageUrl: imageUrl || null,
+        userId,
+      });
+      res.status(201).json(scan);
+    } catch (err) {
+      console.error("recommendation-scan error:", err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.patch(api.scans.update.path, isAuthenticated, async (req: any, res) => {
     const userId = req.user.claims.sub;
     try {

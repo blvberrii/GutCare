@@ -2,12 +2,11 @@ import { useScan, useUpdateScan } from "@/hooks/use-scans";
 import { useRoute, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronLeft, Info, CheckCircle2, AlertCircle, Bookmark, BookmarkCheck,
+  ChevronLeft, CheckCircle2, AlertCircle, Bookmark, BookmarkCheck,
   GraduationCap, ChevronDown, ExternalLink, Heart, Leaf, Zap, Droplets,
-  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star
+  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TotoAvatar } from "@/components/TotoAvatar";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,29 +65,27 @@ function ScoreCircle({ score, grade }: { score: number; grade: string }) {
   );
 }
 
-function ExpandableItem({ item, isPositive }: { item: any; isPositive: boolean }) {
+function ExpandableItem({ item, isPositive, isLast }: { item: any; isPositive: boolean; isLast: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const { IconComponent, color, bg } = getIcon(item.type);
-  const borderColor = isPositive ? "border-emerald-100 hover:border-emerald-300" : "border-red-100 hover:border-red-200";
   const dotColor = isPositive ? "bg-emerald-500" : "bg-red-500";
-  const dotGlow = isPositive ? "shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "shadow-[0_0_8px_rgba(239,68,68,0.5)]";
 
   return (
-    <div className={`bg-white rounded-3xl border ${borderColor} shadow-sm overflow-hidden transition-all duration-300`}>
+    <div className={`bg-white overflow-hidden ${!isLast ? "border-b border-black/5" : ""}`}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-4 p-5 text-left"
+        className="w-full flex items-center gap-4 px-5 py-4 text-left"
         data-testid={`button-expand-${item.type}`}
       >
-        <div className={`w-11 h-11 ${bg} rounded-2xl flex items-center justify-center flex-shrink-0`}>
+        <div className={`w-10 h-10 ${bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
           <IconComponent className={`w-5 h-5 ${color}`} />
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="font-bold text-sm text-foreground">{item.title}</h4>
           <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{item.description}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className={`w-2.5 h-2.5 rounded-full ${dotColor} ${dotGlow}`} />
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
           <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${expanded ? "rotate-180" : ""}`} />
         </div>
       </button>
@@ -198,8 +195,8 @@ export default function ResultsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <TotoAvatar mood="thinking" size="lg" />
-        <p className="text-muted-foreground font-medium animate-pulse">Loading results...</p>
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <p className="text-muted-foreground font-medium">Loading results...</p>
       </div>
     );
   }
@@ -249,7 +246,7 @@ export default function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] pb-32 font-sans">
+    <div className="min-h-screen bg-[#FDFCF8] pb-12 font-sans">
       {/* Sticky Header */}
       <header className="sticky top-0 z-30 flex items-center px-4 py-3 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5">
         <Link href="/">
@@ -286,8 +283,8 @@ export default function ResultsPage() {
             {scan.imageUrl ? (
               <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-muted">
-                <TotoAvatar mood="happy" size="lg" />
+              <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${gradeCfg.bg}`}>
+                <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-40`} />
               </div>
             )}
           </motion.div>
@@ -309,33 +306,37 @@ export default function ResultsPage() {
         <div className="bg-white rounded-t-[3rem] pt-10 px-5 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.08)] -mt-2">
           <div className="space-y-8">
 
-            {/* Positives Section */}
-            {positives.length > 0 && (
+            {/* Negatives Section */}
+            {negatives.length > 0 && (
               <section>
-                <div className="flex items-center gap-2 mb-4 px-1">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                  <h3 className="font-black text-lg text-emerald-700">What's working ✓</h3>
-                  <span className="ml-auto text-xs font-black text-emerald-500 bg-emerald-50 px-3 py-1 rounded-full">{positives.length} found</span>
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                    <h3 className="font-black text-base">Negatives</h3>
+                  </div>
+                  <span className="text-xs font-bold text-muted-foreground">{negatives.length} found</span>
                 </div>
-                <div className="space-y-3">
-                  {positives.map((pos, i) => (
-                    <ExpandableItem key={i} item={pos} isPositive={true} />
+                <div className="rounded-2xl border border-black/8 overflow-hidden shadow-sm">
+                  {negatives.map((neg, i) => (
+                    <ExpandableItem key={i} item={neg} isPositive={false} isLast={i === negatives.length - 1} />
                   ))}
                 </div>
               </section>
             )}
 
-            {/* Negatives Section */}
-            {negatives.length > 0 && (
+            {/* Positives Section */}
+            {positives.length > 0 && (
               <section>
-                <div className="flex items-center gap-2 mb-4 px-1">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                  <h3 className="font-black text-lg text-red-700">Watch out for ✗</h3>
-                  <span className="ml-auto text-xs font-black text-red-500 bg-red-50 px-3 py-1 rounded-full">{negatives.length} found</span>
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <h3 className="font-black text-base">Positives</h3>
+                  </div>
+                  <span className="text-xs font-bold text-muted-foreground">{positives.length} found</span>
                 </div>
-                <div className="space-y-3">
-                  {negatives.map((neg, i) => (
-                    <ExpandableItem key={i} item={neg} isPositive={false} />
+                <div className="rounded-2xl border border-black/8 overflow-hidden shadow-sm">
+                  {positives.map((pos, i) => (
+                    <ExpandableItem key={i} item={pos} isPositive={true} isLast={i === positives.length - 1} />
                   ))}
                 </div>
               </section>
@@ -572,20 +573,6 @@ export default function ResultsPage() {
         </div>
       </main>
 
-      {/* Floating Navigation Bar */}
-      <motion.div
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-5 bg-black/90 pl-3 pr-6 py-2 rounded-full shadow-2xl z-30 backdrop-blur-xl border border-white/10"
-      >
-        <div className="w-11 h-11 bg-primary rounded-full flex items-center justify-center overflow-hidden shadow-lg">
-          <TotoAvatar mood="happy" size="sm" />
-        </div>
-        <Link href="/" className="text-white/70 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors">Home</Link>
-        <Link href="/scan" className="text-white/70 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors">Scan</Link>
-        <Link href="/chat" className="text-white/70 hover:text-white text-[10px] font-black uppercase tracking-widest transition-colors">Ask Toto</Link>
-      </motion.div>
     </div>
   );
 }

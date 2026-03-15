@@ -1,18 +1,20 @@
 import { useAuth } from "@/hooks/use-auth";
-import { useScans, useCreateScan } from "@/hooks/use-scans";
+import { useScans } from "@/hooks/use-scans";
 import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { Redirect, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Scan, ShoppingBag, Carrot, Soup, Loader2 } from "lucide-react";
+import { Scan, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { api } from "@shared/routes";
 
 interface Recommendation {
   title: string;
   category: string;
-  icon: typeof Carrot;
-  color: string;
+  imageEmoji: string;
+  emojiColor: string;
   score: number;
   grade: string;
   ingredients: string;
@@ -26,8 +28,8 @@ const recommendations: Recommendation[] = [
   {
     title: "Grass-fed Ghee",
     category: "Cooking Oil",
-    icon: Carrot,
-    color: "bg-orange-100 text-orange-600",
+    imageEmoji: "🧈",
+    emojiColor: "from-orange-200 to-amber-300",
     score: 95,
     grade: "A",
     ingredients: "Grass-fed clarified butter (butyrate, conjugated linoleic acid, fat-soluble vitamins A, D, E, K2)",
@@ -49,8 +51,8 @@ const recommendations: Recommendation[] = [
   {
     title: "Kefir Water",
     category: "Probiotic Drink",
-    icon: Soup,
-    color: "bg-blue-100 text-blue-600",
+    imageEmoji: "💧",
+    emojiColor: "from-blue-200 to-cyan-300",
     score: 88,
     grade: "A",
     ingredients: "Filtered water, organic cane sugar (fermented), kefir water grains (Lactobacillus hilgardii, Lactobacillus casei, Leuconostoc mesenteroides, Pediococcus parvulus)",
@@ -74,18 +76,18 @@ const recommendations: Recommendation[] = [
   {
     title: "Bone Broth",
     category: "Gut Supplement",
-    icon: ShoppingBag,
-    color: "bg-primary/10 text-primary",
+    imageEmoji: "🍲",
+    emojiColor: "from-amber-200 to-orange-300",
     score: 92,
     grade: "A",
     ingredients: "Grass-fed beef bones, filtered water, apple cider vinegar, onion, garlic, celery, bay leaves, black pepper, sea salt",
     positives: [
-      { title: "Glutamine for Gut Lining", description: "L-Glutamine is the primary fuel for intestinal epithelial cells, supporting tight junction integrity and reducing intestinal permeability ('leaky gut')." },
+      { title: "Glutamine for Gut Lining", description: "L-Glutamine is the primary fuel for intestinal epithelial cells, supporting tight junction integrity and reducing intestinal permeability." },
       { title: "Collagen & Gelatin", description: "Gelatin derived from collagen coats the gut lining, soothes inflammation and supports healthy bowel movements." },
       { title: "Anti-inflammatory", description: "Glycine and proline in bone broth have documented anti-inflammatory properties, particularly beneficial for those with Crohn's or IBD." },
     ],
     negatives: [
-      { title: "High Histamine Content", description: "Long-simmered broths are high in histamine — those with histamine intolerance should consume with caution or choose shorter-cooked versions." },
+      { title: "High Histamine Content", description: "Long-simmered broths are high in histamine — those with histamine intolerance should consume with caution." },
     ],
     citations: [
       { source: "Johns Hopkins Medicine", text: "Glutamine supplementation has been shown to reduce intestinal permeability and support mucosal healing in inflammatory bowel conditions.", url: "https://www.hopkinsmedicine.org" },
@@ -101,8 +103,7 @@ const recommendations: Recommendation[] = [
 export default function Home() {
   const { user } = useAuth();
   const { data: profile, isLoading: isProfileLoading } = useProfile();
-  const { data: scans, isLoading: isScansLoading } = useScans(5);
-  const createScan = useCreateScan();
+  const { data: scans, isLoading: isScansLoading } = useScans();
   const [, navigate] = useLocation();
   const [loadingRec, setLoadingRec] = useState<number | null>(null);
 
@@ -116,31 +117,55 @@ export default function Home() {
     return "Good Evening";
   };
 
+  // Deduplicate scans by productName, keeping the most recent (first occurrence since sorted by createdAt DESC)
+  const uniqueScans = (scans || []).reduce((acc: typeof scans, scan) => {
+    if (!acc!.some(s => s.productName === scan.productName)) {
+      acc!.push(scan);
+    }
+    return acc;
+  }, [] as typeof scans);
+  const recentScans = (uniqueScans || []).slice(0, 5);
+
+  // Find existing scan for a recommendation by product name
+  const findExistingScan = (productName: string) =>
+    (scans || []).find(s => s.productName === productName);
+
   const handleRecommendationClick = async (rec: Recommendation, index: number) => {
     if (loadingRec !== null) return;
+
+    // If we already have a scan for this product, navigate to it
+    const existing = findExistingScan(rec.title);
+    if (existing) {
+      navigate(`/scan/${existing.id}`);
+      return;
+    }
+
     setLoadingRec(index);
     try {
-      const scan = await createScan.mutateAsync({
+      const res = await apiRequest("POST", "/api/recommendation-scan", {
         productName: rec.title,
         score: rec.score,
         grade: rec.grade,
         ingredients: rec.ingredients,
-        positives: rec.positives as any,
-        negatives: rec.negatives as any,
-        citations: rec.citations as any,
-        alternatives: rec.alternatives as any,
-        additivesDetails: [] as any,
+        positives: rec.positives,
+        negatives: rec.negatives,
+        citations: rec.citations,
+        alternatives: rec.alternatives,
+        additivesDetails: [],
         isFavorite: false,
-        userId: undefined,
-        barcode: null,
-        imageUrl: null,
-        userRating: null,
-        userComment: null,
       });
+      const scan = await res.json();
+      queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });
       navigate(`/scan/${scan.id}`);
     } catch {
       setLoadingRec(null);
     }
+  };
+
+  // Get the imageUrl for a recommendation (from existing scan if available)
+  const getRecImage = (title: string) => {
+    const existing = findExistingScan(title);
+    return existing?.imageUrl || null;
   };
 
   return (
@@ -189,27 +214,29 @@ export default function Home() {
           <div className="flex gap-4 overflow-x-auto pb-4">
             {[1, 2].map(i => <div key={i} className="w-48 h-56 bg-white rounded-3xl animate-pulse flex-shrink-0" />)}
           </div>
-        ) : scans?.length ? (
+        ) : recentScans?.length ? (
           <div className="flex gap-4 overflow-x-auto pb-6 snap-x">
-            {scans.map((scan) => (
+            {recentScans.map((scan) => (
               <Link key={scan.id} href={`/scan/${scan.id}`}>
                 <motion.div
                   whileHover={{ y: -4 }}
-                  className="bg-white p-4 rounded-[2rem] shadow-sm border border-border min-w-[180px] snap-start cursor-pointer flex flex-col h-full"
+                  className="bg-white p-4 rounded-[2rem] shadow-sm border border-border min-w-[160px] snap-start cursor-pointer flex flex-col"
                 >
-                  <div className="relative mb-4 aspect-square rounded-2xl overflow-hidden bg-muted shadow-inner">
+                  <div className="relative mb-3 w-full aspect-square rounded-xl overflow-hidden bg-muted">
                     {scan.imageUrl ? (
                       <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-8 h-8 opacity-20" /></div>
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <ShoppingBag className="w-8 h-8 text-primary/20" />
+                      </div>
                     )}
-                    <div className={`absolute top-2 right-2 w-10 h-10 rounded-full flex items-center justify-center font-bold text-white shadow-lg
+                    <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-lg
                       ${scan.grade === 'A' ? 'bg-green-500' : scan.grade === 'B' ? 'bg-lime-500' : scan.grade === 'C' ? 'bg-yellow-500' : 'bg-red-500'}`}>
                       {scan.grade}
                     </div>
                   </div>
-                  <h4 className="font-bold text-sm line-clamp-1 mb-1">{scan.productName}</h4>
-                  <div className="text-xs font-bold text-primary bg-primary/5 self-start px-2 py-1 rounded-lg">Score: {scan.score}</div>
+                  <h4 className="font-bold text-xs line-clamp-2 mb-1 leading-tight">{scan.productName}</h4>
+                  <div className="text-[10px] font-bold text-primary bg-primary/5 self-start px-2 py-1 rounded-lg mt-auto">{scan.score}/100</div>
                 </motion.div>
               </Link>
             ))}
@@ -223,38 +250,50 @@ export default function Home() {
 
       {/* For You */}
       <section>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-2">
           <h3 className="text-xl font-bold">For You</h3>
           <span className="text-xs text-muted-foreground font-bold bg-primary/5 px-3 py-1 rounded-full">Toto picks</span>
         </div>
-        <p className="text-sm text-muted-foreground mb-4 -mt-2">Tap any product to see its full gut health analysis</p>
+        <p className="text-sm text-muted-foreground mb-5">Tap any to see its full gut health breakdown</p>
         <div className="grid gap-4">
-          {recommendations.map((item, i) => (
-            <motion.div
-              key={i}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleRecommendationClick(item, i)}
-              data-testid={`card-recommendation-${i}`}
-              className="bg-white p-5 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary transition-all"
-            >
-              <div className={`${item.color} p-4 rounded-2xl flex-shrink-0`}>
-                <item.icon className="w-6 h-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-base">{item.title}</h4>
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{item.category}</p>
-              </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-white text-sm shadow
-                  ${item.grade === 'A' ? 'bg-green-500' : item.grade === 'B' ? 'bg-lime-500' : 'bg-yellow-500'}`}>
-                  {item.grade}
+          {recommendations.map((item, i) => {
+            const recImage = getRecImage(item.title);
+            const isLoading = loadingRec === i;
+            return (
+              <motion.div
+                key={i}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleRecommendationClick(item, i)}
+                data-testid={`card-recommendation-${i}`}
+                className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
+              >
+                {/* Product image or emoji */}
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm">
+                  {recImage ? (
+                    <img src={recImage} alt={item.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className={`w-full h-full bg-gradient-to-br ${item.emojiColor} flex items-center justify-center`}>
+                      <span className="text-3xl">{item.imageEmoji}</span>
+                    </div>
+                  )}
                 </div>
-                {loadingRec === i ? (
-                  <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                ) : null}
-              </div>
-            </motion.div>
-          ))}
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-sm">{item.title}</h4>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{item.category}</p>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {isLoading ? (
+                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  ) : (
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-white text-sm shadow
+                      ${item.grade === 'A' ? 'bg-green-500' : item.grade === 'B' ? 'bg-lime-500' : 'bg-yellow-500'}`}>
+                      {item.grade}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
     </div>
