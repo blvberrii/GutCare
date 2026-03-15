@@ -13,28 +13,33 @@ export function Navigation() {
     { href: "/profile", icon: User, label: "Profile" },
   ];
 
-  // Hide nav on specific pages: Landing (root when not logged in), ScanPage, Settings, Onboarding
-  const isHidden = !user || ["/scan", "/onboarding", "/settings"].some(path => location.startsWith(path));
+  // Pages where the nav bar should be hidden
+  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history"];
+  const isResultsPage = /^\/scan\/\d+/.test(location);
+  const isHidden = !user || isResultsPage || hiddenPaths.some(path => location.startsWith(path));
 
-  if (isHidden) {
-    return null;
-  }
+  if (isHidden) return null;
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-secondary/20 pb-safe pt-2 px-6 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/5 pb-safe pt-2 px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="flex justify-around items-end pb-4 max-w-md mx-auto">
           {navItems.map((item) => {
-            const isActive = location === item.href;
+            const isActive = location === item.href ||
+              (item.href === "/profile" && ["/profile", "/favorites", "/history"].includes(location));
             return (
               <Link key={item.href} href={item.href}>
-                <div className={`flex flex-col items-center gap-1 p-2 cursor-pointer transition-colors duration-200 ${isActive ? "text-primary" : "text-muted-foreground hover:text-primary/70"}`}>
-                  <item.icon className={`w-6 h-6 ${isActive ? "stroke-[2.5px]" : "stroke-2"}`} />
-                  <span className="text-[10px] font-bold">{item.label}</span>
+                <div className={`flex flex-col items-center gap-1 p-2 cursor-pointer transition-all duration-200 ${
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-primary/70"
+                }`} data-testid={`nav-${item.label.toLowerCase()}`}>
+                  <item.icon className={`w-6 h-6 transition-all ${isActive ? "stroke-[2.5px] scale-110" : "stroke-2"}`} />
+                  <span className={`text-[10px] font-bold transition-all ${isActive ? "opacity-100" : "opacity-60"}`}>
+                    {item.label}
+                  </span>
                   {isActive && (
-                    <motion.div 
-                      layoutId="nav-dot" 
-                      className="w-1 h-1 bg-primary rounded-full mt-1" 
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="w-1.5 h-1.5 bg-primary rounded-full"
                     />
                   )}
                 </div>
@@ -44,19 +49,20 @@ export function Navigation() {
         </div>
       </div>
 
-      {/* Floating Scan Button */}
+      {/* Floating Scan Button — shown on Home page */}
       {location === "/" && (
-        <div className="fixed bottom-24 right-6 z-50">
-          <Link href="/scan">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-accent text-white p-4 rounded-full shadow-lg shadow-accent/30 cursor-pointer flex items-center justify-center w-16 h-16"
-            >
-              <Scan className="w-8 h-8" />
-            </motion.div>
-          </Link>
-        </div>
+        <Link href="/scan">
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            className="fixed bottom-24 right-5 z-50 bg-accent text-white p-4 rounded-full shadow-xl shadow-accent/30 cursor-pointer flex items-center justify-center w-16 h-16"
+            data-testid="button-float-scan"
+          >
+            <Scan className="w-7 h-7" />
+          </motion.div>
+        </Link>
       )}
     </>
   );

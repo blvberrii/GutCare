@@ -217,6 +217,7 @@ export default function Onboarding() {
 
         await updateProfile.mutateAsync({
           userId: user?.id,
+          firstName: values.firstName || "",
           dob: values.dob ? new Date(values.dob) : null,
           gender: values.gender,
           conditions: values.conditions,

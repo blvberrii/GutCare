@@ -12,6 +12,8 @@ import ResultsPage from "@/pages/ResultsPage";
 import Chat from "@/pages/Chat";
 import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
+import FavoritesPage from "@/pages/FavoritesPage";
+import HistoryPage from "@/pages/HistoryPage";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -39,6 +41,8 @@ function Router() {
       <Route path="/scan/:id" component={ResultsPage} />
       <Route path="/chat" component={Chat} />
       <Route path="/profile" component={Profile} />
+      <Route path="/favorites" component={FavoritesPage} />
+      <Route path="/history" component={HistoryPage} />
       <Route path="/settings" component={SettingsPage} />
       <Route component={NotFound} />
     </Switch>

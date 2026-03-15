@@ -49,6 +49,22 @@ Preferred communication style: Simple, everyday language.
   - `gemini-2.5-flash-image` for image generation
 - **Features**: Product ingredient analysis, personalized gut health grading, conversational AI assistant
 
+## Key Pages & Routes
+- `/` - Home (greeting, recently viewed, recommendations)
+- `/scan` - Camera scan page with tip bubble
+- `/scan/:id` - Results page (Yuka-style with expandable sections, citations, ratings)
+- `/chat` - Toto AI chat with Gemini 2.5 Flash, quick questions
+- `/profile` - User profile with stats, conditions, collections
+- `/favorites` - Saved/bookmarked scans
+- `/history` - All scan history
+- `/settings` - Edit profile, conditions, allergies, logout
+- `/onboarding` - First-time setup flow
+
+## Evidence-Based Knowledge Base (in server/routes.ts)
+- Comprehensive gut health knowledge embedded directly in AI prompt
+- Sources: Harvard School of Public Health, Johns Hopkins, Cleveland Clinic, Mayo Clinic, NIH, Monash University FODMAP, FDA, UK NHS, Oxford/Cambridge
+- Covers: additives (E-numbers), fiber types, probiotics, FODMAP, Crohn's/Celiac/IBS guidelines, scoring methodology
+
 ## External Dependencies
 
 ### Third-Party Services
