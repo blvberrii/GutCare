@@ -220,13 +220,16 @@ export default function Landing() {
             <h2 className="text-4xl font-display font-bold">Why I’m building GutCare</h2>
             <div className="prose prose-invert prose-lg max-w-none text-teal-50 space-y-6">
               <p>
-                My interest in gut health began during a period when I had to rethink how I evaluated my food. I had to research fibre types, probiotic strains, fermentation, and how specific ingredients interacted with different gut conditions.
+                My interest in gut health began during a period when I had to rethink how I evaluated my food. For the first time, I couldn't rely on general nutritional advice; the usual "Increase protein, reduce carbs!" no longer applied.. I had to research fibre types, probiotic strains, fermentation, and how specific ingredients interacted with different gut conditions.
               </p>
               <p>
-                What made it harder was that the issue wasn't always visible to others. Persistent bloating and digestive discomfort began affecting how I felt in my own body. When your body feels unstable, it's difficult to feel confident.
+                What made it harder was that the issue wasn't always visible to others -- although they were all I thought about. Persistent bloating and digestive discomfort began affecting how I felt in my own body. However, it wasn't just about appearance in a superficial sense, it was about feeling out of control; unsure whether something I had just eaten would help or make thing worse. I realized how closely gut health and confidence are connected. When your body feels unstable, it's difficult to feel grounded.
               </p>
               <p>
-                I built the tool I wished I had during that time: a way to scan a product and instantly understand how it supports or disrupts your gut, based on your specific sensitivities.
+                As I researched more, I noticed a larger problem. The information exists, but it's difficult to understand. Probiotic supplements list strain names that read like high-level machine codes, without explaining their function. Foods are labelled "gut-friendly", yet rarely specifies for whom. Nutrition guidance is generalized, but gut health is highly individualized.
+              </p>
+              <p>
+                That disconnect stayed with me. When I later had the opportunity to build an app, I built the tool I wished I had during that time: a way to scan a product and instantly understand how it supports or disrupts your gut, based on your specific sensitivities. Not another diet tracker or generic health app, but something that translates complex nutritional science into clarity at the moment of decision.
               </p>
             </div>
           </div>

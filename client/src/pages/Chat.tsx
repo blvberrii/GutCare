@@ -45,6 +45,10 @@ export default function Chat() {
     }
   }, [messages, isTyping]);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
     if (!started) setStarted(true);
@@ -135,7 +139,7 @@ export default function Chat() {
               </div>
 
               <p className="text-[11px] font-black text-muted-foreground uppercase tracking-widest mb-4">
-                Try asking me...
+                Quick questions — or type anything below
               </p>
               <div className="w-full space-y-2">
                 {QUICK_QUESTIONS.map((q, i) => (
@@ -153,6 +157,9 @@ export default function Chat() {
                   </motion.button>
                 ))}
               </div>
+              <p className="text-xs text-muted-foreground/60 mt-4 font-medium">
+                You can also type <span className="text-primary font-bold">any question</span> in the box below ↓
+              </p>
             </motion.div>
           )}
 
@@ -250,7 +257,7 @@ export default function Chat() {
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask about gut health, foods, symptoms..."
+            placeholder="Ask me anything — gut health, foods, symptoms..."
             className="flex-1 h-12 px-5 bg-[#F4F4F0] rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 border-transparent placeholder:text-muted-foreground/50"
             data-testid="input-message"
           />

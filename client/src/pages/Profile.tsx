@@ -86,16 +86,19 @@ export default function Profile() {
             <div className="w-px bg-white/20" />
             <div className="text-center">
               <div className="text-2xl font-black">{favoriteScans.length}</div>
-              <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Favorites</div>
+              <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Saved</div>
             </div>
             <div className="w-px bg-white/20" />
             <div className="text-center">
               <div className="text-2xl font-black">
                 {recentScans.length > 0
-                  ? Math.round(recentScans.reduce((s, sc) => s + (sc.score || 0), 0) / recentScans.length)
+                  ? (recentScans.find(s => s.grade === 'A')?.grade
+                    || recentScans.find(s => s.grade === 'B')?.grade
+                    || recentScans[0]?.grade
+                    || "–")
                   : "–"}
               </div>
-              <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Avg Score</div>
+              <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Best Grade</div>
             </div>
           </div>
         </div>
