@@ -4,101 +4,27 @@ import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { Redirect, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Scan, ShoppingBag, Loader2 } from "lucide-react";
+import { Scan, ShoppingBag, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "@shared/routes";
 
-interface Recommendation {
-  title: string;
+interface AiRecommendation {
+  productName: string;
+  brand?: string;
   category: string;
-  imageEmoji: string;
-  emojiColor: string;
   score: number;
   grade: string;
+  reason?: string;
   ingredients: string;
-  positives: { title: string; description: string }[];
-  negatives: { title: string; description: string }[];
+  positives: { title: string; description: string; type?: string }[];
+  negatives: { title: string; description: string; type?: string }[];
   citations: { source: string; text: string; url?: string }[];
   alternatives: { name: string; score: number }[];
+  imageUrl?: string | null;
 }
-
-const recommendations: Recommendation[] = [
-  {
-    title: "Grass-fed Ghee",
-    category: "Cooking Oil",
-    imageEmoji: "🧈",
-    emojiColor: "from-orange-200 to-amber-300",
-    score: 95,
-    grade: "A",
-    ingredients: "Grass-fed clarified butter (butyrate, conjugated linoleic acid, fat-soluble vitamins A, D, E, K2)",
-    positives: [
-      { title: "Rich in Butyrate", description: "Butyrate is a short-chain fatty acid that feeds colonocytes (gut lining cells) and reduces gut inflammation significantly." },
-      { title: "Lactose & Casein Free", description: "All milk solids are removed during clarification, making it safe for most lactose-intolerant and dairy-sensitive individuals." },
-      { title: "High Smoke Point", description: "Stable at high temperatures, unlike many vegetable oils that oxidise and produce inflammatory compounds when heated." },
-    ],
-    negatives: [],
-    citations: [
-      { source: "Harvard T.H. Chan School of Public Health", text: "Butyrate produced by gut bacteria from fermentable fibre — and found in ghee — is associated with reduced colonic inflammation and improved gut barrier integrity.", url: "https://www.hsph.harvard.edu" },
-      { source: "Cleveland Clinic", text: "Clarified butter (ghee) is an excellent choice for those with dairy sensitivities as it is free from lactose and casein.", url: "https://www.clevelandclinic.org" },
-    ],
-    alternatives: [
-      { name: "Extra Virgin Olive Oil", score: 90 },
-      { name: "Coconut Oil (unrefined)", score: 82 },
-    ],
-  },
-  {
-    title: "Kefir Water",
-    category: "Probiotic Drink",
-    imageEmoji: "💧",
-    emojiColor: "from-blue-200 to-cyan-300",
-    score: 88,
-    grade: "A",
-    ingredients: "Filtered water, organic cane sugar (fermented), kefir water grains (Lactobacillus hilgardii, Lactobacillus casei, Leuconostoc mesenteroides, Pediococcus parvulus)",
-    positives: [
-      { title: "Live Probiotic Cultures", description: "Contains diverse lactic acid bacteria strains that replenish the gut microbiome and compete against pathogenic bacteria." },
-      { title: "Dairy-Free Fermented Drink", description: "Delivers the microbiome benefits of kefir without dairy — ideal for those with lactose intolerance or dairy allergies." },
-      { title: "Low Residual Sugar", description: "Bacteria consume most of the sugar during fermentation, leaving a naturally low-sugar probiotic drink." },
-    ],
-    negatives: [
-      { title: "FODMAP Consideration", description: "Some kefir water varieties with added fruit juice may contain fructose — check labels if following a low-FODMAP protocol." },
-    ],
-    citations: [
-      { source: "Monash University FODMAP Research", text: "Plain water kefir (without fruit additions) is generally well-tolerated on a low-FODMAP diet.", url: "https://www.monashfodmap.com" },
-      { source: "NIH National Library of Medicine", text: "Fermented beverages containing Lactobacillus strains have shown benefit in modulating gut microbiota composition in IBS patients.", url: "https://pubmed.ncbi.nlm.nih.gov" },
-    ],
-    alternatives: [
-      { name: "Plain Kombucha (unsweetened)", score: 80 },
-      { name: "Yakult Original", score: 72 },
-    ],
-  },
-  {
-    title: "Bone Broth",
-    category: "Gut Supplement",
-    imageEmoji: "🍲",
-    emojiColor: "from-amber-200 to-orange-300",
-    score: 92,
-    grade: "A",
-    ingredients: "Grass-fed beef bones, filtered water, apple cider vinegar, onion, garlic, celery, bay leaves, black pepper, sea salt",
-    positives: [
-      { title: "Glutamine for Gut Lining", description: "L-Glutamine is the primary fuel for intestinal epithelial cells, supporting tight junction integrity and reducing intestinal permeability." },
-      { title: "Collagen & Gelatin", description: "Gelatin derived from collagen coats the gut lining, soothes inflammation and supports healthy bowel movements." },
-      { title: "Anti-inflammatory", description: "Glycine and proline in bone broth have documented anti-inflammatory properties, particularly beneficial for those with Crohn's or IBD." },
-    ],
-    negatives: [
-      { title: "High Histamine Content", description: "Long-simmered broths are high in histamine — those with histamine intolerance should consume with caution." },
-    ],
-    citations: [
-      { source: "Johns Hopkins Medicine", text: "Glutamine supplementation has been shown to reduce intestinal permeability and support mucosal healing in inflammatory bowel conditions.", url: "https://www.hopkinsmedicine.org" },
-      { source: "Mayo Clinic", text: "Bone broth contains gelatin, which may help restore the gut lining and is frequently recommended for people with leaky gut syndrome.", url: "https://www.mayoclinic.org" },
-    ],
-    alternatives: [
-      { name: "Collagen Peptide Powder", score: 89 },
-      { name: "Chicken Bone Broth", score: 91 },
-    ],
-  },
-];
 
 export default function Home() {
   const { user } = useAuth();
@@ -106,6 +32,12 @@ export default function Home() {
   const { data: scans, isLoading: isScansLoading } = useScans();
   const [, navigate] = useLocation();
   const [loadingRec, setLoadingRec] = useState<number | null>(null);
+
+  const { data: recommendations, isLoading: isRecsLoading } = useQuery<AiRecommendation[]>({
+    queryKey: ["/api/recommendations"],
+    enabled: !!profile && !!profile.conditions?.length,
+    staleTime: 1000 * 60 * 30, // cache 30 minutes
+  });
 
   if (isProfileLoading) return <div className="flex items-center justify-center min-h-screen"><TotoAvatar mood="thinking" /></div>;
   if (!profile || !profile.conditions || profile.conditions.length === 0) return <Redirect to="/onboarding" />;
@@ -117,33 +49,24 @@ export default function Home() {
     return "Good Evening";
   };
 
-  // Deduplicate scans by productName, keeping the most recent (first occurrence since sorted by createdAt DESC)
   const uniqueScans = (scans || []).reduce((acc: typeof scans, scan) => {
-    if (!acc!.some(s => s.productName === scan.productName)) {
-      acc!.push(scan);
-    }
+    if (!acc!.some(s => s.productName === scan.productName)) acc!.push(scan);
     return acc;
   }, [] as typeof scans);
   const recentScans = (uniqueScans || []).slice(0, 5);
 
-  // Find existing scan for a recommendation by product name
   const findExistingScan = (productName: string) =>
     (scans || []).find(s => s.productName === productName);
 
-  const handleRecommendationClick = async (rec: Recommendation, index: number) => {
+  const handleRecommendationClick = async (rec: AiRecommendation, index: number) => {
     if (loadingRec !== null) return;
-
-    // If we already have a scan for this product, navigate to it
-    const existing = findExistingScan(rec.title);
-    if (existing) {
-      navigate(`/scan/${existing.id}`);
-      return;
-    }
+    const existing = findExistingScan(rec.productName);
+    if (existing) { navigate(`/scan/${existing.id}`); return; }
 
     setLoadingRec(index);
     try {
       const res = await apiRequest("POST", "/api/recommendation-scan", {
-        productName: rec.title,
+        productName: rec.productName,
         score: rec.score,
         grade: rec.grade,
         ingredients: rec.ingredients,
@@ -153,6 +76,7 @@ export default function Home() {
         alternatives: rec.alternatives,
         additivesDetails: [],
         isFavorite: false,
+        imageUrl: rec.imageUrl || null,
       });
       const scan = await res.json();
       queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });
@@ -162,11 +86,8 @@ export default function Home() {
     }
   };
 
-  // Get the imageUrl for a recommendation (from existing scan if available)
-  const getRecImage = (title: string) => {
-    const existing = findExistingScan(title);
-    return existing?.imageUrl || null;
-  };
+  const gradeColor = (g: string) =>
+    g === "A" ? "bg-green-500" : g === "B" ? "bg-lime-500" : g === "C" ? "bg-yellow-500" : "bg-red-500";
 
   return (
     <div className="min-h-screen bg-background pb-32 px-6 pt-12">
@@ -230,8 +151,7 @@ export default function Home() {
                         <ShoppingBag className="w-8 h-8 text-primary/20" />
                       </div>
                     )}
-                    <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-lg
-                      ${scan.grade === 'A' ? 'bg-green-500' : scan.grade === 'B' ? 'bg-lime-500' : scan.grade === 'C' ? 'bg-yellow-500' : 'bg-red-500'}`}>
+                    <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-lg ${gradeColor(scan.grade || "")}`}>
                       {scan.grade}
                     </div>
                   </div>
@@ -252,49 +172,79 @@ export default function Home() {
       <section>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-xl font-bold">For You</h3>
-          <span className="text-xs text-muted-foreground font-bold bg-primary/5 px-3 py-1 rounded-full">Toto picks</span>
+          <div className="flex items-center gap-1 bg-primary/5 px-3 py-1 rounded-full">
+            <Sparkles className="w-3 h-3 text-primary" />
+            <span className="text-[10px] font-black text-primary uppercase tracking-wide">Gemini AI</span>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground mb-5">Tap any to see its full gut health breakdown</p>
-        <div className="grid gap-4">
-          {recommendations.map((item, i) => {
-            const recImage = getRecImage(item.title);
-            const isLoading = loadingRec === i;
-            return (
-              <motion.div
-                key={i}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handleRecommendationClick(item, i)}
-                data-testid={`card-recommendation-${i}`}
-                className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
-              >
-                {/* Product image or emoji */}
-                <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm">
-                  {recImage ? (
-                    <img src={recImage} alt={item.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className={`w-full h-full bg-gradient-to-br ${item.emojiColor} flex items-center justify-center`}>
-                      <span className="text-3xl">{item.imageEmoji}</span>
-                    </div>
-                  )}
+        <p className="text-sm text-muted-foreground mb-5">
+          Personalised picks for{" "}
+          <span className="font-bold text-foreground">{profile.conditions?.join(", ")}</span>
+          {profile.symptoms?.length ? ` · ${profile.symptoms.slice(0, 2).join(", ")}` : ""}
+        </p>
+
+        {isRecsLoading ? (
+          <div className="grid gap-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white p-4 rounded-3xl border border-border flex items-center gap-4">
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-muted animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
+                  <div className="h-2 bg-muted rounded animate-pulse w-1/2" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-sm">{item.title}</h4>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{item.category}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  {isLoading ? (
-                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                  ) : (
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-white text-sm shadow
-                      ${item.grade === 'A' ? 'bg-green-500' : item.grade === 'B' ? 'bg-lime-500' : 'bg-yellow-500'}`}>
-                      {item.grade}
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+                <div className="w-9 h-9 rounded-full bg-muted animate-pulse flex-shrink-0" />
+              </div>
+            ))}
+            <p className="text-center text-xs text-muted-foreground font-medium pt-1">
+              Gemini is personalising your picks + generating images…
+            </p>
+          </div>
+        ) : recommendations?.length ? (
+          <div className="grid gap-4">
+            {recommendations.map((item, i) => {
+              const isLoading = loadingRec === i;
+              return (
+                <motion.div
+                  key={i}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => handleRecommendationClick(item, i)}
+                  data-testid={`card-recommendation-${i}`}
+                  className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
+                >
+                  <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm bg-primary/5">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ShoppingBag className="w-7 h-7 text-primary/30" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-sm leading-snug line-clamp-2">{item.productName}</h4>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{item.category}</p>
+                    {item.reason && (
+                      <p className="text-[11px] text-primary/70 font-medium mt-1 line-clamp-1">{item.reason}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {isLoading ? (
+                      <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                    ) : (
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-white text-sm shadow ${gradeColor(item.grade)}`}>
+                        {item.grade}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="bg-white/50 border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">
+            <p className="text-muted-foreground font-bold">Could not load recommendations. Try refreshing.</p>
+          </div>
+        )}
       </section>
     </div>
   );

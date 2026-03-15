@@ -14,7 +14,7 @@ export function Navigation() {
   ];
 
   // Pages where the nav bar should be hidden
-  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history", "/chat"];
+  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history"];
   const isResultsPage = /^\/scan\/\d+/.test(location);
   const isHidden = !user || isResultsPage || hiddenPaths.some(path => location.startsWith(path));
 

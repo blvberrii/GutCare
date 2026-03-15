@@ -171,17 +171,20 @@ export async function registerRoutes(
   app.post("/api/recommendation-scan", isAuthenticated, async (req: any, res) => {
     const userId = req.user.claims.sub;
     try {
-      const { productName, ...rest } = req.body;
+      const { productName, imageUrl: providedImageUrl, ...rest } = req.body;
       if (!productName) return res.status(400).json({ message: "productName is required" });
 
-      // Generate product image with AI
-      const imagePrompt = `Product photography of ${productName}: a clean, professional studio shot on a white background, no text, no labels, realistic food product`;
-      const imageUrl = await generateImage(imagePrompt).catch(() => null);
+      // Use the pre-generated image from recommendations API if provided, otherwise generate one
+      let imageUrl: string | null = providedImageUrl || null;
+      if (!imageUrl) {
+        const imagePrompt = `Photorealistic commercial product photography of ${productName}: retail packaging, white studio background, soft lighting, professional food photography`;
+        imageUrl = await generateImage(imagePrompt).catch(() => null);
+      }
 
       const scan = await storage.createScan({
         ...rest,
         productName,
-        imageUrl: imageUrl || null,
+        imageUrl,
         userId,
       });
       res.status(201).json(scan);
@@ -346,6 +349,81 @@ IMPORTANT RULES:
     } catch (error) {
       console.error("Analysis failed:", error);
       res.status(500).json({ message: "Analysis failed. Please try a clearer photo of the ingredients label." });
+    }
+  });
+
+  // === Personalized Recommendations (Gemini-powered) ===
+  app.get("/api/recommendations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+
+      const conditions = profile?.conditions?.join(", ") || "general gut health";
+      const symptoms = profile?.symptoms?.join(", ") || "none";
+      const allergies = (profile?.allergies || []).filter((a: string) => a !== "None").join(", ") || "none";
+
+      const prompt = `You are an expert clinical nutritionist specialising in gut health, trained on evidence from Harvard School of Public Health, Johns Hopkins Medicine, Cleveland Clinic, Mayo Clinic, NIH, Monash University, UK NHS, and FDA.
+
+${GUT_HEALTH_KNOWLEDGE_BASE}
+
+## USER PROFILE
+- Gut Conditions: ${conditions}
+- Current Symptoms: ${symptoms}
+- Allergies / Intolerances: ${allergies}
+
+## TASK
+Recommend exactly 3 specific, real, commercially available food products that would measurably benefit this user based on their exact profile above.
+
+RULES:
+- Use real brand + product names (e.g. "Siggi's 0% Plain Icelandic Skyr", "GT's Synergy Trilogy Kombucha 16 fl oz", "Fage Total 0% Plain Greek Yogurt")
+- NEVER recommend generic category names like "yogurt" — always brand + product
+- Avoid ingredients the user is allergic/intolerant to
+- Score 80-100 only (recommendations must be gut-positive)
+- 2-4 positives and any relevant negatives/warnings
+- 2-3 validated scientific citations per product
+
+Return ONLY a valid JSON array, no markdown:
+[
+  {
+    "productName": "Exact Brand + Full Product Name",
+    "brand": "Brand only",
+    "category": "Short category (e.g. Probiotic Yogurt)",
+    "score": <integer 80-100>,
+    "grade": "A",
+    "reason": "One sentence why this specifically helps this user's conditions",
+    "ingredients": "Representative ingredients",
+    "positives": [{ "title": "Short title", "description": "Science-backed 1-2 sentences", "type": "<fiber|protein|probiotics|vitamins|sugar|fat|sodium|calories|additives|default>" }],
+    "negatives": [{ "title": "Concern if any", "description": "Brief explanation", "type": "default" }],
+    "citations": [{ "source": "Institution", "text": "Specific relevant finding", "url": "https://url" }],
+    "alternatives": [{ "name": "Real brand alternative", "score": <integer> }]
+  }
+]`;
+
+      const result = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { responseMimeType: "application/json" },
+      });
+
+      let recs: any[] = [];
+      try {
+        recs = JSON.parse(result.text || "[]");
+        if (!Array.isArray(recs)) recs = [];
+      } catch { recs = []; }
+
+      // Generate product images in parallel
+      const withImages = await Promise.all(
+        recs.map(async (rec: any) => {
+          const imgPrompt = `Photorealistic commercial product photography of ${rec.productName} by ${rec.brand || rec.productName}: retail packaging with label clearly visible, white studio background, soft lighting, professional food photography`;
+          const imageUrl = await generateImage(imgPrompt).catch(() => null);
+          return { ...rec, imageUrl };
+        })
+      );
+
+      res.json(withImages);
+    } catch (err) {
+      console.error("Recommendations error:", err);
+      res.status(500).json({ message: "Failed to generate recommendations" });
     }
   });
 
