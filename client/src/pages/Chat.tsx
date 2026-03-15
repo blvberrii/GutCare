@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { Button } from "@/components/ui/button";
-import { Send, Sparkles, ChevronRight } from "lucide-react";
+import { Send, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import ReactMarkdown from "react-markdown";
@@ -24,8 +24,8 @@ const QUICK_QUESTIONS = [
 const TOTO_FACTS = [
   "I've analyzed over 1.5M food products for gut health!",
   "I'm trained on research from Harvard, Johns Hopkins & the NIH.",
-  "I keep my answers short — under 5 lines, always!",
   "Ask me about any ingredient and I'll break it down.",
+  "I personalise every answer to your specific conditions.",
 ];
 
 export default function Chat() {
@@ -87,15 +87,9 @@ export default function Chat() {
           </div>
           <div>
             <h1 className="font-black text-base text-foreground leading-none">Toto</h1>
-            <p className="text-[11px] text-emerald-500 font-bold mt-0.5">
-              {isTyping ? "Typing..." : "Online · Gut Health AI"}
+            <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
+              {isTyping ? "Typing..." : "Gut Health Helper"}
             </p>
-          </div>
-          <div className="ml-auto">
-            <div className="flex items-center gap-1 bg-primary/5 px-3 py-1.5 rounded-full">
-              <Sparkles className="w-3 h-3 text-primary" />
-              <span className="text-[10px] font-black text-primary uppercase tracking-wide">Gemini AI</span>
-            </div>
           </div>
         </div>
       </div>
@@ -190,8 +184,8 @@ export default function Chat() {
                         ul: ({ children }) => <ul className="space-y-1 mt-1">{children}</ul>,
                         li: ({ children }) => (
                           <li className="flex items-start gap-2">
-                            <span className={msg.role === "user" ? "text-white/70" : "text-primary"}>•</span>
-                            <span>{children}</span>
+                            <span className={`flex-shrink-0 mt-[3px] leading-none ${msg.role === "user" ? "text-white/70" : "text-primary"}`}>•</span>
+                            <span className="[&>p]:mb-0 [&>p]:mt-0">{children}</span>
                           </li>
                         ),
                         strong: ({ children }) => <strong className="font-black">{children}</strong>,

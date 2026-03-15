@@ -4,7 +4,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { Redirect, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Scan, ShoppingBag, Loader2, Sparkles } from "lucide-react";
+import { Scan, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -172,16 +172,9 @@ export default function Home() {
       <section>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-xl font-bold">For You</h3>
-          <div className="flex items-center gap-1 bg-primary/5 px-3 py-1 rounded-full">
-            <Sparkles className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-black text-primary uppercase tracking-wide">Gemini AI</span>
-          </div>
+          <span className="text-xs text-muted-foreground font-bold bg-primary/5 px-3 py-1 rounded-full">Toto picks</span>
         </div>
-        <p className="text-sm text-muted-foreground mb-5">
-          Personalised picks for{" "}
-          <span className="font-bold text-foreground">{profile.conditions?.join(", ")}</span>
-          {profile.symptoms?.length ? ` · ${profile.symptoms.slice(0, 2).join(", ")}` : ""}
-        </p>
+        <p className="text-sm text-muted-foreground mb-5">Tap any product to see its full gut health breakdown</p>
 
         {isRecsLoading ? (
           <div className="grid gap-4">
@@ -195,9 +188,6 @@ export default function Home() {
                 <div className="w-9 h-9 rounded-full bg-muted animate-pulse flex-shrink-0" />
               </div>
             ))}
-            <p className="text-center text-xs text-muted-foreground font-medium pt-1">
-              Gemini is personalising your picks + generating images…
-            </p>
           </div>
         ) : recommendations?.length ? (
           <div className="grid gap-4">
