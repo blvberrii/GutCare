@@ -107,18 +107,21 @@ export const api = {
           ingredients: z.string(),
           score: z.number(),
           grade: z.string(),
+          portionSize: z.string().optional(),
           imageUrl: z.string().nullable().optional(),
           positives: z.array(z.object({
             title: z.string(),
-            description: z.string(),
+            description: z.string().optional(),
             detail: z.string().optional(),
             type: z.string().optional(),
+            amount: z.string().optional(),
           })),
           negatives: z.array(z.object({
             title: z.string(),
-            description: z.string(),
+            description: z.string().optional(),
             detail: z.string().optional(),
             type: z.string().optional(),
+            amount: z.string().optional(),
           })),
           additivesDetails: z.array(z.object({
             name: z.string(),
