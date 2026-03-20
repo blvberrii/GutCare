@@ -473,6 +473,7 @@ export default function Home() {
         positives: analysis.positives || [], negatives: analysis.negatives || [],
         alternatives: analysis.alternatives || [], citations: analysis.citations || [],
         additivesDetails: analysis.additivesDetails || [],
+        nutritionFacts: analysis.nutritionFacts || null,
         imageUrl: null, isFavorite: false,
       });
       navigate(`/scan/${scan.id}`);

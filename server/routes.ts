@@ -256,6 +256,14 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "score": <integer 0-100>,
   "grade": "<A|B|C|D|F>",
   "portionSize": "Serving size from nutrition label, e.g. '43g', '1 cup (240ml)', '2 biscuits (30g)'. Leave empty string if not visible.",
+  "nutritionFacts": [
+    {
+      "label": "Nutrient name (e.g. 'Calories', 'Total Fat', 'Carbohydrates', 'Added Sugar', 'Protein', 'Sodium', 'Fiber', 'Saturated Fat', 'Cholesterol')",
+      "value": "Numeric value as string from the nutrition label per serving (e.g. '190', '8', '760'). Empty string if not visible.",
+      "unit": "Unit string (e.g. 'kcal', 'g', 'mg', '%'). Empty string if not applicable.",
+      "type": "<calories|fat|sugar|protein|sodium|fiber|default>"
+    }
+  ],
   "positives": [
     {
       "title": "Short benefit title (e.g., 'High Protein')",
@@ -387,6 +395,15 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "score": <integer 0-100>,
   "grade": "<A|B|C|D|F>",
   "portionSize": "Serving size if inferable from ingredient context, else empty string",
+  "nutritionFacts": [
+    {
+      "label": "Nutrient name (e.g. 'Calories', 'Total Fat', 'Carbohydrates', 'Added Sugar', 'Protein', 'Sodium', 'Fiber')",
+      "value": "Best estimate numeric value as string based on typical product of this type (e.g. '190', '8', '760'). Must provide your best estimate — do NOT leave empty.",
+      "unit": "Unit string (e.g. 'kcal', 'g', 'mg')",
+      "type": "<calories|fat|sugar|protein|sodium|fiber|default>",
+      "estimated": true
+    }
+  ],
   "positives": [
     {
       "title": "Short benefit title (e.g., 'High Protein')",

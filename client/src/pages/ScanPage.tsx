@@ -136,6 +136,7 @@ export default function ScanPage() {
         alternatives: result.alternatives,
         citations: (result as any).citations || [],
         additivesDetails: (result as any).additivesDetails || [],
+        nutritionFacts: (result as any).nutritionFacts || null,
         isFavorite: false,
       });
       setLocation(`/scan/${savedScan.id}`);

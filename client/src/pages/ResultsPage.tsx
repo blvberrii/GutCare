@@ -136,6 +136,114 @@ function ExpandableItem({
   );
 }
 
+// ─── Nutrition Facts Panel ──────────────────────────────────────────────────
+
+type NutritionFact = { label: string; value: string; unit: string; type: string; estimated?: boolean };
+
+const NUTRITION_STYLE: Record<string, { color: string; bg: string; icon: any }> = {
+  calories:  { color: "text-orange-600", bg: "bg-orange-50",  icon: Flame },
+  protein:   { color: "text-blue-600",   bg: "bg-blue-50",    icon: Zap },
+  fiber:     { color: "text-emerald-600",bg: "bg-emerald-50", icon: Leaf },
+  sugar:     { color: "text-pink-600",   bg: "bg-pink-50",    icon: Apple },
+  sodium:    { color: "text-cyan-600",   bg: "bg-cyan-50",    icon: Droplets },
+  fat:       { color: "text-amber-600",  bg: "bg-amber-50",   icon: Package },
+  default:   { color: "text-gray-600",   bg: "bg-gray-50",    icon: Bean },
+};
+
+const NUTRITION_ORDER = ["calories", "fat", "default", "sugar", "protein", "sodium", "fiber"];
+
+function NutritionTile({ fact }: { fact: NutritionFact }) {
+  const style = NUTRITION_STYLE[fact.type] || NUTRITION_STYLE.default;
+  const IconComp = style.icon;
+  const hasValue = fact.value && fact.value.trim() !== "" && fact.value !== "0";
+
+  return (
+    <div className={`${style.bg} rounded-2xl p-3.5 flex flex-col gap-1.5`}>
+      <div className={`w-7 h-7 rounded-xl ${style.bg} flex items-center justify-center`}>
+        <IconComp className={`w-4 h-4 ${style.color}`} />
+      </div>
+      <div className={`text-lg font-black leading-none ${style.color}`}>
+        {hasValue ? (
+          <>
+            {fact.value}
+            <span className="text-xs font-bold ml-0.5 opacity-70">{fact.unit}</span>
+          </>
+        ) : (
+          <span className="text-sm opacity-50">—</span>
+        )}
+      </div>
+      <p className="text-[10px] font-bold text-muted-foreground leading-tight">{fact.label}</p>
+    </div>
+  );
+}
+
+function NutritionFactsCard({ facts, portionSize, hasEstimates }: {
+  facts: NutritionFact[];
+  portionSize: string | null | undefined;
+  hasEstimates: boolean;
+}) {
+  const sorted = [...facts].sort((a, b) => {
+    const ai = NUTRITION_ORDER.indexOf(a.type);
+    const bi = NUTRITION_ORDER.indexOf(b.type);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
+  const calories = sorted.find(f => f.type === "calories");
+  const rest = sorted.filter(f => f.type !== "calories");
+
+  return (
+    <section data-testid="section-nutrition-facts">
+      <div className="flex items-center justify-between mb-3 px-1">
+        <div className="flex items-center gap-2">
+          <Flame className="w-4 h-4 text-orange-500" />
+          <h3 className="font-black text-base">Nutrition Facts</h3>
+        </div>
+        <span className="text-xs font-black text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+          {portionSize ? `Per ${portionSize}` : "Per serving"}
+          {hasEstimates ? "*" : ""}
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        {calories && (
+          <div className="bg-orange-50 rounded-2xl p-4 flex items-center gap-4">
+            <div className="w-9 h-9 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Flame className="w-5 h-5 text-orange-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-bold text-orange-600/70 uppercase tracking-widest">Calories</p>
+              <p className="text-2xl font-black text-orange-600 leading-none mt-0.5">
+                {calories.value}
+                <span className="text-sm font-bold ml-1 opacity-70">{calories.unit}</span>
+              </p>
+            </div>
+            {portionSize && (
+              <div className="text-right">
+                <p className="text-[10px] text-muted-foreground font-bold">serving</p>
+                <p className="text-xs font-black text-foreground">{portionSize}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {rest.length > 0 && (
+          <div className="grid grid-cols-3 gap-2">
+            {rest.map((fact, i) => (
+              <NutritionTile key={i} fact={fact} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {hasEstimates && (
+        <p className="text-[10px] text-muted-foreground mt-2 px-1">
+          * Values are estimates based on typical products of this type
+        </p>
+      )}
+    </section>
+  );
+}
+
 const RISK_CFG: Record<string, { color: string; bg: string; border: string; dot: string; label: string }> = {
   High:   { color: "text-red-700",    bg: "bg-red-100",    border: "border-red-200",    dot: "bg-red-500",    label: "Dangerous" },
   Medium: { color: "text-amber-700",  bg: "bg-amber-100",  border: "border-amber-200",  dot: "bg-amber-500",  label: "Risky" },
@@ -305,6 +413,8 @@ export default function ResultsPage() {
   const additives = (scan.additivesDetails as any[]) || [];
   const citations = (scan.citations as any[]) || [];
   const alternatives = (scan.alternatives as any[]) || [];
+  const nutritionFacts = (scan.nutritionFacts as NutritionFact[]) || [];
+  const hasEstimates = nutritionFacts.some((f: NutritionFact) => f.estimated);
   const isGood = (scan.score || 0) >= 70;
 
   const handleFavorite = async () => {
@@ -403,6 +513,15 @@ export default function ResultsPage() {
         {/* Main Content Card */}
         <div className="bg-white rounded-t-[3rem] pt-10 px-5 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.08)] -mt-2">
           <div className="space-y-8">
+
+            {/* Nutrition Facts */}
+            {nutritionFacts.length > 0 && (
+              <NutritionFactsCard
+                facts={nutritionFacts}
+                portionSize={scan.portionSize}
+                hasEstimates={hasEstimates}
+              />
+            )}
 
             {/* Negatives Section */}
             {negatives.length > 0 && (

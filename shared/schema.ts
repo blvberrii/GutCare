@@ -43,6 +43,7 @@ export const scans = pgTable("scans", {
   userComment: text("user_comment"),
   citations: jsonb("citations"), // Array of { source, text, url }
   additivesDetails: jsonb("additives_details"), // Array of { name, label, risk, category, description, gutEffect }
+  nutritionFacts: jsonb("nutrition_facts"), // Array of { label, value, unit, type }
   isFavorite: boolean("is_favorite").default(false),
   createdAt: timestamp("created_at").defaultNow(),
 });
