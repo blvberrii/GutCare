@@ -130,6 +130,7 @@ export default function ScanPage() {
         grade: result.grade,
         score: result.score,
         ingredients: result.ingredients,
+        portionSize: (result as any).portionSize || null,
         positives: result.positives,
         negatives: result.negatives,
         alternatives: result.alternatives,

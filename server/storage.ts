@@ -2,6 +2,7 @@ import { db } from "./db";
 import {
   userProfiles,
   scans,
+  barcodeProducts,
   users,
   type UserProfile,
   type InsertUserProfile,
@@ -11,6 +12,8 @@ import {
   type UpdateScanRequest
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
+
+export type BarcodeProduct = typeof barcodeProducts.$inferSelect;
 
 export interface IStorage {
   // Profiles
@@ -24,6 +27,9 @@ export interface IStorage {
   getScan(id: number): Promise<Scan | undefined>;
   createScan(scan: InsertScan): Promise<Scan>;
   updateScan(id: number, updates: UpdateScanRequest): Promise<Scan>;
+
+  // Barcode DB
+  lookupBarcode(barcode: string): Promise<BarcodeProduct | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -77,6 +83,12 @@ export class DatabaseStorage implements IStorage {
       .where(eq(scans.id, id))
       .returning();
     return updated;
+  }
+
+  // Barcode DB
+  async lookupBarcode(barcode: string): Promise<BarcodeProduct | undefined> {
+    const [product] = await db.select().from(barcodeProducts).where(eq(barcodeProducts.barcode, barcode));
+    return product;
   }
 }
 

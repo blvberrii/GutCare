@@ -7,8 +7,9 @@ import {
   AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 const GRADE_CONFIG: Record<string, { color: string; bg: string; border: string; label: string; emoji: string }> = {
   A: { color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", label: "Excellent", emoji: "🌟" },
@@ -93,7 +94,6 @@ function ExpandableItem({
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="font-bold text-sm text-foreground">{item.title}</h4>
-          <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">{item.description}</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasAmount && (
@@ -265,6 +265,22 @@ export default function ResultsPage() {
   const [comment, setComment] = useState("");
   const [showAdditivesSheet, setShowAdditivesSheet] = useState(false);
   const [showCitationsSection, setShowCitationsSection] = useState(false);
+  const [lazyImageUrl, setLazyImageUrl] = useState<string | null>(null);
+  const imageGenStarted = useRef(false);
+
+  useEffect(() => {
+    if (!scan || scan.imageUrl || imageGenStarted.current) return;
+    imageGenStarted.current = true;
+    apiRequest("POST", "/api/generate-product-image", { productName: scan.productName })
+      .then(res => res.json())
+      .then(({ imageUrl }: { imageUrl: string | null }) => {
+        if (imageUrl) {
+          setLazyImageUrl(imageUrl);
+          updateScan.mutateAsync({ id: scanId, imageUrl }).catch(() => {});
+        }
+      })
+      .catch(() => {});
+  }, [scan?.id]);
 
   if (isLoading) {
     return (
@@ -360,11 +376,14 @@ export default function ResultsPage() {
             transition={{ type: "spring", stiffness: 200 }}
             className="relative z-10 w-44 h-44 rounded-[2.5rem] overflow-hidden shadow-2xl mb-6 bg-white ring-4 ring-white"
           >
-            {scan.imageUrl ? (
-              <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover" />
+            {(lazyImageUrl || scan.imageUrl) ? (
+              <img src={lazyImageUrl || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-cover" />
             ) : (
               <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${gradeCfg.bg}`}>
-                <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-40`} />
+                <div className="animate-pulse flex flex-col items-center gap-3">
+                  <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-20`} />
+                  <div className="w-16 h-1.5 bg-black/10 rounded-full" />
+                </div>
               </div>
             )}
           </motion.div>
@@ -393,7 +412,13 @@ export default function ResultsPage() {
                     <AlertCircle className="w-4 h-4 text-red-500" />
                     <h3 className="font-black text-base">Negatives</h3>
                   </div>
-                  <span className="text-xs font-bold text-muted-foreground">{negatives.length} found</span>
+                  {scan.portionSize ? (
+                    <span className="text-xs font-black text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+                      Per portion ({scan.portionSize})
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-muted-foreground">{negatives.length} found</span>
+                  )}
                 </div>
                 <div className="rounded-2xl border border-black/8 overflow-hidden shadow-sm">
                   {negatives.map((neg, i) => (
@@ -417,7 +442,13 @@ export default function ResultsPage() {
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                     <h3 className="font-black text-base">Positives</h3>
                   </div>
-                  <span className="text-xs font-bold text-muted-foreground">{positives.length} found</span>
+                  {scan.portionSize ? (
+                    <span className="text-xs font-black text-muted-foreground bg-black/5 px-2.5 py-1 rounded-full">
+                      Per portion ({scan.portionSize})
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-muted-foreground">{positives.length} found</span>
+                  )}
                 </div>
                 <div className="rounded-2xl border border-black/8 overflow-hidden shadow-sm">
                   {positives.map((pos, i) => (

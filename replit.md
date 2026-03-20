@@ -38,8 +38,9 @@ Preferred communication style: Simple, everyday language.
 
 ### Key Data Models
 - **Users**: Core authentication data (id, email, name, profile image)
-- **UserProfiles**: Extended health data (conditions, symptoms, allergies, DOB, gender)
-- **Scans**: Product analysis results (barcode, grade, score, positives/negatives, alternatives)
+- **UserProfiles**: Extended health data (conditions, symptoms, allergies, DOB, gender, username, language)
+- **Scans**: Product analysis results (barcode, grade, score, portionSize, positives/negatives with amount field, alternatives, additivesDetails, citations)
+- **BarcodeProducts**: Indonesian product barcode database (34 products seeded)
 - **Conversations/Messages**: Chat history with AI assistant
 
 ### AI Integration

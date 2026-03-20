@@ -255,22 +255,21 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "ingredients": "Full ingredients list as readable text",
   "score": <integer 0-100>,
   "grade": "<A|B|C|D|F>",
+  "portionSize": "Serving size from nutrition label, e.g. '43g', '1 cup (240ml)', '2 biscuits (30g)'. Leave empty string if not visible.",
   "positives": [
     {
-      "title": "Short benefit title (e.g., 'Good source of fiber')",
-      "description": "Brief explanation (1-2 sentences, science-backed)",
+      "title": "Short benefit title (e.g., 'High Protein')",
       "detail": "Expanded explanation with specific research context (2-3 sentences)",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit from the nutrition label, e.g. '4g', '190Cal', '12%'. For additives use count e.g. '3'. Leave empty string if not visible."
+      "amount": "Numerical value with unit from the nutrition label per serving, e.g. '4g', '190Cal', '12%'. For additives use count e.g. '3'. Leave empty string if not visible."
     }
   ],
   "negatives": [
     {
-      "title": "Short concern title",
-      "description": "Brief explanation",
+      "title": "Short concern title (e.g., 'High Sodium')",
       "detail": "Expanded explanation with the specific research citation context",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit from the nutrition label, e.g. '760mg', '23g', '9'. For additives use total count. Leave empty string if not visible."
+      "amount": "Numerical value with unit from the nutrition label per serving, e.g. '760mg', '23g', '9'. For additives use total count. Leave empty string if not visible."
     }
   ],
   "additivesDetails": [
@@ -329,28 +328,79 @@ IMPORTANT RULES:
 
       const analysis = JSON.parse(analysisText);
 
-      // Generate product image
-      const productImgPrompt = `Professional commercial product photography of ${analysis.productName}, exact SKU packaging, studio white background, sharp focus, high resolution, photorealistic`;
-      const productImageUrl = await generateImage(productImgPrompt).catch(() => null);
-
-      // Generate images for alternatives (in parallel)
-      const alternativesWithImages = await Promise.all(
-        (analysis.alternatives || []).map(async (alt: any) => {
-          const altImgPrompt = `Professional commercial product photography of ${alt.name}, exact packaging, studio white background, high resolution, photorealistic`;
-          const altImageUrl = await generateImage(altImgPrompt).catch(() => null);
-          return { ...alt, image: altImageUrl };
-        })
-      );
-
+      // Images are generated lazily by the frontend — skip heavy generation here
       res.json({
         ...analysis,
-        imageUrl: productImageUrl,
-        alternatives: alternativesWithImages,
+        imageUrl: null,
+        alternatives: (analysis.alternatives || []).map((alt: any) => ({ ...alt, image: null })),
       });
 
     } catch (error) {
       console.error("Analysis failed:", error);
       res.status(500).json({ message: "Analysis failed. Please try a clearer photo of the ingredients label." });
+    }
+  });
+
+  // === Barcode Lookup ===
+  app.get("/api/barcode/:barcode", isAuthenticated, async (req: any, res) => {
+    try {
+      const { barcode } = req.params;
+      const product = await storage.lookupBarcode(barcode);
+      if (!product) return res.status(404).json({ message: "Barcode not found in database" });
+      res.json(product);
+    } catch (err) {
+      console.error("Barcode lookup error:", err);
+      res.status(500).json({ message: "Lookup failed" });
+    }
+  });
+
+  // === Seed Indonesian Barcodes (run once) ===
+  app.post("/api/admin/seed-barcodes", async (_req, res) => {
+    try {
+      const { db } = await import("./db");
+      const { barcodeProducts } = await import("@shared/schema");
+      const INDONESIAN_PRODUCTS = [
+        { barcode: "8991101044049", productName: "Indomie Mi Goreng", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, soy sauce powder, seasoning (MSG, disodium inosinate E631, disodium guanylate E627), artificial flavor, garlic powder, onion powder, spices, kecap manis (sweet soy sauce)" },
+        { barcode: "8991101188002", productName: "Indomie Rasa Ayam Bawang", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken flavor powder, MSG, garlic, onion, pepper" },
+        { barcode: "8998866100052", productName: "Mie Sedaap Goreng Original", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, vegetable oil, salt, sugar, MSG, chicken extract, garlic, pepper, artificial flavor" },
+        { barcode: "8992696250042", productName: "Pocari Sweat 500ml", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
+        { barcode: "8992761010016", productName: "Teh Botol Sosro 450ml", brand: "Sosro", category: "Bottled Tea", ingredients: "Water, sugar, jasmine tea extract, citric acid" },
+        { barcode: "8998051100012", productName: "Aqua Mineral Water 600ml", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural spring mineral water" },
+        { barcode: "8999999034697", productName: "Milo Susu Coklat 200ml", brand: "Nestlé Milo", category: "Chocolate Malt Drink", ingredients: "Skimmed milk, sugar, cocoa powder, malt extract, vegetable oil, vitamins (B1, B2, B6, B12, C, D), minerals (calcium, iron, phosphorus)" },
+        { barcode: "8852018111019", productName: "Ovaltine Coklat 300ml", brand: "Ovaltine", category: "Malt Drink", ingredients: "Water, sugar, malt extract, skimmed milk powder, cocoa powder, vitamins, minerals" },
+        { barcode: "8992716100013", productName: "Ultra Milk Full Cream 250ml", brand: "Ultra Milk", category: "UHT Milk", ingredients: "Fresh full cream milk, vitamin A, vitamin D" },
+        { barcode: "8992761020015", productName: "Frestea Apple 500ml", brand: "Coca-Cola (Frestea)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, apple juice, citric acid, ascorbic acid, natural flavor" },
+        { barcode: "8992561100016", productName: "Coca-Cola 390ml", brand: "Coca-Cola", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, caramel color (E150d), phosphoric acid, natural flavors, caffeine" },
+        { barcode: "8992561113528", productName: "Sprite 390ml", brand: "Coca-Cola (Sprite)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, sodium citrate, natural lemon and lime flavors" },
+        { barcode: "8935001725148", productName: "Mama Suka Biscuit Susu", brand: "Mama Suka", category: "Biscuits", ingredients: "Wheat flour, sugar, palm oil, whole milk powder, butter, salt, baking powder, vanilla flavor" },
+        { barcode: "8992577000015", productName: "Roti Tawar Sari Roti", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, salt, yeast, margarine (palm oil), emulsifier (E471, E481), improver, ascorbic acid" },
+        { barcode: "8999010000031", productName: "Chitato Sapi Panggang 68g", brand: "Chitato (Indofood)", category: "Potato Chips", ingredients: "Potato, vegetable oil, seasoning (salt, MSG, sugar, beef flavor, maltodextrin, citric acid)" },
+        { barcode: "8992696220014", productName: "Gatorade Lemon Lime 500ml", brand: "Gatorade (PepsiCo)", category: "Sports Drink", ingredients: "Water, sugar, dextrose, citric acid, salt, sodium citrate, monopotassium phosphate, natural flavor, vitamin B6" },
+        { barcode: "8991101048047", productName: "Indomie Soto Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken broth powder, turmeric, lemongrass, galangal, MSG, soy sauce" },
+        { barcode: "8998866005100", productName: "Mie Sedaap Kuah Soto", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken extract, turmeric extract, MSG, spices" },
+        { barcode: "8851932210413", productName: "Sunquick Orange 840ml", brand: "Sunquick (Royal Unibrew)", category: "Fruit Concentrate", ingredients: "Orange juice concentrate (45%), sugar, water, citric acid, natural color, vitamin C, xanthan gum" },
+        { barcode: "8998866002260", productName: "Mie Sedaap Goreng Sambal Goreng", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, chili, salt, sugar, MSG, soy sauce, garlic, onion, spices" },
+        { barcode: "8992696270019", productName: "Nu Green Tea 450ml", brand: "Nu (ABC President)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, citric acid, ascorbic acid, natural flavor" },
+        { barcode: "8992561000019", productName: "Fanta Strawberry 390ml", brand: "Coca-Cola (Fanta)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, trisodium citrate, natural strawberry flavor, red 40, EDTA" },
+        { barcode: "8992777120017", productName: "ABC Sari Kacang Hijau 250ml", brand: "ABC (Heinz ABC)", category: "Mung Bean Drink", ingredients: "Water, mung beans, sugar, salt, vanilla flavor" },
+        { barcode: "8992751100018", productName: "Yakult 65ml", brand: "Yakult", category: "Probiotic Drink", ingredients: "Skimmed milk, water, sugar, glucose, Lactobacillus casei Shirota (>6.5 billion CFU per bottle)" },
+        { barcode: "8992561010018", productName: "Minute Maid Pulpy Orange 350ml", brand: "Coca-Cola (Minute Maid)", category: "Juice Drink", ingredients: "Water, orange juice 10%, sugar, citric acid, orange pulp 2%, vitamin C, natural flavor" },
+        { barcode: "8992777140015", productName: "ABC Juice Guava 250ml", brand: "ABC (Heinz ABC)", category: "Juice Drink", ingredients: "Water, guava juice concentrate (20%), sugar, citric acid, ascorbic acid, natural color" },
+        { barcode: "8991101012018", productName: "Indomie Kari Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, curry powder, chicken extract, turmeric, coriander, MSG" },
+        { barcode: "8888051100016", productName: "Aqua 1.5L Mineral Water", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural mountain spring water" },
+        { barcode: "8999010002035", productName: "Cheetos Cheese 60g", brand: "Indofood (Cheetos)", category: "Corn Snack", ingredients: "Cornmeal, vegetable oil, cheese seasoning (whey, salt, MSG, cheese powder, citric acid, annatto color)" },
+        { barcode: "8992577100012", productName: "Sari Roti Sandwich Coklat", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, chocolate paste, salt, yeast, margarine, emulsifier (E471), vanilla flavor" },
+        { barcode: "8998225200013", productName: "Tropicana Slim Stevia 250ml", brand: "Tropicana Slim (Nutrifood)", category: "Sweetened Drink", ingredients: "Water, stevia extract, natural flavor, citric acid, vitamin C" },
+        { barcode: "8992696260011", productName: "Pocari Sweat 330ml Can", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
+        { barcode: "8995011300014", productName: "SGM Eksplor 1+ Susu Pertumbuhan", brand: "SGM Eksplor (Sari Husada)", category: "Growing Up Milk", ingredients: "Skimmed milk powder, sugar, vegetable oils, lactose, whey protein, vitamins, minerals, DHA, probiotics (L. reuteri)" },
+        { barcode: "8992561003010", productName: "Coca-Cola Zero 390ml", brand: "Coca-Cola", category: "Sugar-free Carbonated Beverage", ingredients: "Carbonated water, caramel color (E150d), phosphoric acid, aspartame (E951), acesulfame K (E950), natural flavors, caffeine" },
+      ];
+
+      await db.insert(barcodeProducts).values(INDONESIAN_PRODUCTS).onConflictDoNothing();
+      res.json({ message: `Seeded ${INDONESIAN_PRODUCTS.length} Indonesian products` });
+    } catch (err) {
+      console.error("Seed error:", err);
+      res.status(500).json({ message: "Seed failed", error: String(err) });
     }
   });
 

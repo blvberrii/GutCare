@@ -35,14 +35,27 @@ export const scans = pgTable("scans", {
   grade: text("grade"), // A-F
   imageUrl: text("image_url"),
   ingredients: text("ingredients"),
-  positives: jsonb("positives"), // Array of { title: string, description: string }
-  negatives: jsonb("negatives"), // Array of { title: string, description: string, additives: [] }
-  alternatives: jsonb("alternatives"), // Array of { name: string, score: number, image: string }
+  portionSize: text("portion_size"), // e.g. "43g", "1 cup (240ml)"
+  positives: jsonb("positives"), // Array of { title, description, detail, type, amount }
+  negatives: jsonb("negatives"), // Array of { title, description, detail, type, amount }
+  alternatives: jsonb("alternatives"), // Array of { name, score }
   userRating: text("user_rating"), // A-F
   userComment: text("user_comment"),
-  citations: jsonb("citations"), // Array of { source: string, text: string, url: string }
-  additivesDetails: jsonb("additives_details"), // Array of { name: string, risk: string, description: string, category: string }
+  citations: jsonb("citations"), // Array of { source, text, url }
+  additivesDetails: jsonb("additives_details"), // Array of { name, label, risk, category, description, gutEffect }
   isFavorite: boolean("is_favorite").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const barcodeProducts = pgTable("barcode_products", {
+  id: serial("id").primaryKey(),
+  barcode: text("barcode").notNull().unique(),
+  productName: text("product_name").notNull(),
+  brand: text("brand"),
+  category: text("category"),
+  ingredients: text("ingredients"),
+  imageUrl: text("image_url"),
+  country: text("country").default("ID"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
