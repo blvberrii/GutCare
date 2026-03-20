@@ -22,6 +22,19 @@ import {
 const conditionsList = ["IBS", "SIBO", "Crohn's", "Celiac", "Lactose Intolerance", "GERD"];
 const symptomsList = ["Bloating", "Fatigue", "Brain Fog", "Skin Issues", "Stomach Pain"];
 const allergiesList = ["Gluten", "Dairy", "Nuts", "Soy", "Eggs", "Shellfish"];
+const languageOptions = [
+  { value: "English", label: "English" },
+  { value: "Bahasa Indonesia", label: "Bahasa Indonesia" },
+  { value: "Spanish", label: "Español" },
+  { value: "French", label: "Français" },
+  { value: "German", label: "Deutsch" },
+  { value: "Portuguese", label: "Português" },
+  { value: "Arabic", label: "العربية" },
+  { value: "Chinese", label: "中文 (简体)" },
+  { value: "Japanese", label: "日本語" },
+  { value: "Korean", label: "한국어" },
+  { value: "Hindi", label: "हिन्दी" },
+];
 
 export default function SettingsPage() {
   const { user, logout } = useAuth();
@@ -36,7 +49,6 @@ export default function SettingsPage() {
 
   const handleLogout = async () => {
     try {
-      // Clear profile to trigger re-onboarding on next login
       await apiRequest("DELETE", "/api/profile");
       queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
       logout();
@@ -48,7 +60,7 @@ export default function SettingsPage() {
 
   const toggleArray = (field: "conditions" | "allergies" | "symptoms", item: string) => {
     const current = profile?.[field] || [];
-    const next = current.includes(item) 
+    const next = current.includes(item)
       ? current.filter(i => i !== item)
       : [...current, item];
     handleUpdate(field, next);
@@ -71,20 +83,40 @@ export default function SettingsPage() {
           <h2 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] flex items-center gap-2 pl-2">
             <User className="w-3 h-3" /> Account Details
           </h2>
-          <div className="bg-white rounded-[2rem] border border-border/50 shadow-sm p-6 space-y-6">
+          <div className="bg-white rounded-[2rem] border border-border/50 shadow-sm p-6 space-y-5">
             <div className="space-y-2">
-              <Label className="font-bold text-sm pl-1">Name</Label>
-              <Input 
-                defaultValue={profile?.firstName || user.firstName || ""} 
+              <Label className="font-bold text-sm pl-1">Display Name</Label>
+              <Input
+                defaultValue={profile?.firstName || user.firstName || ""}
                 className="rounded-2xl h-12 bg-muted/30 border-none font-bold"
+                placeholder="Your name"
                 onBlur={(e) => handleUpdate("firstName", e.target.value)}
+                data-testid="input-display-name"
               />
             </div>
             <div className="space-y-2">
+              <Label className="font-bold text-sm pl-1">Username</Label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">@</span>
+                <Input
+                  defaultValue={(profile as any)?.username || ""}
+                  placeholder="your_username"
+                  className="rounded-2xl h-12 bg-muted/30 border-none font-bold pl-8"
+                  onBlur={(e) => {
+                    const cleaned = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+                    e.target.value = cleaned;
+                    if (cleaned) handleUpdate("username", cleaned);
+                  }}
+                  data-testid="input-username"
+                />
+              </div>
+              <p className="text-[10px] text-muted-foreground pl-1">Lowercase letters, numbers, and underscores only</p>
+            </div>
+            <div className="space-y-2">
               <Label className="font-bold text-sm pl-1">Email Address</Label>
-              <Input 
-                defaultValue={user.email || ""} 
-                className="rounded-2xl h-12 bg-muted/30 border-none font-bold"
+              <Input
+                defaultValue={user.email || ""}
+                className="rounded-2xl h-12 bg-muted/30 border-none font-bold opacity-60"
                 readOnly
               />
             </div>
@@ -138,8 +170,8 @@ export default function SettingsPage() {
             <div className="grid grid-cols-2 gap-6 pt-2">
               <div className="space-y-2">
                 <Label className="font-bold text-sm pl-1">DOB</Label>
-                <Input 
-                  type="date" 
+                <Input
+                  type="date"
                   max={new Date().toISOString().split('T')[0]}
                   defaultValue={profile?.dob ? new Date(profile.dob).toISOString().split('T')[0] : ""}
                   onBlur={(e) => handleUpdate("dob", e.target.value ? new Date(e.target.value) : null)}
@@ -148,7 +180,7 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label className="font-bold text-sm pl-1">Gender</Label>
-                <select 
+                <select
                   className="w-full h-12 px-4 rounded-2xl bg-muted/30 border-none font-bold text-sm appearance-none"
                   value={profile?.gender || ""}
                   onChange={(e) => handleUpdate("gender", e.target.value)}
@@ -163,13 +195,14 @@ export default function SettingsPage() {
 
             <div className="space-y-2">
               <Label className="font-bold text-sm pl-1">Language</Label>
-              <select 
+              <select
                 className="w-full h-12 px-4 rounded-2xl bg-muted/30 border-none font-bold text-sm appearance-none"
                 value={profile?.language || "English"}
                 onChange={(e) => handleUpdate("language", e.target.value)}
               >
-                <option value="English">English</option>
-                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                {languageOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -183,7 +216,7 @@ export default function SettingsPage() {
           <div className="bg-white rounded-[2rem] border border-border/50 shadow-sm overflow-hidden">
             <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm">Help Center</div>
             <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm">Privacy Policy</div>
-            
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <div className="p-5 hover:bg-red-50 cursor-pointer font-black text-sm text-red-500 flex items-center gap-2 transition-colors">

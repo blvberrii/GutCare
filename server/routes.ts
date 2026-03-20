@@ -260,7 +260,8 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "title": "Short benefit title (e.g., 'Good source of fiber')",
       "description": "Brief explanation (1-2 sentences, science-backed)",
       "detail": "Expanded explanation with specific research context (2-3 sentences)",
-      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>"
+      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
+      "amount": "Numerical value with unit from the nutrition label, e.g. '4g', '190Cal', '12%'. For additives use count e.g. '3'. Leave empty string if not visible."
     }
   ],
   "negatives": [
@@ -268,7 +269,8 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "title": "Short concern title",
       "description": "Brief explanation",
       "detail": "Expanded explanation with the specific research citation context",
-      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>"
+      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
+      "amount": "Numerical value with unit from the nutrition label, e.g. '760mg', '23g', '9'. For additives use total count. Leave empty string if not visible."
     }
   ],
   "additivesDetails": [
@@ -411,19 +413,23 @@ Return ONLY a valid JSON array, no markdown:
         if (!Array.isArray(recs)) recs = [];
       } catch { recs = []; }
 
-      // Generate product images in parallel
-      const withImages = await Promise.all(
-        recs.map(async (rec: any) => {
-          const imgPrompt = `Photorealistic commercial product photography of ${rec.productName} by ${rec.brand || rec.productName}: retail packaging with label clearly visible, white studio background, soft lighting, professional food photography`;
-          const imageUrl = await generateImage(imgPrompt).catch(() => null);
-          return { ...rec, imageUrl };
-        })
-      );
-
-      res.json(withImages);
+      res.json(recs);
     } catch (err) {
       console.error("Recommendations error:", err);
       res.status(500).json({ message: "Failed to generate recommendations" });
+    }
+  });
+
+  // === Generate Product Image (lazy-loaded by frontend) ===
+  app.post("/api/generate-product-image", isAuthenticated, async (req: any, res) => {
+    try {
+      const { productName, brand } = req.body;
+      if (!productName) return res.status(400).json({ imageUrl: null });
+      const imgPrompt = `Photorealistic commercial product photography of ${productName}${brand ? ` by ${brand}` : ""}: retail packaging with label clearly visible, white studio background, soft lighting, professional food photography`;
+      const imageUrl = await generateImage(imgPrompt).catch(() => null);
+      res.json({ imageUrl });
+    } catch {
+      res.json({ imageUrl: null });
     }
   });
 

@@ -6,7 +6,7 @@ import { Redirect, Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Scan, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@shared/routes";
@@ -23,7 +23,85 @@ interface AiRecommendation {
   negatives: { title: string; description: string; type?: string }[];
   citations: { source: string; text: string; url?: string }[];
   alternatives: { name: string; score: number }[];
-  imageUrl?: string | null;
+}
+
+function gradeColor(g: string) {
+  return g === "A" ? "bg-green-500" : g === "B" ? "bg-lime-500" : g === "C" ? "bg-yellow-500" : "bg-red-500";
+}
+
+function RecommendationCard({
+  item,
+  index,
+  isLoadingRec,
+  onClick,
+  onImageLoaded,
+}: {
+  item: AiRecommendation;
+  index: number;
+  isLoadingRec: boolean;
+  onClick: () => void;
+  onImageLoaded: (url: string) => void;
+}) {
+  const cacheKey = `gutcare-img-${item.productName.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")}`;
+  const [imageUrl, setImageUrl] = useState<string | null>(() => {
+    try { return localStorage.getItem(cacheKey); } catch { return null; }
+  });
+  const [imgLoading, setImgLoading] = useState(false);
+  const fetchedRef = useRef(false);
+
+  useEffect(() => {
+    if (imageUrl || fetchedRef.current) return;
+    fetchedRef.current = true;
+    setImgLoading(true);
+    apiRequest("POST", "/api/generate-product-image", { productName: item.productName, brand: item.brand })
+      .then(r => r.json())
+      .then(data => {
+        if (data.imageUrl) {
+          setImageUrl(data.imageUrl);
+          onImageLoaded(data.imageUrl);
+          try { localStorage.setItem(cacheKey, data.imageUrl); } catch {}
+        }
+      })
+      .catch(() => {})
+      .finally(() => setImgLoading(false));
+  }, []);
+
+  return (
+    <motion.div
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      data-testid={`card-recommendation-${index}`}
+      className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
+    >
+      <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm bg-primary/5">
+        {imgLoading ? (
+          <div className="w-full h-full bg-primary/5 animate-pulse" />
+        ) : imageUrl ? (
+          <img src={imageUrl} alt={item.productName} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ShoppingBag className="w-7 h-7 text-primary/30" />
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-bold text-sm leading-snug line-clamp-2">{item.productName}</h4>
+        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{item.category}</p>
+        {item.reason && (
+          <p className="text-[11px] text-primary/70 font-medium mt-1 line-clamp-1">{item.reason}</p>
+        )}
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {isLoadingRec ? (
+          <Loader2 className="w-5 h-5 text-primary animate-spin" />
+        ) : (
+          <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-white text-sm shadow ${gradeColor(item.grade)}`}>
+            {item.grade}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
 }
 
 export default function Home() {
@@ -32,11 +110,12 @@ export default function Home() {
   const { data: scans, isLoading: isScansLoading } = useScans();
   const [, navigate] = useLocation();
   const [loadingRec, setLoadingRec] = useState<number | null>(null);
+  const loadedImages = useRef<Record<string, string>>({});
 
   const { data: recommendations, isLoading: isRecsLoading } = useQuery<AiRecommendation[]>({
     queryKey: ["/api/recommendations"],
     enabled: !!profile && !!profile.conditions?.length,
-    staleTime: 1000 * 60 * 30, // cache 30 minutes
+    staleTime: 1000 * 60 * 30,
   });
 
   if (isProfileLoading) return <div className="flex items-center justify-center min-h-screen"><TotoAvatar mood="thinking" /></div>;
@@ -65,6 +144,7 @@ export default function Home() {
 
     setLoadingRec(index);
     try {
+      const cachedImage = loadedImages.current[rec.productName] || null;
       const res = await apiRequest("POST", "/api/recommendation-scan", {
         productName: rec.productName,
         score: rec.score,
@@ -76,7 +156,7 @@ export default function Home() {
         alternatives: rec.alternatives,
         additivesDetails: [],
         isFavorite: false,
-        imageUrl: rec.imageUrl || null,
+        imageUrl: cachedImage,
       });
       const scan = await res.json();
       queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });
@@ -85,9 +165,6 @@ export default function Home() {
       setLoadingRec(null);
     }
   };
-
-  const gradeColor = (g: string) =>
-    g === "A" ? "bg-green-500" : g === "B" ? "bg-lime-500" : g === "C" ? "bg-yellow-500" : "bg-red-500";
 
   return (
     <div className="min-h-screen bg-background pb-32 px-6 pt-12">
@@ -133,15 +210,15 @@ export default function Home() {
 
         {isScansLoading ? (
           <div className="flex gap-4 overflow-x-auto pb-4">
-            {[1, 2].map(i => <div key={i} className="w-48 h-56 bg-white rounded-3xl animate-pulse flex-shrink-0" />)}
+            {[1, 2].map(i => <div key={i} className="w-40 h-56 bg-white rounded-3xl animate-pulse flex-shrink-0" />)}
           </div>
         ) : recentScans?.length ? (
           <div className="flex gap-4 overflow-x-auto pb-6 snap-x">
             {recentScans.map((scan) => (
-              <Link key={scan.id} href={`/scan/${scan.id}`}>
+              <Link key={scan.id} href={`/scan/${scan.id}`} className="block flex-shrink-0">
                 <motion.div
                   whileHover={{ y: -4 }}
-                  className="bg-white p-4 rounded-[2rem] shadow-sm border border-border min-w-[160px] snap-start cursor-pointer flex flex-col"
+                  className="bg-white p-4 rounded-[2rem] shadow-sm border border-border w-40 snap-start cursor-pointer flex flex-col"
                 >
                   <div className="relative mb-3 w-full aspect-square rounded-xl overflow-hidden bg-muted">
                     {scan.imageUrl ? (
@@ -191,44 +268,16 @@ export default function Home() {
           </div>
         ) : recommendations?.length ? (
           <div className="grid gap-4">
-            {recommendations.map((item, i) => {
-              const isLoading = loadingRec === i;
-              return (
-                <motion.div
-                  key={i}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleRecommendationClick(item, i)}
-                  data-testid={`card-recommendation-${i}`}
-                  className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
-                >
-                  <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm bg-primary/5">
-                    {item.imageUrl ? (
-                      <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingBag className="w-7 h-7 text-primary/30" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm leading-snug line-clamp-2">{item.productName}</h4>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">{item.category}</p>
-                    {item.reason && (
-                      <p className="text-[11px] text-primary/70 font-medium mt-1 line-clamp-1">{item.reason}</p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {isLoading ? (
-                      <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                    ) : (
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center font-black text-white text-sm shadow ${gradeColor(item.grade)}`}>
-                        {item.grade}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+            {recommendations.map((item, i) => (
+              <RecommendationCard
+                key={i}
+                item={item}
+                index={i}
+                isLoadingRec={loadingRec === i}
+                onClick={() => handleRecommendationClick(item, i)}
+                onImageLoaded={(url) => { loadedImages.current[item.productName] = url; }}
+              />
+            ))}
           </div>
         ) : (
           <div className="bg-white/50 border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">

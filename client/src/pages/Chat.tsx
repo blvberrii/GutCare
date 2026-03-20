@@ -122,11 +122,11 @@ export default function Chat() {
               {/* Toto Facts */}
               <div className="w-full bg-primary/5 rounded-2xl p-4 mb-6 text-left border border-primary/10">
                 <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-3">About Toto</p>
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {TOTO_FACTS.map((fact, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className="text-primary mt-0.5">•</span>
-                      <p className="text-xs text-muted-foreground font-medium">{fact}</p>
+                    <div key={i} className="flex items-center gap-2.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
+                      <p className="text-xs text-muted-foreground font-medium leading-snug">{fact}</p>
                     </div>
                   ))}
                 </div>
@@ -184,8 +184,8 @@ export default function Chat() {
                         ul: ({ children }) => <ul className="space-y-1 mt-1">{children}</ul>,
                         li: ({ children }) => (
                           <li className="flex items-start gap-2">
-                            <span className={`flex-shrink-0 mt-[3px] leading-none ${msg.role === "user" ? "text-white/70" : "text-primary"}`}>•</span>
-                            <span className="[&>p]:mb-0 [&>p]:mt-0">{children}</span>
+                            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 mt-[5px] ${msg.role === "user" ? "bg-white/70" : "bg-primary"}`} />
+                            <div className="flex-1 [&_p]:m-0">{children}</div>
                           </li>
                         ),
                         strong: ({ children }) => <strong className="font-black">{children}</strong>,

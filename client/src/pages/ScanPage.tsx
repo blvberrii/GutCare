@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Camera, Upload, X, Info } from "lucide-react";
+import { Camera, Upload, X, Info, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAnalyzeProduct, useCreateScan } from "@/hooks/use-scans";
@@ -15,14 +15,21 @@ const TIPS = [
 ];
 
 export default function ScanPage() {
-  const [image, setImage] = useState<string | null>(null);
-  const [tipIndex] = useState(Math.floor(Math.random() * TIPS.length));
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [image, setImage] = useState<string | null>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [cameraReady, setCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState(false);
+  const [tipIndex] = useState(Math.floor(Math.random() * TIPS.length));
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeStep, setAnalyzeStep] = useState(0);
+
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-
   const analyzeProduct = useAnalyzeProduct();
   const createScan = useCreateScan();
 
@@ -34,15 +41,76 @@ export default function ScanPage() {
     "Finding better alternatives...",
   ];
 
+  const startCamera = useCallback(async () => {
+    setCameraError(false);
+    setCameraReady(false);
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
+        audio: false,
+      });
+      streamRef.current = s;
+      setStream(s);
+    } catch {
+      setCameraError(true);
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+    setStream(null);
+    setCameraReady(false);
+  }, []);
+
+  useEffect(() => {
+    if (stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current
+        .play()
+        .then(() => setCameraReady(true))
+        .catch(() => setCameraError(true));
+    }
+  }, [stream]);
+
+  useEffect(() => {
+    startCamera();
+    return () => {
+      streamRef.current?.getTracks().forEach(t => t.stop());
+    };
+  }, [startCamera]);
+
+  const capturePhoto = () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d")?.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+    setImage(dataUrl);
+    stopCamera();
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
+        stopCamera();
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleRetake = () => {
+    setImage(null);
+    startCamera();
   };
 
   const handleAnalyze = async () => {
@@ -56,7 +124,6 @@ export default function ScanPage() {
 
     try {
       const result = await analyzeProduct.mutateAsync(image);
-
       const savedScan = await createScan.mutateAsync({
         productName: result.productName,
         imageUrl: result.imageUrl,
@@ -70,7 +137,6 @@ export default function ScanPage() {
         additivesDetails: (result as any).additivesDetails || [],
         isFavorite: false,
       });
-
       setLocation(`/scan/${savedScan.id}`);
     } catch (error) {
       console.error(error);
@@ -94,10 +160,7 @@ export default function ScanPage() {
         >
           <TotoAvatar mood="thinking" size="xl" />
         </motion.div>
-
-        <h2 className="text-2xl font-black text-foreground mt-8 mb-2">
-          Toto is working...
-        </h2>
+        <h2 className="text-2xl font-black text-foreground mt-8 mb-2">Toto is working...</h2>
         <AnimatePresence mode="wait">
           <motion.p
             key={analyzeStep}
@@ -109,7 +172,6 @@ export default function ScanPage() {
             {steps[analyzeStep]}
           </motion.p>
         </AnimatePresence>
-
         <div className="w-full max-w-xs bg-black/5 rounded-full h-2 overflow-hidden">
           <motion.div
             className="h-full bg-primary rounded-full"
@@ -118,7 +180,6 @@ export default function ScanPage() {
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </div>
-
         <div className="mt-12 flex gap-2">
           {steps.map((_, i) => (
             <div
@@ -138,14 +199,13 @@ export default function ScanPage() {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute top-safe-top top-4 left-4 z-20 text-white hover:bg-white/20 rounded-full"
+        className="absolute top-4 left-4 z-20 text-white hover:bg-white/20 rounded-full"
         onClick={() => setLocation("/")}
         data-testid="button-back"
       >
         <X className="w-6 h-6" />
       </Button>
 
-      {/* Tip Bubble */}
       <AnimatePresence>
         {!image && (
           <motion.div
@@ -162,48 +222,63 @@ export default function ScanPage() {
         )}
       </AnimatePresence>
 
-      {/* Camera Viewfinder */}
       <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-gray-900">
         {image ? (
           <img src={image} alt="Preview" className="w-full h-full object-contain" />
         ) : (
-          <div className="text-white/30 text-center p-8">
-            <motion.div
-              animate={{ opacity: [0.3, 0.6, 0.3] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <Camera className="w-20 h-20 mx-auto mb-4" />
-            </motion.div>
-          </div>
-        )}
+          <>
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              playsInline
+              muted
+            />
 
-        {!image && (
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-72 h-56 relative">
-              <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white rounded-tl-2xl" />
-              <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white rounded-tr-2xl" />
-              <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white rounded-bl-2xl" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white rounded-br-2xl" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-white/50 text-xs font-bold uppercase tracking-widest">
-                  Aim at ingredients label
-                </p>
+            {!cameraReady && !cameraError && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900">
+                <Camera className="w-16 h-16 text-white/30 mb-3 animate-pulse" />
+                <p className="text-white/40 text-sm font-bold">Starting camera...</p>
               </div>
-            </div>
-          </div>
+            )}
+
+            {cameraError && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900 p-8 text-center">
+                <ImageIcon className="w-14 h-14 text-white/20 mb-4" />
+                <p className="text-white/50 text-sm font-bold mb-1">Camera unavailable</p>
+                <p className="text-white/30 text-xs">Upload a photo from your gallery below</p>
+              </div>
+            )}
+
+            {cameraReady && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-72 h-56 relative">
+                  <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white rounded-tl-2xl" />
+                  <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white rounded-tr-2xl" />
+                  <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white rounded-bl-2xl" />
+                  <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white rounded-br-2xl" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">
+                      Aim at ingredients label
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
-      {/* Controls */}
-      <div className="bg-black/90 p-8 pb-safe-bottom pb-12 rounded-t-3xl backdrop-blur-md">
+      <canvas ref={canvasRef} className="hidden" />
+
+      <div className="bg-black/90 p-8 pb-12 rounded-t-3xl backdrop-blur-md">
         <input
           type="file"
           accept="image/*"
-          capture="environment"
           ref={fileInputRef}
           className="hidden"
           onChange={handleFileChange}
-          data-testid="input-camera"
+          data-testid="input-file"
         />
 
         {!image ? (
@@ -213,21 +288,18 @@ export default function ScanPage() {
                 size="lg"
                 variant="outline"
                 className="rounded-full w-14 h-14 border-2 border-white/30 bg-transparent text-white hover:bg-white/10"
-                onClick={() => {
-                  const input = document.createElement("input");
-                  input.type = "file";
-                  input.accept = "image/*";
-                  input.onchange = (e) => handleFileChange(e as any);
-                  input.click();
-                }}
+                onClick={() => fileInputRef.current?.click()}
                 data-testid="button-upload"
               >
                 <Upload className="w-5 h-5" />
               </Button>
 
               <button
-                className="w-20 h-20 rounded-full bg-white flex items-center justify-center border-4 border-gray-400 shadow-2xl active:scale-95 transition-transform"
-                onClick={() => fileInputRef.current?.click()}
+                className={`w-20 h-20 rounded-full bg-white flex items-center justify-center border-4 border-gray-400 shadow-2xl transition-transform ${
+                  cameraReady ? "active:scale-95" : "opacity-50"
+                }`}
+                onClick={capturePhoto}
+                disabled={!cameraReady}
                 data-testid="button-capture"
               >
                 <div className="w-14 h-14 rounded-full bg-white border-2 border-gray-200" />
@@ -236,7 +308,7 @@ export default function ScanPage() {
               <div className="w-14" />
             </div>
             <p className="text-white/40 text-xs font-bold uppercase tracking-widest">
-              Tap to capture
+              {cameraError ? "Use gallery button to upload" : "Tap to capture"}
             </p>
           </div>
         ) : (
@@ -244,7 +316,7 @@ export default function ScanPage() {
             <Button
               variant="outline"
               className="flex-1 bg-transparent text-white border-white/30 hover:bg-white/10 rounded-2xl h-14 font-bold"
-              onClick={() => setImage(null)}
+              onClick={handleRetake}
               data-testid="button-retake"
             >
               Retake
