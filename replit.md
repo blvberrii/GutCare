@@ -51,16 +51,22 @@ Preferred communication style: Simple, everyday language.
 - **Features**: Product ingredient analysis, personalized gut health grading, conversational AI assistant
 
 ## Key Pages & Routes
-- `/` - Home (greeting, recently viewed, recommendations)
+- `/` - Home: search bar at top (replaces separate search page), recently viewed, "For You" recommendations. Search is inline — typing shows DB+AI results; clearing restores home content.
 - `/scan` - Camera scan page with tip bubble
 - `/scan/:id` - Results page (Yuka-style with expandable sections, citations, ratings)
-- `/search` - Product search (scan history + Indonesian barcode DB; "Analyze" triggers AI analysis)
+- `/search` - Standalone product search page (still exists as fallback route)
 - `/chat` - Toto AI chat with Gemini 2.5 Flash, quick questions
 - `/profile` - User profile with stats, conditions, collections
 - `/favorites` - Saved/bookmarked scans
 - `/history` - All scan history
 - `/settings` - Edit profile, conditions, allergies, logout
 - `/onboarding` - First-time setup flow
+
+## Product Images
+- Uses Open Food Facts API (free, no key, CORS-enabled) for product images
+- `useProductImage(name, barcode?)` hook: checks localStorage cache first, then fetches from Open Food Facts by barcode or name search
+- Cache key: `gutcare-img2-*` in localStorage
+- Replaces previous Gemini image generation (which was slow); all components now use Open Food Facts
 
 ## Evidence-Based Knowledge Base (in server/routes.ts)
 - Comprehensive gut health knowledge embedded directly in AI prompt

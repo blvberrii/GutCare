@@ -8,14 +8,25 @@ export function Navigation() {
   const { user } = useAuth();
 
   const navItems = [
-    { href: "/", icon: Home, label: "Home" },
-    { href: "/search", icon: Search, label: "Search" },
-    { href: "/chat", icon: MessageCircle, label: "Toto" },
-    { href: "/profile", icon: User, label: "Profile" },
+    {
+      href: "/", icon: Home, label: "Home",
+      isActive: (loc: string) => loc === "/",
+    },
+    {
+      href: "/", icon: Search, label: "Search",
+      isActive: (_loc: string) => false,
+    },
+    {
+      href: "/chat", icon: MessageCircle, label: "Toto",
+      isActive: (loc: string) => loc === "/chat",
+    },
+    {
+      href: "/profile", icon: User, label: "Profile",
+      isActive: (loc: string) => ["/profile", "/favorites", "/history"].includes(loc),
+    },
   ];
 
-  // Pages where the nav bar should be hidden
-  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history", "/search"];
+  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history"];
   const isResultsPage = /^\/scan\/\d+/.test(location);
   const isHidden = !user || isResultsPage || hiddenPaths.some(path => location.startsWith(path));
 
@@ -26,18 +37,20 @@ export function Navigation() {
       <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-black/5 pb-safe pt-2 px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="flex justify-around items-end pb-4 max-w-md mx-auto">
           {navItems.map((item) => {
-            const isActive = location === item.href ||
-              (item.href === "/profile" && ["/profile", "/favorites", "/history"].includes(location));
+            const active = item.isActive(location);
             return (
-              <Link key={item.href} href={item.href}>
-                <div className={`flex flex-col items-center gap-1 p-2 cursor-pointer transition-all duration-200 ${
-                  isActive ? "text-primary" : "text-muted-foreground hover:text-primary/70"
-                }`} data-testid={`nav-${item.label.toLowerCase()}`}>
-                  <item.icon className={`w-6 h-6 transition-all ${isActive ? "stroke-[2.5px] scale-110" : "stroke-2"}`} />
-                  <span className={`text-[10px] font-bold transition-all ${isActive ? "opacity-100" : "opacity-60"}`}>
+              <Link key={item.label} href={item.href}>
+                <div
+                  className={`flex flex-col items-center gap-1 p-2 cursor-pointer transition-all duration-200 ${
+                    active ? "text-primary" : "text-muted-foreground hover:text-primary/70"
+                  }`}
+                  data-testid={`nav-${item.label.toLowerCase()}`}
+                >
+                  <item.icon className={`w-6 h-6 transition-all ${active ? "stroke-[2.5px] scale-110" : "stroke-2"}`} />
+                  <span className={`text-[10px] font-bold transition-all ${active ? "opacity-100" : "opacity-60"}`}>
                     {item.label}
                   </span>
-                  {isActive && (
+                  {active && (
                     <motion.div
                       layoutId="nav-indicator"
                       className="w-1.5 h-1.5 bg-primary rounded-full"
