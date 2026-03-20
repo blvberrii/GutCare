@@ -11,7 +11,7 @@ import {
   type UpdateProfileRequest,
   type UpdateScanRequest
 } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, ilike, or } from "drizzle-orm";
 
 export type BarcodeProduct = typeof barcodeProducts.$inferSelect;
 
@@ -30,6 +30,7 @@ export interface IStorage {
 
   // Barcode DB
   lookupBarcode(barcode: string): Promise<BarcodeProduct | undefined>;
+  searchProducts(query: string): Promise<BarcodeProduct[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -89,6 +90,20 @@ export class DatabaseStorage implements IStorage {
   async lookupBarcode(barcode: string): Promise<BarcodeProduct | undefined> {
     const [product] = await db.select().from(barcodeProducts).where(eq(barcodeProducts.barcode, barcode));
     return product;
+  }
+
+  async searchProducts(query: string): Promise<BarcodeProduct[]> {
+    return await db
+      .select()
+      .from(barcodeProducts)
+      .where(
+        or(
+          ilike(barcodeProducts.productName, `%${query}%`),
+          ilike(barcodeProducts.brand, `%${query}%`),
+          ilike(barcodeProducts.category, `%${query}%`)
+        )
+      )
+      .limit(20);
   }
 }
 

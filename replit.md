@@ -54,6 +54,7 @@ Preferred communication style: Simple, everyday language.
 - `/` - Home (greeting, recently viewed, recommendations)
 - `/scan` - Camera scan page with tip bubble
 - `/scan/:id` - Results page (Yuka-style with expandable sections, citations, ratings)
+- `/search` - Product search (scan history + Indonesian barcode DB; "Analyze" triggers AI analysis)
 - `/chat` - Toto AI chat with Gemini 2.5 Flash, quick questions
 - `/profile` - User profile with stats, conditions, collections
 - `/favorites` - Saved/bookmarked scans

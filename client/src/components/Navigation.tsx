@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, User, MessageCircle, Scan } from "lucide-react";
+import { Home, User, MessageCircle, Scan, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -9,12 +9,13 @@ export function Navigation() {
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
+    { href: "/search", icon: Search, label: "Search" },
     { href: "/chat", icon: MessageCircle, label: "Toto" },
     { href: "/profile", icon: User, label: "Profile" },
   ];
 
   // Pages where the nav bar should be hidden
-  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history"];
+  const hiddenPaths = ["/scan", "/onboarding", "/settings", "/favorites", "/history", "/search"];
   const isResultsPage = /^\/scan\/\d+/.test(location);
   const isHidden = !user || isResultsPage || hiddenPaths.some(path => location.startsWith(path));
 

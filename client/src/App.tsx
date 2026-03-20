@@ -14,6 +14,7 @@ import Profile from "@/pages/Profile";
 import SettingsPage from "@/pages/Settings";
 import FavoritesPage from "@/pages/FavoritesPage";
 import HistoryPage from "@/pages/HistoryPage";
+import SearchPage from "@/pages/SearchPage";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -44,6 +45,7 @@ function Router() {
       <Route path="/favorites" component={FavoritesPage} />
       <Route path="/history" component={HistoryPage} />
       <Route path="/settings" component={SettingsPage} />
+      <Route path="/search" component={SearchPage} />
       <Route component={NotFound} />
     </Switch>
   );

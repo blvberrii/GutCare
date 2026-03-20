@@ -341,6 +341,136 @@ IMPORTANT RULES:
     }
   });
 
+  // === Analyze product from barcode DB (text-based, no image) ===
+  app.post("/api/analyze/product-text", isAuthenticated, async (req: any, res) => {
+    try {
+      const { productName, ingredients } = req.body;
+      const userId = req.user.claims.sub;
+      if (!productName || !ingredients) return res.status(400).json({ message: "productName and ingredients are required" });
+
+      const profile = await storage.getProfile(userId);
+      const userConditions = profile?.conditions?.join(", ") || "None specified";
+      const userAllergies = profile?.allergies?.join(", ") || "None specified";
+      const userSymptoms = profile?.symptoms?.join(", ") || "None specified";
+      const userName = profile?.firstName || "the user";
+
+      const systemPrompt = `
+You are an expert clinical nutritionist specializing in gut health, trained on evidence from leading medical institutions including Harvard School of Public Health, Johns Hopkins Medicine, Cleveland Clinic, Mayo Clinic, NIH, Monash University FODMAP research, the FDA, UK NHS, and Oxford/Cambridge Nutrition Departments.
+
+${GUT_HEALTH_KNOWLEDGE_BASE}
+
+## USER PROFILE
+- Name: ${userName}
+- Gut Conditions: ${userConditions}
+- Allergies: ${userAllergies}  
+- Symptoms: ${userSymptoms}
+
+## YOUR TASK
+Analyze the following product using its name and ingredient list. Produce a personalized gut health assessment based on the user's specific profile.
+
+Product Name: ${productName}
+Ingredients: ${ingredients}
+
+## SCORING METHODOLOGY
+Use the evidence-based scoring framework in the knowledge base above. Score 0-100 based on:
+- Ingredient quality and processing level (+/- up to 40 points)
+- Additive risk profile (+/- up to 25 points)
+- FODMAP compatibility with user's conditions (+/- up to 20 points)
+- Nutritional value for gut health (+/- up to 15 points)
+Assign A (85-100), B (70-84), C (55-69), D (40-54), F (<40).
+
+## RESPONSE FORMAT
+Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
+{
+  "productName": "${productName}",
+  "ingredients": "Full ingredients list as readable text",
+  "score": <integer 0-100>,
+  "grade": "<A|B|C|D|F>",
+  "portionSize": "Serving size if inferable from ingredient context, else empty string",
+  "positives": [
+    {
+      "title": "Short benefit title (e.g., 'High Protein')",
+      "detail": "Expanded explanation with specific research context (2-3 sentences)",
+      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
+      "amount": "Numerical value with unit if inferable, else empty string"
+    }
+  ],
+  "negatives": [
+    {
+      "title": "Short concern title (e.g., 'High Sodium')",
+      "detail": "Expanded explanation with the specific research citation context",
+      "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
+      "amount": "Numerical value with unit if inferable, else empty string"
+    }
+  ],
+  "additivesDetails": [
+    {
+      "name": "Full chemical/common name of additive",
+      "label": "E-number or code if applicable",
+      "risk": "<Low|Medium|High>",
+      "category": "e.g., Emulsifier, Preservative, Artificial Color",
+      "description": "What it is, what it does in this product, evidence of gut impact",
+      "gutEffect": "Specific impact on gut health from evidence-based research"
+    }
+  ],
+  "citations": [
+    {
+      "source": "Institution name (e.g., Harvard School of Public Health)",
+      "text": "Verbatim-style finding relevant to THIS product's ingredients",
+      "url": "https://doi.org or institutional URL if known, else empty string"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "Specific brand + product name",
+      "score": <integer 80-100>
+    }
+  ]
+}
+
+IMPORTANT RULES:
+- Provide 2-4 positives and 2-4 negatives (real, specific to THIS product)
+- Provide 3+ scientific citations using ONLY validated sources
+- For alternatives, name REAL specific products/brands that score 80+, same food category
+- Analyze ONLY the provided ingredients list
+- For additives, list ALL additives identified
+- Citations must be specific to THIS product's ingredients
+`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
+        config: { responseMimeType: "application/json" },
+      });
+
+      const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!analysisText) throw new Error("Failed to get analysis from AI");
+
+      const analysis = JSON.parse(analysisText);
+      res.json({
+        ...analysis,
+        imageUrl: null,
+        alternatives: (analysis.alternatives || []).map((alt: any) => ({ ...alt, image: null })),
+      });
+    } catch (error) {
+      console.error("Text analysis failed:", error);
+      res.status(500).json({ message: "Analysis failed. Please try again." });
+    }
+  });
+
+  // === Product Search ===
+  app.get("/api/products/search", isAuthenticated, async (req: any, res) => {
+    try {
+      const q = String(req.query.q || "").trim().toLowerCase();
+      if (!q || q.length < 1) return res.json([]);
+      const results = await storage.searchProducts(q);
+      res.json(results);
+    } catch (err) {
+      console.error("Product search error:", err);
+      res.status(500).json({ message: "Search failed" });
+    }
+  });
+
   // === Barcode Lookup ===
   app.get("/api/barcode/:barcode", isAuthenticated, async (req: any, res) => {
     try {
