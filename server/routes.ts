@@ -458,7 +458,7 @@ IMPORTANT RULES:
     }
   });
 
-  // === Product Search ===
+  // === Product Search (local DB) ===
   app.get("/api/products/search", isAuthenticated, async (req: any, res) => {
     try {
       const q = String(req.query.q || "").trim().toLowerCase();
@@ -471,13 +471,119 @@ IMPORTANT RULES:
     }
   });
 
-  // === Barcode Lookup ===
+  // === AI-Powered Product Search (Gemini) ===
+  app.get("/api/products/search-ai", isAuthenticated, async (req: any, res) => {
+    try {
+      const q = String(req.query.q || "").trim();
+      if (!q || q.length < 2) return res.json([]);
+
+      const prompt = `The user is searching for food products matching: "${q}"
+
+List 5 real food/grocery products that best match this search term. Focus on:
+- Indonesian packaged food brands (Indomie, Aqua, Teh Botol, Pocari Sweat, Khong Guan, etc.)
+- International products widely available in Indonesia
+- Wellness/health products relevant to gut health
+
+For each product, provide accurate real ingredient information from your knowledge.
+
+Return ONLY a valid JSON array (no markdown, no explanation):
+[
+  {
+    "productName": "Exact brand and product name",
+    "brand": "Brand name",
+    "category": "Category e.g. Instant Noodles, Crackers, Beverage, Dairy, Snack",
+    "ingredients": "Full ingredient list as comma-separated readable text"
+  }
+]
+
+Rules:
+- Only include products you have confident ingredient knowledge about
+- Return 3-5 products maximum
+- Ingredients must be realistic and accurate for that product
+- If unsure about a specific product's ingredients, skip it`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { responseMimeType: "application/json" },
+      });
+
+      const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) return res.json([]);
+
+      const products = JSON.parse(text);
+      if (!Array.isArray(products)) return res.json([]);
+
+      // Assign temp string IDs so frontend can track them
+      res.json(products.slice(0, 5).map((p: any, i: number) => ({
+        productName: p.productName || "",
+        brand: p.brand || "",
+        category: p.category || "",
+        ingredients: p.ingredients || "",
+        _aiGenerated: true,
+        _aiKey: `ai-${i}-${q}`,
+      })));
+    } catch (err) {
+      console.error("AI product search error:", err);
+      res.json([]); // Silent fail — UI gracefully handles empty
+    }
+  });
+
+  // === Barcode Lookup (DB first, Gemini fallback) ===
   app.get("/api/barcode/:barcode", isAuthenticated, async (req: any, res) => {
     try {
       const { barcode } = req.params;
+
+      // Try local DB first
       const product = await storage.lookupBarcode(barcode);
-      if (!product) return res.status(404).json({ message: "Barcode not found in database" });
-      res.json(product);
+      if (product) return res.json(product);
+
+      // Gemini fallback: try to identify the barcode
+      try {
+        const prompt = `A user scanned barcode: "${barcode}"
+
+If you know which product this barcode belongs to (focus on Indonesian, Southeast Asian, or internationally distributed products), return its details.
+If you are not confident about this specific barcode, return null.
+
+Return ONLY a valid JSON object or the literal null:
+{
+  "productName": "Exact brand and product name",
+  "brand": "Brand name",
+  "category": "Product category",
+  "ingredients": "Full ingredient list as readable comma-separated text"
+}`;
+
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [{ role: "user", parts: [{ text: prompt }] }],
+          config: { responseMimeType: "application/json" },
+        });
+
+        const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!text || text.trim() === "null") {
+          return res.status(404).json({ message: "Barcode not found" });
+        }
+
+        const aiProduct = JSON.parse(text);
+        if (!aiProduct || !aiProduct.productName) {
+          return res.status(404).json({ message: "Barcode not found" });
+        }
+
+        // Return as a pseudo-product (not persisted in DB)
+        return res.json({
+          id: -1,
+          barcode,
+          productName: aiProduct.productName,
+          brand: aiProduct.brand || "",
+          category: aiProduct.category || "",
+          ingredients: aiProduct.ingredients || "",
+          imageUrl: null,
+          country: "ID",
+          createdAt: new Date(),
+        });
+      } catch {
+        return res.status(404).json({ message: "Barcode not found" });
+      }
     } catch (err) {
       console.error("Barcode lookup error:", err);
       res.status(500).json({ message: "Lookup failed" });
