@@ -154,28 +154,29 @@ function ProductRow({
 }) {
   const isAnalyzing = analyzingKey === trackKey;
   const isDisabled = analyzingKey !== null;
-  const btnBg = accent === "violet"
-    ? "bg-violet-100 text-violet-600 hover:bg-violet-200"
-    : "bg-primary/10 text-primary hover:bg-primary/20";
 
   return (
     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.04 }}>
-      <div className={`flex items-center gap-3 px-4 py-3.5 ${showDivider ? "border-b border-black/5" : ""}`}>
-        <ProductImage name={productName} barcode={barcode} accent={accent} />
+      <button
+        onClick={onAnalyze}
+        disabled={isDisabled}
+        className={`w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors active:bg-black/5 hover:bg-black/[0.03] disabled:opacity-50 ${showDivider ? "border-b border-black/5" : ""}`}
+        data-testid={`button-analyze-${trackKey}`}
+      >
+        <div className="relative flex-shrink-0">
+          <ProductImage name={productName} barcode={barcode} accent={accent} />
+          {isAnalyzing && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-xl">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+            </div>
+          )}
+        </div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm truncate">{productName}</p>
           <p className="text-xs text-muted-foreground truncate">{brand}{category ? ` · ${category}` : ""}</p>
         </div>
-        <button
-          onClick={onAnalyze}
-          disabled={isDisabled}
-          className={`flex items-center gap-1.5 text-xs font-black px-3 py-1.5 rounded-full transition-colors flex-shrink-0 disabled:opacity-40 ${btnBg}`}
-          data-testid={`button-analyze-${trackKey}`}
-        >
-          {isAnalyzing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Scan className="w-3 h-3" />}
-          {isAnalyzing ? "Analyzing…" : "Analyze"}
-        </button>
-      </div>
+        <ChevronRight className={`w-4 h-4 flex-shrink-0 transition-colors ${accent === "violet" ? "text-violet-300" : "text-muted-foreground/30"}`} />
+      </button>
     </motion.div>
   );
 }
