@@ -94,6 +94,9 @@ function ExpandableItem({
         </div>
         <div className="flex-1 min-w-0">
           <h4 className="font-bold text-sm text-foreground">{item.title}</h4>
+          {item.description && (
+            <p className="text-xs text-muted-foreground mt-0.5 truncate">{item.description}</p>
+          )}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           {hasAmount && (

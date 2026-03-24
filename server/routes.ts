@@ -255,29 +255,31 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "ingredients": "Full ingredients list as readable text",
   "score": <integer 0-100>,
   "grade": "<A|B|C|D|F>",
-  "portionSize": "Serving size from nutrition label, e.g. '43g', '1 cup (240ml)', '2 biscuits (30g)'. Leave empty string if not visible.",
+  "portionSize": "Serving size from nutrition label if visible (e.g. '43g', '1 cup (240ml)', '2 biscuits (30g)'). If not visible on label, estimate a typical serving size for this product category — NEVER leave empty.",
   "nutritionFacts": [
     {
       "label": "Nutrient name (e.g. 'Calories', 'Total Fat', 'Carbohydrates', 'Added Sugar', 'Protein', 'Sodium', 'Fiber', 'Saturated Fat', 'Cholesterol')",
-      "value": "Numeric value as string from the nutrition label per serving (e.g. '190', '8', '760'). Empty string if not visible.",
-      "unit": "Unit string (e.g. 'kcal', 'g', 'mg', '%'). Empty string if not applicable.",
+      "value": "Numeric value as string from the nutrition label per serving. If not visible, provide a typical estimated value for this product — NEVER leave empty.",
+      "unit": "Unit string (e.g. 'kcal', 'g', 'mg', '%').",
       "type": "<calories|fat|sugar|protein|sodium|fiber|default>"
     }
   ],
   "positives": [
     {
       "title": "Short benefit title (e.g., 'High Protein')",
+      "description": "3-6 word supporting subtitle (e.g., 'Excellent muscle recovery source', 'Boosts gut microbiome')",
       "detail": "Expanded explanation with specific research context (2-3 sentences)",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit from the nutrition label per serving, e.g. '4g', '190Cal', '12%'. For additives use count e.g. '3'. Leave empty string if not visible."
+      "amount": "Numerical value with unit per serving, e.g. '4g', '190Cal', '760mg'. Read from label if visible; otherwise estimate a typical value for this product type. For additives use count e.g. '3'. NEVER leave empty."
     }
   ],
   "negatives": [
     {
       "title": "Short concern title (e.g., 'High Sodium')",
+      "description": "3-6 word supporting subtitle (e.g., 'Too salty', 'Contains risky additives', 'A bit too caloric')",
       "detail": "Expanded explanation with the specific research citation context",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit from the nutrition label per serving, e.g. '760mg', '23g', '9'. For additives use total count. Leave empty string if not visible."
+      "amount": "Numerical value with unit per serving, e.g. '760mg', '3.5g', '9'. Read from label if visible; otherwise estimate a typical value for this product type. For additives use total count. NEVER leave empty."
     }
   ],
   "additivesDetails": [
@@ -394,11 +396,11 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "ingredients": "Full ingredients list as readable text",
   "score": <integer 0-100>,
   "grade": "<A|B|C|D|F>",
-  "portionSize": "Serving size if inferable from ingredient context, else empty string",
+  "portionSize": "Estimate a typical serving size for this product based on its name and ingredients (e.g. '43g', '1 cup (240ml)', '2 biscuits (30g)', '65ml'). NEVER leave empty.",
   "nutritionFacts": [
     {
       "label": "Nutrient name (e.g. 'Calories', 'Total Fat', 'Carbohydrates', 'Added Sugar', 'Protein', 'Sodium', 'Fiber')",
-      "value": "Best estimate numeric value as string based on typical product of this type (e.g. '190', '8', '760'). Must provide your best estimate — do NOT leave empty.",
+      "value": "Best estimate numeric value as string based on typical product of this type (e.g. '190', '8', '760'). NEVER leave empty.",
       "unit": "Unit string (e.g. 'kcal', 'g', 'mg')",
       "type": "<calories|fat|sugar|protein|sodium|fiber|default>",
       "estimated": true
@@ -407,17 +409,19 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
   "positives": [
     {
       "title": "Short benefit title (e.g., 'High Protein')",
+      "description": "3-6 word supporting subtitle (e.g., 'Excellent muscle recovery source', 'Boosts gut microbiome')",
       "detail": "Expanded explanation with specific research context (2-3 sentences)",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit if inferable, else empty string"
+      "amount": "Estimated numerical value with unit per typical serving, e.g. '4g', '190Cal', '760mg'. NEVER leave empty."
     }
   ],
   "negatives": [
     {
       "title": "Short concern title (e.g., 'High Sodium')",
+      "description": "3-6 word supporting subtitle (e.g., 'Too salty', 'Contains risky additives', 'A bit too caloric')",
       "detail": "Expanded explanation with the specific research citation context",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
-      "amount": "Numerical value with unit if inferable, else empty string"
+      "amount": "Estimated numerical value with unit per typical serving, e.g. '760mg', '3.5g', '9'. For additives use total count. NEVER leave empty."
     }
   ],
   "additivesDetails": [
