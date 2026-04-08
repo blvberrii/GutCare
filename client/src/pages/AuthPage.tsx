@@ -36,7 +36,7 @@ const loginSchema = z.object({
 type RegisterForm = z.infer<typeof registerSchema>;
 type LoginForm = z.infer<typeof loginSchema>;
 
-export default function AuthPage({ initialTab = "login" }: { initialTab?: "login" | "register" }) {
+export default function AuthPage({ initialTab = "register" }: { initialTab?: "login" | "register" }) {
   const [tab, setTab] = useState<"login" | "register">(initialTab);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -119,7 +119,7 @@ export default function AuthPage({ initialTab = "login" }: { initialTab?: "login
         >
           {/* Tab switcher */}
           <div className="flex border-b border-black/5">
-            {(["login", "register"] as const).map((t) => (
+            {(["register", "login"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
