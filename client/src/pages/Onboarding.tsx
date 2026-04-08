@@ -13,8 +13,20 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TotoAvatar } from "@/components/TotoAvatar";
 
-const conditionsList = ["IBS", "SIBO", "Crohn's", "Celiac", "Lactose Intolerance", "GERD"];
-const symptomsList = ["Bloating", "Fatigue", "Brain Fog", "Skin Issues", "Stomach Pain"];
+const conditionsList = [
+  "IBS", "SIBO", "Crohn's Disease", "Celiac Disease",
+  "Lactose Intolerance", "GERD / Acid Reflux", "Ulcerative Colitis",
+  "Gastritis", "Leaky Gut Syndrome", "Diverticulitis",
+  "Gastroparesis", "H. Pylori Infection", "Food Intolerances",
+  "Chronic Constipation",
+];
+const symptomsList = [
+  "Bloating", "Fatigue", "Brain Fog", "Skin Issues",
+  "Stomach Pain", "Diarrhea", "Constipation", "Nausea",
+  "Heartburn", "Gas / Flatulence", "Cramping", "Loss of Appetite",
+  "Mucus in Stool", "Urgency", "Weight Changes",
+  "Joint Pain", "Headaches", "Food Cravings",
+];
 const allergiesList = ["Gluten", "Dairy", "Nuts", "Soy", "Eggs", "Shellfish"];
 
 // Extension schema to include name if needed, though Replit Auth usually has it
@@ -50,6 +62,8 @@ export default function Onboarding() {
   });
 
   const [otherAllergy, setOtherAllergy] = useState("");
+  const [otherCondition, setOtherCondition] = useState("");
+  const [otherSymptom, setOtherSymptom] = useState("");
 
   const steps = [
     {
@@ -109,23 +123,36 @@ export default function Onboarding() {
       subtitle: "We'll tailor recommendations to these.",
       content: (
         <div className="grid grid-cols-2 gap-3">
-          {conditionsList.map((item) => (
-            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-              form.watch("conditions")?.includes(item)
-                ? "bg-primary/5 border-primary"
-                : "bg-white border-primary/10 hover:border-primary/30"
-            }`}>
-              <Checkbox 
-                checked={form.watch("conditions")?.includes(item)}
-                onCheckedChange={(checked) => {
-                  const current = form.getValues("conditions") || [];
-                  if (checked) form.setValue("conditions", [...current, item]);
-                  else form.setValue("conditions", current.filter(c => c !== item));
-                }}
-                className="w-5 h-5 rounded-md border-2 border-primary"
-              />
-              <span className={`font-bold text-sm ${form.watch("conditions")?.includes(item) ? "text-primary" : "text-foreground"}`}>{item}</span>
-            </label>
+          {[...conditionsList, "Others"].map((item) => (
+            <div key={item} className="space-y-2">
+              <label className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                form.watch("conditions")?.includes(item)
+                  ? "bg-primary/5 border-primary"
+                  : "bg-white border-primary/10 hover:border-primary/30"
+              }`}>
+                <Checkbox
+                  checked={form.watch("conditions")?.includes(item)}
+                  onCheckedChange={(checked) => {
+                    const current = form.getValues("conditions") || [];
+                    if (checked) form.setValue("conditions", [...current, item]);
+                    else {
+                      form.setValue("conditions", current.filter(c => c !== item));
+                      if (item === "Others") setOtherCondition("");
+                    }
+                  }}
+                  className="w-5 h-5 rounded-md border-2 border-primary"
+                />
+                <span className={`font-bold text-sm ${form.watch("conditions")?.includes(item) ? "text-primary" : "text-foreground"}`}>{item}</span>
+              </label>
+              {item === "Others" && form.watch("conditions")?.includes("Others") && (
+                <Input
+                  value={otherCondition}
+                  onChange={(e) => setOtherCondition(e.target.value)}
+                  placeholder="Describe your condition"
+                  className="rounded-xl h-10 bg-white border-2 border-primary/10 focus:border-primary"
+                />
+              )}
+            </div>
           ))}
         </div>
       )
@@ -135,23 +162,36 @@ export default function Onboarding() {
       subtitle: "What's been bothering you lately?",
       content: (
         <div className="grid grid-cols-2 gap-3">
-          {symptomsList.map((item) => (
-            <label key={item} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-              form.watch("symptoms")?.includes(item)
-                ? "bg-secondary/5 border-secondary"
-                : "bg-white border-primary/10 hover:border-primary/30"
-            }`}>
-              <Checkbox 
-                checked={form.watch("symptoms")?.includes(item)}
-                onCheckedChange={(checked) => {
-                  const current = form.getValues("symptoms") || [];
-                  if (checked) form.setValue("symptoms", [...current, item]);
-                  else form.setValue("symptoms", current.filter(c => c !== item));
-                }}
-                className="w-5 h-5 rounded-md border-2 border-secondary"
-              />
-              <span className={`font-bold text-sm ${form.watch("symptoms")?.includes(item) ? "text-secondary-foreground" : "text-foreground"}`}>{item}</span>
-            </label>
+          {[...symptomsList, "Others"].map((item) => (
+            <div key={item} className="space-y-2">
+              <label className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                form.watch("symptoms")?.includes(item)
+                  ? "bg-secondary/5 border-secondary"
+                  : "bg-white border-primary/10 hover:border-primary/30"
+              }`}>
+                <Checkbox
+                  checked={form.watch("symptoms")?.includes(item)}
+                  onCheckedChange={(checked) => {
+                    const current = form.getValues("symptoms") || [];
+                    if (checked) form.setValue("symptoms", [...current, item]);
+                    else {
+                      form.setValue("symptoms", current.filter(c => c !== item));
+                      if (item === "Others") setOtherSymptom("");
+                    }
+                  }}
+                  className="w-5 h-5 rounded-md border-2 border-secondary"
+                />
+                <span className={`font-bold text-sm ${form.watch("symptoms")?.includes(item) ? "text-secondary-foreground" : "text-foreground"}`}>{item}</span>
+              </label>
+              {item === "Others" && form.watch("symptoms")?.includes("Others") && (
+                <Input
+                  value={otherSymptom}
+                  onChange={(e) => setOtherSymptom(e.target.value)}
+                  placeholder="Describe your symptom"
+                  className="rounded-xl h-10 bg-white border-2 border-primary/10 focus:border-secondary"
+                />
+              )}
+            </div>
           ))}
         </div>
       )
@@ -210,6 +250,21 @@ export default function Onboarding() {
     } else {
       try {
         const values = form.getValues();
+
+        let conditions = values.conditions || [];
+        if (conditions.includes("Others") && otherCondition) {
+          conditions = [...conditions.filter(c => c !== "Others"), `Other: ${otherCondition}`];
+        } else {
+          conditions = conditions.filter(c => c !== "Others");
+        }
+
+        let symptoms = values.symptoms || [];
+        if (symptoms.includes("Others") && otherSymptom) {
+          symptoms = [...symptoms.filter(s => s !== "Others"), `Other: ${otherSymptom}`];
+        } else {
+          symptoms = symptoms.filter(s => s !== "Others");
+        }
+
         let allergies = values.allergies || [];
         if (allergies.includes("Others") && otherAllergy) {
           allergies = [...allergies.filter(a => a !== "Others"), `Other: ${otherAllergy}`];
@@ -220,9 +275,9 @@ export default function Onboarding() {
           firstName: values.firstName || "",
           dob: values.dob ? new Date(values.dob) : null,
           gender: values.gender,
-          conditions: values.conditions,
-          symptoms: values.symptoms,
-          allergies: allergies,
+          conditions,
+          symptoms,
+          allergies,
           struggles: values.struggles,
         });
         setLocation("/");
