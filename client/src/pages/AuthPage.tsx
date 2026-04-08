@@ -226,7 +226,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                       <Input
                         id="reg-firstName"
                         data-testid="input-reg-firstname"
-                        placeholder="e.g. Fiona"
+                        placeholder="e.g. Sarah"
                         className="pl-10 rounded-xl"
                         {...registerForm.register("firstName")}
                       />
@@ -245,7 +245,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                       <Input
                         id="reg-username"
                         data-testid="input-reg-username"
-                        placeholder="e.g. fiona_gut"
+                        placeholder="e.g. sarah_healthy"
                         className="pl-10 rounded-xl"
                         {...registerForm.register("username")}
                       />
