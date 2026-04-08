@@ -8,9 +8,9 @@ function pickOffImage(product: any): string | null {
     || product.image_small_url || product.image_front_thumb_url || product.image_thumb_url || null;
 }
 
-/** Fetch product image: Open Food Facts first, then Unsplash stock photo fallback. */
+/** Fetch product image from Open Food Facts. Returns null if not found (shows placeholder). */
 export function useProductImage(productName: string, barcode?: string | null): string | null {
-  const key = `gutcare-img3-${(barcode || productName).toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 60)}`;
+  const key = `gutcare-img4-${(barcode || productName).toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 60)}`;
   const [url, setUrl] = useState<string | null>(() => {
     try { return localStorage.getItem(key); } catch { return null; }
   });
@@ -40,17 +40,11 @@ export function useProductImage(productName: string, barcode?: string | null): s
         if (imgUrl) {
           setUrl(imgUrl);
           try { localStorage.setItem(key, imgUrl); } catch {}
-        } else {
-          const terms = productName.split(" ").slice(0, 3).join(" ");
-          const fallback = `https://source.unsplash.com/200x200/?${encodeURIComponent(terms)},food,product`;
-          setUrl(fallback);
-          try { localStorage.setItem(key, fallback); } catch {}
         }
+        // No fallback — null means show the placeholder icon instead of a broken image
       })
       .catch(() => {
-        const terms = productName.split(" ").slice(0, 3).join(" ");
-        const fallback = `https://source.unsplash.com/200x200/?${encodeURIComponent(terms)},food`;
-        setUrl(fallback);
+        // Network error — stay null, placeholder icon will show
       });
   }, []);
 

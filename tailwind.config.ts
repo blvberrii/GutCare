@@ -11,6 +11,18 @@ export default {
         sm: ".1875rem", /* 3px */
       },
       colors: {
+        coral: {
+          50:  "hsl(12 76% 97%)",
+          100: "hsl(12 76% 93%)",
+          200: "hsl(12 76% 85%)",
+          300: "hsl(12 76% 76%)",
+          400: "hsl(12 76% 68%)",
+          500: "hsl(12 76% 61%)",
+          600: "hsl(12 76% 50%)",
+          700: "hsl(12 76% 40%)",
+          800: "hsl(12 76% 30%)",
+          900: "hsl(12 76% 20%)",
+        },
         // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
