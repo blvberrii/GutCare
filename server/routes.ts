@@ -845,5 +845,77 @@ Respond to the user's message now:
     }
   });
 
+  // ── Smart product image search ────────────────────────────────────────────
+  app.get("/api/product-image", isAuthenticated, async (req: any, res) => {
+    const name = String(req.query.name || "").trim();
+    const barcode = String(req.query.barcode || "").trim();
+
+    const OFF_FIELDS = "image_front_url,image_url,image_front_small_url,image_small_url";
+
+    function pickImage(product: any): string | null {
+      if (!product) return null;
+      return product.image_front_url || product.image_url
+        || product.image_front_small_url || product.image_small_url || null;
+    }
+
+    async function searchByName(query: string): Promise<string | null> {
+      try {
+        const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&json=1&fields=${OFF_FIELDS}&page_size=5&action=process`;
+        const r = await fetch(url);
+        const data: any = await r.json();
+        for (const p of (data?.products || [])) {
+          const img = pickImage(p);
+          if (img) return img;
+        }
+      } catch {}
+      return null;
+    }
+
+    // Strip common descriptor words and comma suffixes to improve matching
+    function cleanName(raw: string): string {
+      return raw
+        .split(",")[0]
+        .replace(/\b(organic|natural|original|classic|premium|select|old fashioned|lactose[- ]free|low[- ]fat|reduced fat|whole grain|gluten[- ]free|non[- ]gmo|free range|grass[- ]fed)\b/gi, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    try {
+      // 1. Barcode lookup (most accurate)
+      if (barcode) {
+        const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=${OFF_FIELDS}`);
+        const data: any = await r.json();
+        const img = pickImage(data?.product);
+        if (img) return res.json({ url: img });
+      }
+
+      if (!name) return res.json({ url: null });
+
+      const cleaned = cleanName(name);
+
+      // 2. Full cleaned name
+      let img = await searchByName(cleaned);
+      if (img) return res.json({ url: img });
+
+      // 3. First 4 words of cleaned name
+      const short = cleaned.split(" ").slice(0, 4).join(" ");
+      if (short !== cleaned) {
+        img = await searchByName(short);
+        if (img) return res.json({ url: img });
+      }
+
+      // 4. First 2 words (brand + product type)
+      const brand = cleaned.split(" ").slice(0, 2).join(" ");
+      if (brand !== short) {
+        img = await searchByName(brand);
+        if (img) return res.json({ url: img });
+      }
+
+      res.json({ url: null });
+    } catch {
+      res.json({ url: null });
+    }
+  });
+
   return httpServer;
 }
