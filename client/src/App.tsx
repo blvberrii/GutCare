@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Navigation } from "@/components/Navigation";
 
 import Landing from "@/pages/Landing";
+import AuthPage from "@/pages/AuthPage";
 import Onboarding from "@/pages/Onboarding";
 import Home from "@/pages/Home";
 import ScanPage from "@/pages/ScanPage";
@@ -29,6 +30,10 @@ function Router() {
     return (
       <Switch>
         <Route path="/" component={Landing} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/login">
+          {() => <AuthPage initialTab="login" />}
+        </Route>
         <Route component={Landing} />
       </Switch>
     );

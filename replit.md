@@ -31,10 +31,12 @@ Preferred communication style: Simple, everyday language.
 - **Session Storage**: PostgreSQL-backed sessions via `connect-pg-simple`
 
 ### Authentication
-- **Provider**: Replit Auth (OpenID Connect)
-- **Session**: Express-session with PostgreSQL store
-- **Flow**: OAuth2 with automatic user upsert on login
-- **Protected Routes**: `isAuthenticated` middleware checks session validity
+- **Provider**: Custom username/password auth (bcrypt, no third-party OAuth)
+- **Session**: Express-session with PostgreSQL store (`connect-pg-simple`)
+- **Flow**: Register with username + display name + password → bcrypt hash stored; login sets `req.session.userId`
+- **Protected Routes**: `isAuthenticated` middleware checks `req.session.userId`
+- **Auth page**: `/auth` (register tab) and `/login` (login tab) via `AuthPage.tsx`
+- **Logout**: `POST /api/logout` destroys session
 
 ### Key Data Models
 - **Users**: Core authentication data (id, email, name, profile image)

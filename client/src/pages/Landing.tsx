@@ -33,12 +33,12 @@ export default function Landing() {
           <span className="font-display font-bold text-2xl text-teal-700">GutCare</span>
         </div>
         <div className="flex gap-4">
-          <Link href="/home">
+          <Link href="/login">
             <Button variant="ghost" className="text-teal-700 font-medium">Log In</Button>
           </Link>
-          <a href="/api/login">
+          <Link href="/auth">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">Get Started</Button>
-          </a>
+          </Link>
         </div>
       </nav>
 
@@ -57,12 +57,12 @@ export default function Landing() {
             Scan any product and instantly see how it affects <span className="font-semibold text-coral-500">your</span> specific gut health. No more guesswork, just clarity.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a href="/api/login">
+            <Link href="/auth">
               <Button size="lg" className="rounded-full px-8 py-7 text-lg bg-teal-600 hover:bg-teal-700 shadow-xl shadow-teal-200 group">
                 Start Scanning Free
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </a>
+            </Link>
             <div className="flex gap-2">
               <Button variant="outline" size="lg" className="rounded-full px-8 py-7 border-2">
                 <Download className="mr-2 w-5 h-5" /> App Store
@@ -275,11 +275,11 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto bg-teal-600 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50" />
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-8 relative z-10">Start your journey to gut confidence today.</h2>
-          <a href="/api/login">
+          <Link href="/auth">
             <Button size="lg" className="rounded-full px-10 py-8 text-xl bg-white text-teal-700 hover:bg-gray-100 shadow-2xl mb-8 relative z-10">
               Get Started for Free
             </Button>
-          </a>
+          </Link>
           <div className="flex justify-center gap-4 opacity-80 scale-90 md:scale-100">
             <Download className="w-8 h-8" />
             <div className="text-left">
