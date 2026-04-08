@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, X, ShoppingBag, ChevronRight, History, Package, Loader2, Scan, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useProductImage } from "@/hooks/use-product-image";
 import type { Scan as ScanType } from "@shared/schema";
 
 type DBProduct = {
@@ -220,6 +221,7 @@ export default function SearchPage() {
                         brand={product.brand}
                         category={product.category}
                         ingredients={product.ingredients}
+                        barcode={product.barcode}
                         trackKey={String(product.id)}
                         analyzingKey={analyzingKey}
                         onAnalyze={() => runAnalyze(product.productName, product.ingredients, String(product.id))}
@@ -301,12 +303,13 @@ function SectionLabel({
 }
 
 function ProductRow({
-  productName, brand, category, ingredients, trackKey, analyzingKey, onAnalyze, showDivider, index, accent = "teal"
+  productName, brand, category, ingredients, barcode, trackKey, analyzingKey, onAnalyze, showDivider, index, accent = "teal"
 }: {
   productName: string;
   brand: string;
   category: string | null;
   ingredients: string;
+  barcode?: string | null;
   trackKey: string;
   analyzingKey: string | null;
   onAnalyze: () => void;
@@ -314,6 +317,7 @@ function ProductRow({
   index: number;
   accent?: "teal" | "violet";
 }) {
+  const imgUrl = useProductImage(productName, barcode);
   const isAnalyzing = analyzingKey === trackKey;
   const isDisabled = analyzingKey !== null;
   const iconBg = accent === "violet" ? "bg-violet-50" : "bg-teal-50";
@@ -329,8 +333,14 @@ function ProductRow({
       transition={{ delay: index * 0.04 }}
     >
       <div className={`flex items-center gap-3 px-4 py-3.5 ${showDivider ? "border-b border-black/5" : ""}`}>
-        <div className={`w-10 h-10 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
-          <ShoppingBag className={`w-5 h-5 ${iconColor}`} />
+        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : iconBg}`}>
+          {imgUrl ? (
+            <img src={imgUrl} alt={productName} className="w-full h-full object-contain" />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <ShoppingBag className={`w-5 h-5 ${iconColor}`} />
+            </div>
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm truncate">{productName}</p>
