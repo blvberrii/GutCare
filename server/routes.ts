@@ -911,6 +911,13 @@ Respond to the user's message now:
         if (img) return res.json({ url: img });
       }
 
+      // Final fallback: generate a photorealistic image with Gemini
+      if (name) {
+        const prompt = `Photorealistic commercial product photography of "${cleaned || name}": retail packaging with label clearly visible on white studio background, soft lighting, professional food photography, no text overlays`;
+        const dataUrl = await generateImage(prompt).catch(() => null);
+        if (dataUrl) return res.json({ url: dataUrl });
+      }
+
       res.json({ url: null });
     } catch {
       res.json({ url: null });
