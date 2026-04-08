@@ -13,8 +13,8 @@ export function Navigation() {
       isActive: (loc: string) => loc === "/",
     },
     {
-      href: "/", icon: Search, label: "Search",
-      isActive: (_loc: string) => false,
+      href: "/search", icon: Search, label: "Search",
+      isActive: (loc: string) => loc === "/search",
     },
     {
       href: "/chat", icon: MessageCircle, label: "Toto",
