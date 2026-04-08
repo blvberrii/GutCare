@@ -7,7 +7,7 @@ import { Redirect, Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Scan, ShoppingBag, Loader2, Search, X,
-  History, Package, ChevronRight, Wand2
+  History, Package, ChevronRight, Wand2, Clock, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
@@ -533,7 +533,12 @@ export default function Home() {
             {/* Recently Viewed */}
             <section className="mb-12">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Recently Viewed</h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <Clock className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold">Recently Viewed</h3>
+                </div>
                 <Link href="/history">
                   <span className="text-sm font-bold text-primary">View all</span>
                 </Link>
@@ -558,7 +563,12 @@ export default function Home() {
             {/* For You */}
             <section>
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-bold">For You</h3>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-gradient-to-br from-coral-400 to-coral-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold">For You</h3>
+                </div>
                 <span className="text-xs text-muted-foreground font-bold bg-primary/5 px-3 py-1 rounded-full">Toto picks</span>
               </div>
               <p className="text-sm text-muted-foreground mb-5">Tap any product to see its full gut health breakdown</p>

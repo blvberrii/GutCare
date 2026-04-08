@@ -297,14 +297,44 @@ export default function Onboarding() {
     }
   };
 
+  const stepMeta = [
+    { emoji: null, bg: "", label: "" },
+    { emoji: "🎂", bg: "bg-gradient-to-br from-pink-100 to-purple-100", label: "Your profile" },
+    { emoji: "🫀", bg: "bg-gradient-to-br from-teal-100 to-emerald-100", label: "Gut conditions" },
+    { emoji: "💨", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", label: "Symptoms" },
+    { emoji: "⚠️", bg: "bg-gradient-to-br from-amber-100 to-orange-100", label: "Allergies" },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex flex-col p-6">
       <div className="flex-1 max-w-md mx-auto w-full flex flex-col justify-center">
-        <motion.div className="flex justify-center mb-12">
-          <TotoAvatar mood="happy" size="lg" />
-        </motion.div>
+        <AnimatePresence mode="wait">
+          {step === 0 ? (
+            <motion.div
+              key="toto"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="flex justify-center mb-8"
+            >
+              <TotoAvatar mood="happy" size="lg" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`step-icon-${step}`}
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              className="flex justify-center mb-8"
+            >
+              <div className={`w-24 h-24 rounded-[2rem] ${stepMeta[step].bg} flex items-center justify-center shadow-md`}>
+                <span className="text-5xl">{stepMeta[step].emoji}</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
-        <div className="mb-12 text-center">
+        <div className="mb-8 text-center">
           <motion.h2 
             key={`title-${step}`}
             initial={{ opacity: 0, y: 10 }}
