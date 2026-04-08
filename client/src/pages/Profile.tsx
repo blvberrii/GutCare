@@ -2,9 +2,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { useProfile } from "@/hooks/use-profile";
 import { useScans } from "@/hooks/use-scans";
 import { Button } from "@/components/ui/button";
-import { Settings, Edit2, ChevronRight, Bookmark, Star, User, Heart, ShoppingBag } from "lucide-react";
+import { Settings, Edit2, ChevronRight, Bookmark, Star, User, Heart } from "lucide-react";
 import { Redirect, Link } from "wouter";
 import { motion } from "framer-motion";
+
+function productInitialBg(name: string) {
+  const G = ["bg-gradient-to-br from-teal-400 to-teal-600","bg-gradient-to-br from-coral-400 to-coral-600","bg-gradient-to-br from-violet-400 to-violet-600","bg-gradient-to-br from-amber-400 to-amber-600"];
+  return G[(name.charCodeAt(0) || 0) % G.length];
+}
 
 export default function Profile() {
   const { user } = useAuth();
@@ -209,12 +214,12 @@ export default function Profile() {
                     className="bg-white rounded-2xl border border-black/5 p-4 flex items-center gap-4 shadow-sm cursor-pointer hover:border-primary/20 transition-all"
                     data-testid={`card-scan-${scan.id}`}
                   >
-                    <div className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : "bg-muted"}`}>
+                    <div className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : productInitialBg(scan.productName || "?")}`}>
                       {scan.imageUrl ? (
                         <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-contain" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="w-5 h-5 text-muted-foreground/30" />
+                          <span className="text-white font-black text-sm">{(scan.productName || "?")[0]?.toUpperCase()}</span>
                         </div>
                       )}
                     </div>

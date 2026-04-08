@@ -3,11 +3,21 @@ import { useScans, useCreateScan } from "@/hooks/use-scans";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, ShoppingBag, ChevronRight, History, Package, Loader2, Scan, Wand2 } from "lucide-react";
+import { Search, X, ChevronRight, History, Package, Loader2, Scan, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useProductImage } from "@/hooks/use-product-image";
 import type { Scan as ScanType } from "@shared/schema";
+
+function productInitialBg(name: string) {
+  const GRADIENTS = [
+    "bg-gradient-to-br from-teal-400 to-teal-600",
+    "bg-gradient-to-br from-coral-400 to-coral-600",
+    "bg-gradient-to-br from-violet-400 to-violet-600",
+    "bg-gradient-to-br from-amber-400 to-amber-600",
+  ];
+  return GRADIENTS[(name.charCodeAt(0) || 0) % GRADIENTS.length];
+}
 
 type DBProduct = {
   id: number;
@@ -333,12 +343,12 @@ function ProductRow({
       transition={{ delay: index * 0.04 }}
     >
       <div className={`flex items-center gap-3 px-4 py-3.5 ${showDivider ? "border-b border-black/5" : ""}`}>
-        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : iconBg}`}>
+        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : productInitialBg(productName)}`}>
           {imgUrl ? (
             <img src={imgUrl} alt={productName} className="w-full h-full object-contain" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <ShoppingBag className={`w-5 h-5 ${iconColor}`} />
+              <span className="text-white font-black text-sm">{productName[0]?.toUpperCase()}</span>
             </div>
           )}
         </div>
@@ -373,12 +383,12 @@ function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: 
         className={`flex items-center gap-3 px-4 py-3.5 active:bg-black/5 transition-colors cursor-pointer ${showDivider ? "border-b border-black/5" : ""}`}
         data-testid={`row-scan-${scan.id}`}
       >
-        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : "bg-black/5"}`}>
+        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : productInitialBg(scan.productName || "?")}`}>
           {scan.imageUrl ? (
             <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5 text-muted-foreground/40" />
+              <span className="text-white font-black text-sm">{(scan.productName || "?")[0]?.toUpperCase()}</span>
             </div>
           )}
         </div>

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, CheckCircle2, AlertCircle, Bookmark, BookmarkCheck,
   GraduationCap, ChevronDown, ExternalLink, Heart, Leaf, Zap, Droplets,
-  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2, X,
+  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, Info, Loader2, X,
   Baby, Users, User, ThermometerSun, BookOpen, ShieldX, BadgeCheck, Pill, FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -702,8 +702,8 @@ export default function ResultsPage() {
                 <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" />
               </div>
             ) : (
-              <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${gradeCfg.bg}`}>
-                <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-20`} />
+              <div className={`w-full h-full flex flex-col items-center justify-center ${gradeCfg.bg}`}>
+                <span className={`font-black text-5xl ${gradeCfg.color} opacity-40`}>{(scan.productName || "?")[0]?.toUpperCase()}</span>
               </div>
             )}
           </motion.div>

@@ -3,10 +3,15 @@ import { useUpdateScan } from "@/hooks/use-scans";
 import { useProductImage } from "@/hooks/use-product-image";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { ChevronLeft, Bookmark, BookmarkCheck, ShoppingBag } from "lucide-react";
+import { ChevronLeft, Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useToast } from "@/hooks/use-toast";
+
+function productInitialBg(name: string) {
+  const G = ["bg-gradient-to-br from-teal-400 to-teal-600","bg-gradient-to-br from-coral-400 to-coral-600","bg-gradient-to-br from-violet-400 to-violet-600","bg-gradient-to-br from-amber-400 to-amber-600"];
+  return G[(name.charCodeAt(0) || 0) % G.length];
+}
 
 function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string | null; savedUrl?: string | null }) {
   const fetchedUrl = useProductImage(name, barcode);
@@ -16,8 +21,8 @@ function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string
       <img src={src} alt={name} className="w-full h-full object-contain" />
     </div>
   ) : (
-    <div className="w-full h-full flex items-center justify-center bg-muted">
-      <ShoppingBag className="w-6 h-6 text-muted-foreground/30" />
+    <div className={`w-full h-full flex items-center justify-center ${productInitialBg(name)}`}>
+      <span className="text-white font-black text-sm">{name[0]?.toUpperCase()}</span>
     </div>
   );
 }
