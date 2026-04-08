@@ -1,7 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile, useUpdateProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, User, Shield, Heart, AlertCircle } from "lucide-react";
+import { ChevronLeft, LogOut, User, Shield, Heart, AlertCircle, ChevronRight, HelpCircle, FileText, Lock } from "lucide-react";
 import { Link, Redirect } from "wouter";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -214,8 +214,39 @@ export default function SettingsPage() {
             <Heart className="w-3 h-3" /> Support & Legal
           </h2>
           <div className="bg-white rounded-[2rem] border border-border/50 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm">Help Center</div>
-            <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm">Privacy Policy</div>
+            <Link href="/help">
+              <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <HelpCircle className="w-4 h-4 text-teal-600" />
+                  </div>
+                  Help Center
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </Link>
+            <Link href="/privacy">
+              <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Lock className="w-4 h-4 text-blue-600" />
+                  </div>
+                  Privacy Policy
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </Link>
+            <Link href="/terms">
+              <div className="p-5 border-b border-border/50 hover:bg-muted/30 cursor-pointer font-bold text-sm flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-gray-600" />
+                  </div>
+                  Terms of Service
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground" />
+              </div>
+            </Link>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>

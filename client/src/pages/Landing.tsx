@@ -494,8 +494,13 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-gray-100 text-center text-gray-400 text-sm">
+      <footer className="py-12 px-6 border-t border-gray-100 text-center text-gray-400 text-sm space-y-3">
         <p>© 2026 GutCare. Built for gut clarity.</p>
+        <div className="flex justify-center gap-6 text-xs">
+          <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms of Service</Link>
+          <a href="mailto:support@gutcare.app" className="hover:text-gray-600 transition-colors">Contact</a>
+        </div>
       </footer>
     </div>
   );

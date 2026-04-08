@@ -16,6 +16,9 @@ import SettingsPage from "@/pages/Settings";
 import FavoritesPage from "@/pages/FavoritesPage";
 import HistoryPage from "@/pages/HistoryPage";
 import SearchPage from "@/pages/SearchPage";
+import HelpCenter from "@/pages/HelpCenter";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -34,6 +37,8 @@ function Router() {
         <Route path="/login">
           {() => <AuthPage initialTab="login" />}
         </Route>
+        <Route path="/privacy" component={PrivacyPolicy} />
+        <Route path="/terms" component={TermsOfService} />
         <Route component={Landing} />
       </Switch>
     );
@@ -51,6 +56,9 @@ function Router() {
       <Route path="/history" component={HistoryPage} />
       <Route path="/settings" component={SettingsPage} />
       <Route path="/search" component={SearchPage} />
+      <Route path="/help" component={HelpCenter} />
+      <Route path="/privacy" component={PrivacyPolicy} />
+      <Route path="/terms" component={TermsOfService} />
       <Route component={NotFound} />
     </Switch>
   );
