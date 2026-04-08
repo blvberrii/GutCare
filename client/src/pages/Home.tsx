@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useProductImage } from "@/hooks/use-product-image";
 import { useScans, useCreateScan } from "@/hooks/use-scans";
 import { useProfile } from "@/hooks/use-profile";
 import { TotoAvatar } from "@/components/TotoAvatar";
@@ -62,37 +63,6 @@ function useDebounced<T>(value: T, delay: number): T {
   return debounced;
 }
 
-/** Fetch product image from Open Food Facts (fast, free, no API key). */
-function useProductImage(productName: string, barcode?: string | null) {
-  const key = `gutcare-img2-${(barcode || productName).toLowerCase().replace(/[^a-z0-9]/g, "-").slice(0, 60)}`;
-  const [url, setUrl] = useState<string | null>(() => {
-    try { return localStorage.getItem(key); } catch { return null; }
-  });
-  const fetchedRef = useRef(false);
-
-  useEffect(() => {
-    if (url || fetchedRef.current) return;
-    fetchedRef.current = true;
-    const endpoint = barcode
-      ? `https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=image_url`
-      : `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(productName)}&json=1&fields=image_url,product_name&page_size=1&action=process`;
-
-    fetch(endpoint)
-      .then(r => r.json())
-      .then(data => {
-        const imgUrl = barcode
-          ? data?.product?.image_url
-          : data?.products?.[0]?.image_url;
-        if (imgUrl) {
-          setUrl(imgUrl);
-          try { localStorage.setItem(key, imgUrl); } catch {}
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  return url;
-}
 
 // ─── Grade helpers ─────────────────────────────────────────────────────────────
 

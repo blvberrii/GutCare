@@ -1,9 +1,23 @@
 import { useScans } from "@/hooks/use-scans";
+import { useProductImage } from "@/hooks/use-product-image";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ChevronLeft, ShoppingBag, Calendar } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { TotoAvatar } from "@/components/TotoAvatar";
+
+function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string | null; savedUrl?: string | null }) {
+  const fetchedUrl = useProductImage(name, barcode);
+  const src = savedUrl || fetchedUrl;
+  return src ? (
+    <img src={src} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <ShoppingBag className="w-6 h-6 text-muted-foreground/30" />
+    </div>
+  );
+}
 
 const GRADE_COLOR: Record<string, string> = {
   A: "bg-emerald-500", B: "bg-lime-500", C: "bg-amber-500", D: "bg-orange-500", F: "bg-red-500"
@@ -83,13 +97,7 @@ export default function HistoryPage() {
                     data-testid={`card-history-${scan.id}`}
                   >
                     <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-muted shadow-sm">
-                      {scan.imageUrl ? (
-                        <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="w-6 h-6 text-muted-foreground/30" />
-                        </div>
-                      )}
+                      <ScanImage name={scan.productName || ""} barcode={scan.barcode} savedUrl={scan.imageUrl} />
                     </div>
 
                     <div className="flex-1 min-w-0">

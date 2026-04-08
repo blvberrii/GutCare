@@ -1,4 +1,5 @@
 import { useScan, useUpdateScan } from "@/hooks/use-scans";
+import { useProductImage } from "@/hooks/use-product-image";
 import { useRoute, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,9 +8,8 @@ import {
   AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
 
 const GRADE_CONFIG: Record<string, { color: string; bg: string; border: string; label: string; emoji: string }> = {
   A: { color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", label: "Excellent", emoji: "🌟" },
@@ -376,22 +376,7 @@ export default function ResultsPage() {
   const [comment, setComment] = useState("");
   const [showAdditivesSheet, setShowAdditivesSheet] = useState(false);
   const [showCitationsSection, setShowCitationsSection] = useState(false);
-  const [lazyImageUrl, setLazyImageUrl] = useState<string | null>(null);
-  const imageGenStarted = useRef(false);
-
-  useEffect(() => {
-    if (!scan || scan.imageUrl || imageGenStarted.current) return;
-    imageGenStarted.current = true;
-    apiRequest("POST", "/api/generate-product-image", { productName: scan.productName })
-      .then(res => res.json())
-      .then(({ imageUrl }: { imageUrl: string | null }) => {
-        if (imageUrl) {
-          setLazyImageUrl(imageUrl);
-          updateScan.mutateAsync({ id: scanId, imageUrl }).catch(() => {});
-        }
-      })
-      .catch(() => {});
-  }, [scan?.id]);
+  const fetchedProductImage = useProductImage(scan?.productName || "", scan?.barcode);
 
   if (isLoading) {
     return (
@@ -489,14 +474,11 @@ export default function ResultsPage() {
             transition={{ type: "spring", stiffness: 200 }}
             className="relative z-10 w-44 h-44 rounded-[2.5rem] overflow-hidden shadow-2xl mb-6 bg-white ring-4 ring-white"
           >
-            {(lazyImageUrl || scan.imageUrl) ? (
-              <img src={lazyImageUrl || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-cover" />
+            {(fetchedProductImage || scan.imageUrl) ? (
+              <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-cover" />
             ) : (
               <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${gradeCfg.bg}`}>
-                <div className="animate-pulse flex flex-col items-center gap-3">
-                  <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-20`} />
-                  <div className="w-16 h-1.5 bg-black/10 rounded-full" />
-                </div>
+                <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-20`} />
               </div>
             )}
           </motion.div>
