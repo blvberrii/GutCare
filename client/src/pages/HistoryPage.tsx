@@ -11,9 +11,11 @@ function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string
   const fetchedUrl = useProductImage(name, barcode);
   const src = savedUrl || fetchedUrl;
   return src ? (
-    <img src={src} alt={name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+    <div className="w-full h-full bg-white p-1.5">
+      <img src={src} alt={name} className="w-full h-full object-contain" />
+    </div>
   ) : (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center bg-muted">
       <ShoppingBag className="w-6 h-6 text-muted-foreground/30" />
     </div>
   );

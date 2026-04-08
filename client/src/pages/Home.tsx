@@ -101,9 +101,9 @@ function ProductImage({ name, barcode, accent }: { name: string; barcode?: strin
   const bg = accent === "violet" ? "bg-violet-50" : "bg-teal-50";
   const iconColor = accent === "violet" ? "text-violet-400" : "text-teal-400";
   return (
-    <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${!imgUrl ? bg : ""}`}>
+    <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : bg}`}>
       {imgUrl ? (
-        <img src={imgUrl} alt={name} className="w-full h-full object-cover" />
+        <img src={imgUrl} alt={name} className="w-full h-full object-contain" />
       ) : (
         <div className={`w-full h-full flex items-center justify-center`}>
           <ShoppingBag className={`w-5 h-5 ${iconColor}`} />
@@ -160,9 +160,9 @@ function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: 
         className={`flex items-center gap-3 px-4 py-3.5 active:bg-black/5 transition-colors cursor-pointer ${showDivider ? "border-b border-black/5" : ""}`}
         data-testid={`row-scan-${scan.id}`}
       >
-        <div className="w-11 h-11 rounded-xl overflow-hidden bg-black/5 flex-shrink-0">
+        <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${displayImg ? "bg-white p-1" : "bg-black/5"}`}>
           {displayImg ? (
-            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-cover" />
+            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-muted-foreground/40" />
@@ -332,9 +332,9 @@ function RecommendationCard({ item, index, isLoadingRec, onClick }: {
       data-testid={`card-recommendation-${index}`}
       className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
     >
-      <div className="flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm bg-primary/5">
+      <div className={`flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm ${imgUrl ? "bg-white p-1.5" : "bg-primary/5"}`}>
         {imgUrl ? (
-          <img src={imgUrl} alt={item.productName} className="w-full h-full object-cover" />
+          <img src={imgUrl} alt={item.productName} className="w-full h-full object-contain" />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <ShoppingBag className="w-7 h-7 text-primary/30" />
@@ -621,9 +621,9 @@ function RecentScanCard({ scan }: { scan: ScanType }) {
         whileHover={{ y: -4 }}
         className="bg-white p-4 rounded-[2rem] shadow-sm border border-border w-40 snap-start cursor-pointer flex flex-col"
       >
-        <div className="relative mb-3 w-full aspect-square rounded-xl overflow-hidden bg-muted">
+        <div className={`relative mb-3 w-full aspect-square rounded-xl overflow-hidden ${displayImg ? "bg-white p-2" : "bg-muted"}`}>
           {displayImg ? (
-            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-cover" />
+            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-primary/5">
               <ShoppingBag className="w-8 h-8 text-primary/20" />

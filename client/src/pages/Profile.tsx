@@ -209,9 +209,9 @@ export default function Profile() {
                     className="bg-white rounded-2xl border border-black/5 p-4 flex items-center gap-4 shadow-sm cursor-pointer hover:border-primary/20 transition-all"
                     data-testid={`card-scan-${scan.id}`}
                   >
-                    <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
+                    <div className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : "bg-muted"}`}>
                       {scan.imageUrl ? (
-                        <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-cover" />
+                        <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-contain" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <ShoppingBag className="w-5 h-5 text-muted-foreground/30" />

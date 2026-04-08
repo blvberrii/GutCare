@@ -698,7 +698,9 @@ export default function ResultsPage() {
             className="relative z-10 w-44 h-44 rounded-[2.5rem] overflow-hidden shadow-2xl mb-6 bg-white ring-4 ring-white"
           >
             {(fetchedProductImage || scan.imageUrl) ? (
-              <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-cover" />
+              <div className="w-full h-full bg-white p-3">
+                <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" />
+              </div>
             ) : (
               <div className={`w-full h-full flex flex-col items-center justify-center gap-2 ${gradeCfg.bg}`}>
                 <ShoppingBag className={`w-14 h-14 ${gradeCfg.color} opacity-20`} />
@@ -874,9 +876,9 @@ export default function ResultsPage() {
                       transition={{ delay: i * 0.1 }}
                       className="bg-white rounded-2xl border border-black/5 p-4 flex items-center gap-4 shadow-sm hover:border-primary/30 transition-all cursor-pointer group"
                     >
-                      <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-muted shadow-sm">
+                      <div className={`w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 shadow-sm ${alt.image ? "bg-white p-1.5" : "bg-muted"}`}>
                         {alt.image ? (
-                          <img src={alt.image} alt={alt.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                          <img src={alt.image} alt={alt.name} className="w-full h-full object-contain" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <Package className="w-6 h-6 text-muted-foreground/30" />
