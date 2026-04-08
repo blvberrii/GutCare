@@ -368,9 +368,9 @@ export default function Landing() {
             <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
               <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_15%]" />
             </div>
-            <div className="absolute -bottom-6 -right-6 bg-coral-500 p-6 rounded-2xl shadow-xl -rotate-3">
-              <p className="font-display font-bold text-xl">Fiona Surja</p>
-              <p className="text-coral-100 text-sm">Founder & Developer</p>
+            <div className="absolute -bottom-4 -right-4 bg-coral-500 p-3.5 rounded-xl shadow-xl -rotate-3">
+              <p className="font-display font-bold text-base">Fiona Surja</p>
+              <p className="text-coral-100 text-xs">Founder & Developer</p>
             </div>
           </div>
           <div className="space-y-8">
