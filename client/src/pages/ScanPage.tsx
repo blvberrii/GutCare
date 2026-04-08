@@ -7,12 +7,9 @@ import { useAnalyzeProduct, useCreateScan } from "@/hooks/use-scans";
 import { useToast } from "@/hooks/use-toast";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { apiRequest } from "@/lib/queryClient";
-
-declare class BarcodeDetector {
-  static getSupportedFormats(): Promise<string[]>;
-  constructor(options?: { formats: string[] });
-  detect(source: HTMLVideoElement | HTMLImageElement | HTMLCanvasElement | ImageBitmap): Promise<Array<{ rawValue: string; format: string; boundingBox: DOMRectReadOnly }>>;
-}
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { DecodeHintType, BarcodeFormat } from "@zxing/library";
+import type { IScannerControls } from "@zxing/browser";
 
 const ANALYZE_STEPS = [
   "Reading ingredients...",
@@ -27,9 +24,8 @@ type Mode = "barcode" | "photo";
 export default function ScanPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const detectorRef = useRef<BarcodeDetector | null>(null);
-  const scanLoopRef = useRef<number | null>(null);
+  const photoStreamRef = useRef<MediaStream | null>(null);
+  const zxingControlsRef = useRef<IScannerControls | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const processingRef = useRef(false);
 
@@ -37,7 +33,6 @@ export default function ScanPage() {
   const [image, setImage] = useState<string | null>(null);
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState(false);
-  const [barcodeSupported, setBarcodeSupported] = useState(true);
   const [detected, setDetected] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analyzeStep, setAnalyzeStep] = useState(0);
@@ -47,9 +42,61 @@ export default function ScanPage() {
   const analyzeProduct = useAnalyzeProduct();
   const createScan = useCreateScan();
 
-  // ── Camera ────────────────────────────────────────────────────────────────
+  // ── ZXing barcode scanner (works on iOS, Android, Firefox, Chrome) ────────
 
-  const startCamera = useCallback(async () => {
+  const stopZxing = useCallback(() => {
+    zxingControlsRef.current?.stop();
+    zxingControlsRef.current = null;
+    setCameraReady(false);
+  }, []);
+
+  const startZxingScan = useCallback(async () => {
+    if (!videoRef.current) return;
+    setCameraError(false);
+    setCameraReady(false);
+
+    try {
+      const hints = new Map();
+      hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+        BarcodeFormat.EAN_13, BarcodeFormat.EAN_8,
+        BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
+        BarcodeFormat.CODE_128, BarcodeFormat.CODE_39,
+        BarcodeFormat.CODE_93, BarcodeFormat.ITF,
+        BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX,
+      ]);
+      hints.set(DecodeHintType.TRY_HARDER, true);
+
+      const reader = new BrowserMultiFormatReader(hints, {
+        delayBetweenScanAttempts: 100,
+        delayBetweenScanSuccess: 300,
+      });
+
+      zxingControlsRef.current = await reader.decodeFromConstraints(
+        { video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+        videoRef.current,
+        (result, error) => {
+          if (result && !processingRef.current) {
+            handleBarcodeDetectedRef.current(result.getText());
+          }
+        }
+      );
+
+      setCameraReady(true);
+    } catch {
+      setCameraError(true);
+    }
+  }, []);
+
+  // ── Manual camera for photo mode ──────────────────────────────────────────
+
+  const stopPhotoCamera = useCallback(() => {
+    photoStreamRef.current?.getTracks().forEach(t => t.stop());
+    photoStreamRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+    setCameraReady(false);
+  }, []);
+
+  const startPhotoCamera = useCallback(async () => {
     setCameraError(false);
     setCameraReady(false);
     try {
@@ -57,7 +104,7 @@ export default function ScanPage() {
         video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false,
       });
-      streamRef.current = s;
+      photoStreamRef.current = s;
       if (videoRef.current) {
         videoRef.current.srcObject = s;
         await videoRef.current.play();
@@ -68,52 +115,17 @@ export default function ScanPage() {
     }
   }, []);
 
-  const stopCamera = useCallback(() => {
-    if (scanLoopRef.current) cancelAnimationFrame(scanLoopRef.current);
-    scanLoopRef.current = null;
-    streamRef.current?.getTracks().forEach(t => t.stop());
-    streamRef.current = null;
-    setCameraReady(false);
-  }, []);
+  // ── Barcode detection handler (uses a ref so ZXing callback always has latest) ──
 
-  useEffect(() => {
-    startCamera();
-    return () => {
-      if (scanLoopRef.current) cancelAnimationFrame(scanLoopRef.current);
-      streamRef.current?.getTracks().forEach(t => t.stop());
-    };
-  }, [startCamera]);
-
-  // ── Barcode detector setup ─────────────────────────────────────────────────
-
-  useEffect(() => {
-    const initDetector = async () => {
-      if (!("BarcodeDetector" in window)) {
-        setBarcodeSupported(false);
-        return;
-      }
-      try {
-        const formats = await BarcodeDetector.getSupportedFormats();
-        const wanted = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "code_93", "itf", "qr_code"].filter(f => formats.includes(f));
-        detectorRef.current = new BarcodeDetector({ formats: wanted.length ? wanted : formats });
-      } catch {
-        setBarcodeSupported(false);
-      }
-    };
-    initDetector();
-  }, []);
-
-  // ── Continuous scan loop ──────────────────────────────────────────────────
+  const handleBarcodeDetectedRef = useRef<(code: string) => Promise<void>>(async () => {});
 
   const handleBarcodeDetected = useCallback(async (code: string) => {
     if (processingRef.current) return;
     processingRef.current = true;
     setDetected(code);
 
-    if (scanLoopRef.current) cancelAnimationFrame(scanLoopRef.current);
-
-    // Brief pause so the user sees the green flash
-    await new Promise(r => setTimeout(r, 350));
+    // Brief green flash before starting analysis
+    await new Promise(r => setTimeout(r, 400));
     setIsAnalyzing(true);
     setAnalyzeStep(0);
 
@@ -127,17 +139,15 @@ export default function ScanPage() {
       setDetected(null);
       processingRef.current = false;
       toast({ title, description });
-      startCamera();
-      restartScanLoop();
+      startZxingScan();
     };
 
     try {
-      // Step 1: Look up product by barcode
       const barcodeRes = await apiRequest("GET", `/api/barcode/${encodeURIComponent(code)}`);
       if (!barcodeRes.ok) {
         return resetAndRetry(
           "Product not found",
-          `Barcode ${code} isn't in our database. Switch to Label mode to photograph the ingredients.`,
+          `Barcode ${code} isn't in our database yet. Try Label mode to photograph the ingredients.`,
         );
       }
       const product = await barcodeRes.json();
@@ -145,7 +155,6 @@ export default function ScanPage() {
         return resetAndRetry("Product not found", "Try Label mode to photograph the ingredients.");
       }
 
-      // Step 2: Run full gut health analysis using product name + ingredients
       const analyzeRes = await apiRequest("POST", "/api/analyze/product-text", {
         productName: product.productName,
         ingredients: product.ingredients || "",
@@ -153,7 +162,6 @@ export default function ScanPage() {
       if (!analyzeRes.ok) throw new Error("Analysis failed");
       const analysis = await analyzeRes.json();
 
-      // Step 3: Save and navigate
       const savedScan = await createScan.mutateAsync({
         productName: analysis.productName || product.productName,
         imageUrl: product.imageUrl || null,
@@ -174,35 +182,40 @@ export default function ScanPage() {
     } catch {
       resetAndRetry("Scan failed", "Couldn't analyze that barcode. Try again or switch to Label mode.");
     }
-  }, [createScan, setLocation, toast, startCamera]);
+  }, [createScan, setLocation, toast, startZxingScan]);
 
-  const restartScanLoop = useCallback(() => {
-    if (!detectorRef.current || !videoRef.current || mode !== "barcode") return;
-    const tick = async () => {
-      if (!videoRef.current || !detectorRef.current || processingRef.current) return;
-      if (videoRef.current.readyState >= 2) {
-        try {
-          const results = await detectorRef.current.detect(videoRef.current);
-          if (results.length > 0) {
-            handleBarcodeDetected(results[0].rawValue);
-            return;
-          }
-        } catch { /* ignore frame errors */ }
-      }
-      scanLoopRef.current = requestAnimationFrame(tick);
-    };
-    scanLoopRef.current = requestAnimationFrame(tick);
-  }, [mode, handleBarcodeDetected]);
+  // Keep the ref in sync with the latest callback
+  useEffect(() => {
+    handleBarcodeDetectedRef.current = handleBarcodeDetected;
+  }, [handleBarcodeDetected]);
+
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   useEffect(() => {
-    if (cameraReady && mode === "barcode" && barcodeSupported) {
-      processingRef.current = false;
-      restartScanLoop();
-    }
+    startZxingScan();
     return () => {
-      if (scanLoopRef.current) cancelAnimationFrame(scanLoopRef.current);
+      zxingControlsRef.current?.stop();
+      photoStreamRef.current?.getTracks().forEach(t => t.stop());
     };
-  }, [cameraReady, mode, barcodeSupported, restartScanLoop]);
+  }, []);
+
+  // ── Mode switching ─────────────────────────────────────────────────────────
+
+  const switchMode = useCallback((m: Mode) => {
+    if (m === mode) return;
+    setDetected(null);
+    setImage(null);
+    processingRef.current = false;
+
+    if (m === "barcode") {
+      stopPhotoCamera();
+      startZxingScan();
+    } else {
+      stopZxing();
+      startPhotoCamera();
+    }
+    setMode(m);
+  }, [mode, stopPhotoCamera, startZxingScan, stopZxing, startPhotoCamera]);
 
   // ── Photo mode ─────────────────────────────────────────────────────────────
 
@@ -214,21 +227,26 @@ export default function ScanPage() {
     c.height = v.videoHeight;
     c.getContext("2d")?.drawImage(v, 0, 0);
     setImage(c.toDataURL("image/jpeg", 0.85));
-    stopCamera();
+    stopPhotoCamera();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => { setImage(reader.result as string); stopCamera(); };
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+        stopPhotoCamera();
+        stopZxing();
+      };
       reader.readAsDataURL(file);
     }
   };
 
   const handleRetake = () => {
     setImage(null);
-    startCamera();
+    if (mode === "photo") startPhotoCamera();
+    else startZxingScan();
   };
 
   const handleAnalyzePhoto = async () => {
@@ -264,16 +282,6 @@ export default function ScanPage() {
     }
   };
 
-  const switchMode = (m: Mode) => {
-    if (m === mode) return;
-    if (scanLoopRef.current) cancelAnimationFrame(scanLoopRef.current);
-    processingRef.current = false;
-    setDetected(null);
-    setImage(null);
-    setMode(m);
-    if (!streamRef.current) startCamera();
-  };
-
   // ── Analyzing screen ───────────────────────────────────────────────────────
 
   if (isAnalyzing) {
@@ -306,7 +314,7 @@ export default function ScanPage() {
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-4">
-        <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" onClick={() => setLocation("/")} data-testid="button-back">
+        <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" onClick={() => { stopZxing(); stopPhotoCamera(); setLocation("/"); }} data-testid="button-back">
           <X className="w-6 h-6" />
         </Button>
 
@@ -359,8 +367,13 @@ export default function ScanPage() {
             {/* ── Barcode viewfinder ── */}
             {cameraReady && mode === "barcode" && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                {/* Dark overlay with cutout */}
-                <div className="absolute inset-0 bg-black/50" style={{ clipPath: "polygon(0% 0%, 0% 100%, calc(50% - 145px) 100%, calc(50% - 145px) calc(50% - 80px), calc(50% + 145px) calc(50% - 80px), calc(50% + 145px) calc(50% + 80px), calc(50% - 145px) calc(50% + 80px), calc(50% - 145px) 100%, 100% 100%, 100% 0%)" }} />
+                {/* Darkened overlay with transparent cutout */}
+                <div
+                  className="absolute inset-0 bg-black/50"
+                  style={{
+                    clipPath: "polygon(0% 0%, 0% 100%, calc(50% - 145px) 100%, calc(50% - 145px) calc(50% - 80px), calc(50% + 145px) calc(50% - 80px), calc(50% + 145px) calc(50% + 80px), calc(50% - 145px) calc(50% + 80px), calc(50% - 145px) 100%, 100% 100%, 100% 0%)",
+                  }}
+                />
 
                 {/* Viewfinder box */}
                 <div className={`relative w-72 h-40 transition-all duration-300 ${detected ? "scale-[1.02]" : ""}`}>
@@ -371,10 +384,7 @@ export default function ScanPage() {
                     "bottom-0 left-0 border-b-[3px] border-l-[3px] rounded-bl-xl",
                     "bottom-0 right-0 border-b-[3px] border-r-[3px] rounded-br-xl",
                   ].map((cls, i) => (
-                    <div
-                      key={i}
-                      className={`absolute w-8 h-8 transition-colors duration-300 ${cls} ${detected ? "border-green-400" : "border-white"}`}
-                    />
+                    <div key={i} className={`absolute w-8 h-8 transition-colors duration-300 ${cls} ${detected ? "border-green-400" : "border-white"}`} />
                   ))}
 
                   {/* Laser sweep line */}
@@ -387,11 +397,11 @@ export default function ScanPage() {
                     />
                   )}
 
-                  {/* Detected flash */}
+                  {/* Green flash on detect */}
                   {detected && (
                     <motion.div
                       initial={{ opacity: 0 }}
-                      animate={{ opacity: [0, 0.25, 0] }}
+                      animate={{ opacity: [0, 0.3, 0] }}
                       transition={{ duration: 0.4 }}
                       className="absolute inset-0 bg-green-400 rounded-lg"
                     />
@@ -401,7 +411,7 @@ export default function ScanPage() {
                 {/* Hint text */}
                 <div className="absolute bottom-[calc(50%-120px)] left-1/2 -translate-x-1/2 translate-y-full mt-6">
                   <p className={`text-xs font-bold uppercase tracking-widest mt-4 transition-colors ${detected ? "text-green-400" : "text-white/50"}`}>
-                    {detected ? `Detected: ${detected}` : barcodeSupported ? "Move camera over barcode" : "BarcodeDetector not supported"}
+                    {detected ? `Detected: ${detected}` : "Move camera over barcode"}
                   </p>
                 </div>
               </div>
@@ -439,15 +449,8 @@ export default function ScanPage() {
           <div className="flex flex-col items-center gap-3">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
-              <p className="text-white/60 text-sm font-bold">
-                {barcodeSupported ? "Auto-scanning — no tap needed" : "Barcode scanning not supported on this browser"}
-              </p>
+              <p className="text-white/60 text-sm font-bold">Auto-scanning — no tap needed</p>
             </div>
-            {!barcodeSupported && (
-              <Button onClick={() => switchMode("photo")} className="rounded-full bg-primary text-white px-6 h-12 font-bold">
-                Switch to Label Mode
-              </Button>
-            )}
           </div>
         )}
 
