@@ -24,16 +24,6 @@ import { TotoAvatar } from "@/components/TotoAvatar";
 import { useAuth } from "@/hooks/use-auth";
 import founderImg from "@/assets/images/founder.png";
 
-const FloatingPill = ({ label, delay, className }: { label: string; delay: number; className: string }) => (
-  <motion.span
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay }}
-    className={`inline-flex items-center px-4 py-1.5 rounded-full text-sm font-semibold border backdrop-blur-sm ${className}`}
-  >
-    {label}
-  </motion.span>
-);
 
 const StepCard = ({ num, icon, title, desc, color }: { num: string; icon: React.ReactNode; title: string; desc: string; color: string }) => (
   <motion.div
@@ -114,16 +104,6 @@ export default function Landing() {
         <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-3xl opacity-30 -z-10" />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          {/* Floating condition badges */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            <FloatingPill label="🌿 IBS" delay={0.1} className="bg-teal-50 border-teal-200 text-teal-700" />
-            <FloatingPill label="🔬 SIBO" delay={0.2} className="bg-emerald-50 border-emerald-200 text-emerald-700" />
-            <FloatingPill label="🌾 Celiac" delay={0.3} className="bg-amber-50 border-amber-200 text-amber-700" />
-            <FloatingPill label="🔥 Crohn's" delay={0.4} className="bg-orange-50 border-orange-200 text-orange-700" />
-            <FloatingPill label="📋 FODMAP" delay={0.5} className="bg-purple-50 border-purple-200 text-purple-700" />
-            <FloatingPill label="🥛 Lactose" delay={0.6} className="bg-blue-50 border-blue-200 text-blue-700" />
-          </div>
-
           <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
             Understand what's <br />
             <span className="text-teal-600">really in your food.</span>
