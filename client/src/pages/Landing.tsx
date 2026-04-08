@@ -22,7 +22,6 @@ import {
 } from "lucide-react";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useAuth } from "@/hooks/use-auth";
-import founderImg from "@/assets/images/founder.jpg";
 
 const FloatingPill = ({ label, delay, className }: { label: string; delay: number; className: string }) => (
   <motion.span
@@ -398,8 +397,8 @@ export default function Landing() {
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3" />
         <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_2fr] gap-16 items-center relative z-10">
           <div className="relative">
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
-              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_15%]" />
+            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3 bg-teal-600 flex items-center justify-center">
+              <span className="text-white font-display font-bold text-8xl opacity-60">FS</span>
             </div>
             <div className="absolute -bottom-6 -right-6 bg-coral-500 p-6 rounded-2xl shadow-xl -rotate-3">
               <p className="font-display font-bold text-xl">Fiona Surja</p>
