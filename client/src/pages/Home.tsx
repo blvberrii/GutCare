@@ -83,16 +83,6 @@ function GradeBadge({ grade }: { grade: string | null | undefined }) {
   );
 }
 
-function productInitialBg(name: string) {
-  const GRADIENTS = [
-    "bg-gradient-to-br from-teal-400 to-teal-600",
-    "bg-gradient-to-br from-coral-400 to-coral-600",
-    "bg-gradient-to-br from-violet-400 to-violet-600",
-    "bg-gradient-to-br from-amber-400 to-amber-600",
-  ];
-  return GRADIENTS[(name.charCodeAt(0) || 0) % GRADIENTS.length];
-}
-
 // ─── Small Components ──────────────────────────────────────────────────────────
 
 function SectionLabel({ icon, label, labelClass = "text-muted-foreground" }: {
@@ -106,18 +96,16 @@ function SectionLabel({ icon, label, labelClass = "text-muted-foreground" }: {
   );
 }
 
-function ProductImage({ name, barcode, accent }: { name: string; barcode?: string | null; accent?: "violet" | "teal" }) {
-  const imgUrl = useProductImage(name, barcode);
-  const bg = accent === "violet" ? "bg-violet-50" : "bg-teal-50";
-  const iconColor = accent === "violet" ? "text-violet-400" : "text-teal-400";
+function ProductImage({ name, barcode }: { name: string; barcode?: string | null; accent?: "violet" | "teal" }) {
+  const { url: imgUrl, loading } = useProductImage(name, barcode);
   return (
-    <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : productInitialBg(name)}`}>
-      {imgUrl ? (
+    <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : "bg-gray-100"}`}>
+      {loading ? (
+        <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
+      ) : imgUrl ? (
         <img src={imgUrl} alt={name} className="w-full h-full object-contain" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="text-white font-black text-sm">{name[0]?.toUpperCase()}</span>
-        </div>
+        <div className="w-full h-full rounded-lg bg-gray-100" />
       )}
     </div>
   );
@@ -162,21 +150,22 @@ function ProductRow({
 }
 
 function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: boolean }) {
-  const imgUrl = useProductImage(scan.productName || "", null);
+  const { url: imgUrl, loading: imgLoading } = useProductImage(scan.productName || "", null);
   const displayImg = scan.imageUrl || imgUrl;
+  const isLoading = !scan.imageUrl && imgLoading;
   return (
     <Link href={`/scan/${scan.id}`}>
       <div
         className={`flex items-center gap-3 px-4 py-3.5 active:bg-black/5 transition-colors cursor-pointer ${showDivider ? "border-b border-black/5" : ""}`}
         data-testid={`row-scan-${scan.id}`}
       >
-        <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${displayImg ? "bg-white p-1" : productInitialBg(scan.productName || "?")}`}>
-          {displayImg ? (
+        <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${displayImg ? "bg-white p-1" : "bg-gray-100"}`}>
+          {isLoading ? (
+            <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
+          ) : displayImg ? (
             <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white font-black text-sm">{(scan.productName || "?")[0]?.toUpperCase()}</span>
-            </div>
+            <div className="w-full h-full rounded-lg bg-gray-100" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -334,7 +323,7 @@ function SearchResults({
 function RecommendationCard({ item, index, isLoadingRec, onClick }: {
   item: AiRecommendation; index: number; isLoadingRec: boolean; onClick: () => void;
 }) {
-  const imgUrl = useProductImage(item.productName, null);
+  const { url: imgUrl, loading: imgLoading } = useProductImage(item.productName, null);
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
@@ -342,13 +331,13 @@ function RecommendationCard({ item, index, isLoadingRec, onClick }: {
       data-testid={`card-recommendation-${index}`}
       className="bg-white p-4 rounded-3xl shadow-sm border border-border flex items-center gap-4 cursor-pointer hover:border-primary/40 hover:shadow-md transition-all"
     >
-      <div className={`flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm ${imgUrl ? "bg-white p-1.5" : productInitialBg(item.productName)}`}>
-        {imgUrl ? (
+      <div className={`flex-shrink-0 w-16 h-16 rounded-2xl overflow-hidden shadow-sm ${imgUrl ? "bg-white p-1.5" : "bg-gray-100"}`}>
+        {imgLoading ? (
+          <div className="w-full h-full animate-pulse bg-gray-200 rounded-xl" />
+        ) : imgUrl ? (
           <img src={imgUrl} alt={item.productName} className="w-full h-full object-contain" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-white font-black text-xl">{item.productName[0]?.toUpperCase()}</span>
-          </div>
+          <div className="w-full h-full rounded-xl bg-gray-100" />
         )}
       </div>
       <div className="flex-1 min-w-0">
@@ -623,21 +612,22 @@ export default function Home() {
 // ─── Recent Scan Card ──────────────────────────────────────────────────────────
 
 function RecentScanCard({ scan }: { scan: ScanType }) {
-  const imgUrl = useProductImage(scan.productName || "", null);
+  const { url: imgUrl, loading: imgLoading } = useProductImage(scan.productName || "", null);
   const displayImg = scan.imageUrl || imgUrl;
+  const isLoading = !scan.imageUrl && imgLoading;
   return (
     <Link href={`/scan/${scan.id}`} className="block flex-shrink-0">
       <motion.div
         whileHover={{ y: -4 }}
         className="bg-white p-4 rounded-[2rem] shadow-sm border border-border w-40 snap-start cursor-pointer flex flex-col"
       >
-        <div className={`relative mb-3 w-full aspect-square rounded-xl overflow-hidden ${displayImg ? "bg-white p-2" : productInitialBg(scan.productName || "?")}`}>
-          {displayImg ? (
+        <div className={`relative mb-3 w-full aspect-square rounded-xl overflow-hidden ${displayImg ? "bg-white p-2" : "bg-gray-100"}`}>
+          {isLoading ? (
+            <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
+          ) : displayImg ? (
             <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white font-black text-3xl">{(scan.productName || "?")[0]?.toUpperCase()}</span>
-            </div>
+            <div className="w-full h-full rounded-lg bg-gray-100" />
           )}
           <div className={`absolute top-2 right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-xs shadow-lg ${gradeColor(scan.grade)}`}>
             {scan.grade}

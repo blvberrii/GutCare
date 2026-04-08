@@ -9,16 +9,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useProductImage } from "@/hooks/use-product-image";
 import type { Scan as ScanType } from "@shared/schema";
 
-function productInitialBg(name: string) {
-  const GRADIENTS = [
-    "bg-gradient-to-br from-teal-400 to-teal-600",
-    "bg-gradient-to-br from-coral-400 to-coral-600",
-    "bg-gradient-to-br from-violet-400 to-violet-600",
-    "bg-gradient-to-br from-amber-400 to-amber-600",
-  ];
-  return GRADIENTS[(name.charCodeAt(0) || 0) % GRADIENTS.length];
-}
-
 type DBProduct = {
   id: number;
   barcode: string;
@@ -327,11 +317,9 @@ function ProductRow({
   index: number;
   accent?: "teal" | "violet";
 }) {
-  const imgUrl = useProductImage(productName, barcode);
+  const { url: imgUrl, loading: imgLoading } = useProductImage(productName, barcode);
   const isAnalyzing = analyzingKey === trackKey;
   const isDisabled = analyzingKey !== null;
-  const iconBg = accent === "violet" ? "bg-violet-50" : "bg-teal-50";
-  const iconColor = accent === "violet" ? "text-violet-500" : "text-teal-500";
   const btnBg = accent === "violet"
     ? "bg-violet-100 text-violet-600 hover:bg-violet-200"
     : "bg-primary/10 text-primary hover:bg-primary/20";
@@ -343,13 +331,13 @@ function ProductRow({
       transition={{ delay: index * 0.04 }}
     >
       <div className={`flex items-center gap-3 px-4 py-3.5 ${showDivider ? "border-b border-black/5" : ""}`}>
-        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : productInitialBg(productName)}`}>
-          {imgUrl ? (
+        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : "bg-gray-100"}`}>
+          {imgLoading ? (
+            <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
+          ) : imgUrl ? (
             <img src={imgUrl} alt={productName} className="w-full h-full object-contain" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white font-black text-sm">{productName[0]?.toUpperCase()}</span>
-            </div>
+            <div className="w-full h-full rounded-lg bg-gray-100" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -383,13 +371,11 @@ function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: 
         className={`flex items-center gap-3 px-4 py-3.5 active:bg-black/5 transition-colors cursor-pointer ${showDivider ? "border-b border-black/5" : ""}`}
         data-testid={`row-scan-${scan.id}`}
       >
-        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : productInitialBg(scan.productName || "?")}`}>
+        <div className={`w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : "bg-gray-100"}`}>
           {scan.imageUrl ? (
             <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-contain" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="text-white font-black text-sm">{(scan.productName || "?")[0]?.toUpperCase()}</span>
-            </div>
+            <div className="w-full h-full rounded-lg bg-gray-100" />
           )}
         </div>
         <div className="flex-1 min-w-0">

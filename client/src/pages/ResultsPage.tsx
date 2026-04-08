@@ -594,7 +594,7 @@ export default function ResultsPage() {
   const [comment, setComment] = useState("");
   const [showAdditivesSheet, setShowAdditivesSheet] = useState(false);
   const [showCitationsSection, setShowCitationsSection] = useState(false);
-  const fetchedProductImage = useProductImage(scan?.productName || "", scan?.barcode);
+  const { url: fetchedProductImage, loading: productImgLoading } = useProductImage(scan?.productName || "", scan?.barcode);
 
   if (isLoading) {
     return (
@@ -697,14 +697,14 @@ export default function ResultsPage() {
             transition={{ type: "spring", stiffness: 200 }}
             className="relative z-10 w-44 h-44 rounded-[2.5rem] overflow-hidden shadow-2xl mb-6 bg-white ring-4 ring-white"
           >
-            {(fetchedProductImage || scan.imageUrl) ? (
+            {(!scan.imageUrl && productImgLoading) ? (
+              <div className="w-full h-full animate-pulse bg-gray-200" />
+            ) : (fetchedProductImage || scan.imageUrl) ? (
               <div className="w-full h-full bg-white p-3">
                 <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" />
               </div>
             ) : (
-              <div className={`w-full h-full flex flex-col items-center justify-center ${gradeCfg.bg}`}>
-                <span className={`font-black text-5xl ${gradeCfg.color} opacity-40`}>{(scan.productName || "?")[0]?.toUpperCase()}</span>
-              </div>
+              <div className="w-full h-full bg-gray-100" />
             )}
           </motion.div>
 

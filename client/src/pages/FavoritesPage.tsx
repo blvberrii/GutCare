@@ -8,23 +8,21 @@ import { Button } from "@/components/ui/button";
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useToast } from "@/hooks/use-toast";
 
-function productInitialBg(name: string) {
-  const G = ["bg-gradient-to-br from-teal-400 to-teal-600","bg-gradient-to-br from-coral-400 to-coral-600","bg-gradient-to-br from-violet-400 to-violet-600","bg-gradient-to-br from-amber-400 to-amber-600"];
-  return G[(name.charCodeAt(0) || 0) % G.length];
-}
-
 function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string | null; savedUrl?: string | null }) {
-  const fetchedUrl = useProductImage(name, barcode);
+  const { url: fetchedUrl, loading } = useProductImage(name, barcode);
   const src = savedUrl || fetchedUrl;
-  return src ? (
-    <div className="w-full h-full bg-white p-1.5">
-      <img src={src} alt={name} className="w-full h-full object-contain" />
-    </div>
-  ) : (
-    <div className={`w-full h-full flex items-center justify-center ${productInitialBg(name)}`}>
-      <span className="text-white font-black text-sm">{name[0]?.toUpperCase()}</span>
-    </div>
-  );
+  const isLoading = !savedUrl && loading;
+  if (isLoading) {
+    return <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />;
+  }
+  if (src) {
+    return (
+      <div className="w-full h-full bg-white p-1.5">
+        <img src={src} alt={name} className="w-full h-full object-contain" />
+      </div>
+    );
+  }
+  return <div className="w-full h-full rounded-lg bg-gray-100" />;
 }
 
 const GRADE_COLOR: Record<string, string> = {

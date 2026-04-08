@@ -6,11 +6,6 @@ import { Settings, Edit2, ChevronRight, Bookmark, Star, User, Heart } from "luci
 import { Redirect, Link } from "wouter";
 import { motion } from "framer-motion";
 
-function productInitialBg(name: string) {
-  const G = ["bg-gradient-to-br from-teal-400 to-teal-600","bg-gradient-to-br from-coral-400 to-coral-600","bg-gradient-to-br from-violet-400 to-violet-600","bg-gradient-to-br from-amber-400 to-amber-600"];
-  return G[(name.charCodeAt(0) || 0) % G.length];
-}
-
 export default function Profile() {
   const { user } = useAuth();
   const { data: profile } = useProfile();
@@ -214,13 +209,11 @@ export default function Profile() {
                     className="bg-white rounded-2xl border border-black/5 p-4 flex items-center gap-4 shadow-sm cursor-pointer hover:border-primary/20 transition-all"
                     data-testid={`card-scan-${scan.id}`}
                   >
-                    <div className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : productInitialBg(scan.productName || "?")}`}>
+                    <div className={`w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 ${scan.imageUrl ? "bg-white p-1" : "bg-gray-100"}`}>
                       {scan.imageUrl ? (
                         <img src={scan.imageUrl} alt={scan.productName || ""} className="w-full h-full object-contain" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-white font-black text-sm">{(scan.productName || "?")[0]?.toUpperCase()}</span>
-                        </div>
+                        <div className="w-full h-full rounded-lg bg-gray-100" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
