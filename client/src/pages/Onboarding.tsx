@@ -123,7 +123,7 @@ export default function Onboarding() {
       subtitle: "We'll tailor recommendations to these.",
       content: (
         <div className="grid grid-cols-2 gap-3">
-          {[...conditionsList, "Others"].map((item) => (
+          {["Neither", ...conditionsList, "Others"].map((item) => (
             <div key={item} className="space-y-2">
               <label className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                 form.watch("conditions")?.includes(item)
@@ -134,7 +134,12 @@ export default function Onboarding() {
                   checked={form.watch("conditions")?.includes(item)}
                   onCheckedChange={(checked) => {
                     const current = form.getValues("conditions") || [];
-                    if (checked) form.setValue("conditions", [...current, item]);
+                    if (item === "Neither" && checked) {
+                      form.setValue("conditions", ["Neither"]);
+                      setOtherCondition("");
+                      return;
+                    }
+                    if (checked) form.setValue("conditions", [...current.filter(c => c !== "Neither"), item]);
                     else {
                       form.setValue("conditions", current.filter(c => c !== item));
                       if (item === "Others") setOtherCondition("");
@@ -162,7 +167,7 @@ export default function Onboarding() {
       subtitle: "What's been bothering you lately?",
       content: (
         <div className="grid grid-cols-2 gap-3">
-          {[...symptomsList, "Others"].map((item) => (
+          {["Neither", ...symptomsList, "Others"].map((item) => (
             <div key={item} className="space-y-2">
               <label className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                 form.watch("symptoms")?.includes(item)
@@ -173,7 +178,12 @@ export default function Onboarding() {
                   checked={form.watch("symptoms")?.includes(item)}
                   onCheckedChange={(checked) => {
                     const current = form.getValues("symptoms") || [];
-                    if (checked) form.setValue("symptoms", [...current, item]);
+                    if (item === "Neither" && checked) {
+                      form.setValue("symptoms", ["Neither"]);
+                      setOtherSymptom("");
+                      return;
+                    }
+                    if (checked) form.setValue("symptoms", [...current.filter(s => s !== "Neither"), item]);
                     else {
                       form.setValue("symptoms", current.filter(c => c !== item));
                       if (item === "Others") setOtherSymptom("");
