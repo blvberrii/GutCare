@@ -232,24 +232,25 @@ export default function Landing() {
             </motion.div>
             <div className="relative">
               <div className="absolute inset-0 bg-teal-100 rounded-full blur-3xl opacity-30 -z-10 animate-pulse" />
-              {/* Floating badge decorations */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                className="absolute -top-4 -left-6 bg-white rounded-2xl px-4 py-2 shadow-lg flex items-center gap-2 z-10"
-              >
-                <span className="text-2xl">🌿</span>
-                <span className="font-bold text-teal-700 text-sm">Low FODMAP</span>
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut", delay: 0.5 }}
-                className="absolute -bottom-4 -right-4 bg-white rounded-2xl px-4 py-2 shadow-lg flex items-center gap-2 z-10"
-              >
-                <span className="text-2xl">✅</span>
-                <span className="font-bold text-emerald-700 text-sm">IBS-Safe</span>
-              </motion.div>
-              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
+              <div className="relative max-w-[300px] mx-auto">
+                {/* Floating badges — stacked to the right of the phone */}
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+                  className="absolute top-14 left-full ml-3 bg-white rounded-2xl px-3.5 py-2 shadow-md border border-gray-100 flex items-center gap-2 z-10 whitespace-nowrap"
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-teal-400 flex-shrink-0" />
+                  <span className="font-semibold text-gray-700 text-sm">Low FODMAP</span>
+                </motion.div>
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut", delay: 0.8 }}
+                  className="absolute bottom-14 left-full ml-3 bg-white rounded-2xl px-3.5 py-2 shadow-md border border-gray-100 flex items-center gap-2 z-10 whitespace-nowrap"
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                  <span className="font-semibold text-gray-700 text-sm">IBS-Safe</span>
+                </motion.div>
+              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] overflow-hidden">
                 <div className="bg-white h-full w-full rounded-[1.5rem] flex items-center justify-center p-6 text-center">
                   <div>
                     <TotoAvatar size="lg" mood="happy" />
@@ -259,21 +260,23 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
+              </div>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-16 items-center flex-row-reverse">
             <div className="relative order-2 md:order-1">
               <div className="absolute inset-0 bg-coral-100 rounded-full blur-3xl opacity-30 -z-10" />
-              <motion.div
-                animate={{ y: [0, -7, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-2 shadow-lg flex items-center gap-2 z-10"
-              >
-                <span className="text-2xl">💡</span>
-                <span className="font-bold text-gray-700 text-sm">Smarter pick</span>
-              </motion.div>
-              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
+              <div className="relative max-w-[300px] mx-auto">
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ repeat: Infinity, duration: 3.2, ease: "easeInOut" }}
+                  className="absolute top-14 left-full ml-3 bg-white rounded-2xl px-3.5 py-2 shadow-md border border-gray-100 flex items-center gap-2 z-10 whitespace-nowrap"
+                >
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0" />
+                  <span className="font-semibold text-gray-700 text-sm">Smarter pick</span>
+                </motion.div>
+              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] overflow-hidden">
                 <div className="bg-white h-full w-full rounded-[1.5rem] p-5">
                   <h4 className="font-bold text-gray-800 mb-1 text-sm">Better Alternatives</h4>
                   <p className="text-xs text-gray-400 mb-4">Gut-friendly swaps for you</p>
@@ -293,6 +296,7 @@ export default function Landing() {
                     ))}
                   </div>
                 </div>
+              </div>
               </div>
             </div>
             <motion.div 
