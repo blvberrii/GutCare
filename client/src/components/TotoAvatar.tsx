@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import totoLogo from "@assets/toto-logo.png";
+import totoLogo from "@/assets/toto-logo.png";
 
 interface TotoAvatarProps {
   size?: "sm" | "md" | "lg" | "xl";
-  mood?: "happy" | "thinking" | "excited";
   className?: string;
   noAnimate?: boolean;
+  /** @deprecated No longer used — kept for backwards compatibility */
+  mood?: "happy" | "thinking" | "excited";
 }
 
 const SIZES = {
