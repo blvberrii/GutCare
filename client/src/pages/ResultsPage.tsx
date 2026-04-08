@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft, CheckCircle2, AlertCircle, Bookmark, BookmarkCheck,
   GraduationCap, ChevronDown, ExternalLink, Heart, Leaf, Zap, Droplets,
-  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2, X
+  AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, ShoppingBag, Info, Loader2, X,
+  Baby, Users, User, ThermometerSun, BookOpen, ShieldX, BadgeCheck, Pill, FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -247,6 +248,223 @@ function NutritionFactsCard({ facts, portionSize, hasEstimates }: {
   );
 }
 
+// ─── Spec Color Map ──────────────────────────────────────────────────────────
+const SPEC_COLOR: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+  green:  { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", dot: "bg-emerald-400" },
+  blue:   { bg: "bg-blue-50",   text: "text-blue-700",   border: "border-blue-200",   dot: "bg-blue-400" },
+  amber:  { bg: "bg-amber-50",  text: "text-amber-700",  border: "border-amber-200",  dot: "bg-amber-400" },
+  red:    { bg: "bg-red-50",    text: "text-red-700",    border: "border-red-200",    dot: "bg-red-400" },
+  purple: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200", dot: "bg-purple-400" },
+  teal:   { bg: "bg-teal-50",  text: "text-teal-700",  border: "border-teal-200",  dot: "bg-teal-400" },
+};
+
+function SpecBadge({ spec }: { spec: { label: string; color: string } }) {
+  const style = SPEC_COLOR[spec.color] || SPEC_COLOR.teal;
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black border ${style.bg} ${style.text} ${style.border}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+      {spec.label}
+    </span>
+  );
+}
+
+// ─── Suitability Row ─────────────────────────────────────────────────────────
+const SUITABILITY_ICON_MAP: Record<string, { icon: any; label: string }> = {
+  adults:   { icon: User,  label: "Adults" },
+  children: { icon: Baby,  label: "Children" },
+  pregnant: { icon: Heart, label: "Pregnant" },
+  elderly:  { icon: Users, label: "Elderly" },
+};
+
+function suitabilityColor(value: string) {
+  const v = value.toLowerCase();
+  if (v.includes("not recommended") || v.includes("avoid")) return { dot: "bg-red-500", text: "text-red-600" };
+  if (v.includes("consult") || v.includes("moderation") || v.includes("care")) return { dot: "bg-amber-500", text: "text-amber-600" };
+  return { dot: "bg-emerald-500", text: "text-emerald-600" };
+}
+
+// ─── Collapsible List Card ─────────────────────────────────────────────────
+function CollapsibleListCard({
+  title,
+  subtitle,
+  icon: Icon,
+  items,
+  colorScheme,
+  defaultOpen = false,
+}: {
+  title: string;
+  subtitle?: string;
+  icon: any;
+  items: string[];
+  colorScheme: "orange" | "rose" | "violet" | "teal";
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const cfg: Record<string, { wrap: string; iconBg: string; iconColor: string; dotColor: string }> = {
+    orange: { wrap: "bg-orange-50/80 border-orange-100",  iconBg: "bg-orange-100",  iconColor: "text-orange-500",  dotColor: "bg-orange-400" },
+    rose:   { wrap: "bg-rose-50/80 border-rose-100",      iconBg: "bg-rose-100",    iconColor: "text-rose-500",    dotColor: "bg-rose-400" },
+    violet: { wrap: "bg-violet-50/80 border-violet-100",  iconBg: "bg-violet-100",  iconColor: "text-violet-500",  dotColor: "bg-violet-400" },
+    teal:   { wrap: "bg-teal-50/80 border-teal-100",      iconBg: "bg-teal-100",    iconColor: "text-teal-600",    dotColor: "bg-teal-400" },
+  };
+  const c = cfg[colorScheme];
+
+  return (
+    <div className={`rounded-[2rem] border overflow-hidden ${c.wrap}`}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-4 p-5 text-left"
+        data-testid={`button-collapse-${title.replace(/\s+/g, "-").toLowerCase()}`}
+      >
+        <div className={`w-10 h-10 rounded-2xl ${c.iconBg} flex items-center justify-center flex-shrink-0`}>
+          <Icon className={`w-5 h-5 ${c.iconColor}`} />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-black text-sm">{title}</h3>
+          {subtitle && <p className="text-[11px] text-muted-foreground mt-0.5">{subtitle}</p>}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-black px-3 py-1 rounded-full ${c.iconBg} ${c.iconColor}`}>{items.length}</span>
+          <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 space-y-2.5">
+              {items.map((item, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <span className={`w-2 h-2 rounded-full ${c.dotColor} mt-1.5 flex-shrink-0`} />
+                  <p className="text-xs leading-relaxed text-foreground/80">{item}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ─── Product Info Panel ────────────────────────────────────────────────────
+function ProductInfoPanel({ details }: { details: any }) {
+  const [open, setOpen] = useState(false);
+  const suitability: Record<string, string> = details.suitability || {};
+  const suitabilityKeys = Object.keys(suitability).filter(k => suitability[k] && suitability[k].trim() !== "");
+  const hasDirections = details.directionsForUse && details.directionsForUse.trim() !== "";
+  const hasSafety = details.safetyInfo && details.safetyInfo.trim() !== "";
+  const hasStorage = details.storageInfo && details.storageInfo.trim() !== "";
+
+  const hasContent = suitabilityKeys.length > 0 || hasDirections || hasSafety || hasStorage;
+  if (!hasContent) return null;
+
+  return (
+    <div className="bg-sky-50/70 border border-sky-100 rounded-[2rem] overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center gap-4 p-5 text-left"
+        data-testid="button-collapse-product-info"
+      >
+        <div className="w-10 h-10 rounded-2xl bg-sky-100 flex items-center justify-center flex-shrink-0">
+          <BookOpen className="w-5 h-5 text-sky-600" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-black text-sm">Product Information</h3>
+          <p className="text-[11px] text-muted-foreground mt-0.5">Usage, safety & storage</p>
+        </div>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 space-y-4">
+              {/* Suitability */}
+              {suitabilityKeys.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Suitable for</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {suitabilityKeys.map(key => {
+                      const mapEntry = SUITABILITY_ICON_MAP[key];
+                      const IconComp = mapEntry?.icon || User;
+                      const label = mapEntry?.label || key;
+                      const value = suitability[key];
+                      const { dot, text } = suitabilityColor(value);
+                      return (
+                        <div key={key} className="bg-white rounded-2xl p-3 flex items-start gap-2.5 border border-black/5">
+                          <div className="w-7 h-7 bg-sky-50 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <IconComp className="w-3.5 h-3.5 text-sky-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{label}</p>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              <span className={`w-1.5 h-1.5 rounded-full ${dot} flex-shrink-0`} />
+                              <p className={`text-[11px] font-bold leading-tight ${text}`}>{value}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Directions */}
+              {hasDirections && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Pill className="w-3.5 h-3.5 text-sky-500" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Directions for Use</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-3.5 border border-black/5 text-xs leading-relaxed text-foreground/80">
+                    {details.directionsForUse}
+                  </div>
+                </div>
+              )}
+
+              {/* Safety */}
+              {hasSafety && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <ShieldX className="w-3.5 h-3.5 text-sky-500" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Safety Information</p>
+                  </div>
+                  <div className="bg-amber-50 rounded-2xl p-3.5 border border-amber-100 text-xs leading-relaxed text-amber-800">
+                    {details.safetyInfo}
+                  </div>
+                </div>
+              )}
+
+              {/* Storage */}
+              {hasStorage && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <ThermometerSun className="w-3.5 h-3.5 text-sky-500" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Storage</p>
+                  </div>
+                  <div className="bg-white rounded-2xl p-3.5 border border-black/5 text-xs leading-relaxed text-foreground/80">
+                    {details.storageInfo}
+                  </div>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 const RISK_CFG: Record<string, { color: string; bg: string; border: string; dot: string; label: string }> = {
   High:   { color: "text-red-700",    bg: "bg-red-100",    border: "border-red-200",    dot: "bg-red-500",    label: "Dangerous" },
   Medium: { color: "text-amber-700",  bg: "bg-amber-100",  border: "border-amber-200",  dot: "bg-amber-500",  label: "Risky" },
@@ -404,6 +622,11 @@ export default function ResultsPage() {
   const nutritionFacts = (scan.nutritionFacts as NutritionFact[]) || [];
   const hasEstimates = nutritionFacts.some((f: NutritionFact) => f.estimated);
   const isGood = (scan.score || 0) >= 70;
+  const productDetails = (scan.productDetails as any) || {};
+  const specs: { label: string; color: string }[] = productDetails.specifications || [];
+  const sideEffects: string[] = (productDetails.sideEffects || []).filter(Boolean);
+  const contraindications: string[] = (productDetails.contraindications || []).filter(Boolean);
+  const deficiencyEffects: string[] = (productDetails.deficiencyEffects || []).filter(Boolean);
 
   const handleFavorite = async () => {
     try {
@@ -499,6 +722,17 @@ export default function ResultsPage() {
         <div className="bg-white rounded-t-[3rem] pt-10 px-5 shadow-[0_-20px_60px_-20px_rgba(0,0,0,0.08)] -mt-2">
           <div className="space-y-8">
 
+            {/* Specification Badges */}
+            {specs.length > 0 && (
+              <section data-testid="section-specifications">
+                <div className="flex flex-wrap gap-2">
+                  {specs.map((spec, i) => (
+                    <SpecBadge key={i} spec={spec} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Nutrition Facts */}
             {nutritionFacts.length > 0 && (
               <NutritionFactsCard
@@ -560,6 +794,44 @@ export default function ResultsPage() {
                   ))}
                 </div>
               </section>
+            )}
+
+            {/* Side Effects */}
+            {sideEffects.length > 0 && (
+              <CollapsibleListCard
+                title="Side Effects"
+                subtitle={`${sideEffects.length} potential effect${sideEffects.length > 1 ? "s" : ""} to be aware of`}
+                icon={FlaskConical}
+                items={sideEffects}
+                colorScheme="orange"
+              />
+            )}
+
+            {/* Contraindications */}
+            {contraindications.length > 0 && (
+              <CollapsibleListCard
+                title="Contraindications"
+                subtitle="Conditions or medications to watch out for"
+                icon={ShieldX}
+                items={contraindications}
+                colorScheme="rose"
+              />
+            )}
+
+            {/* Deficiency Effects */}
+            {deficiencyEffects.length > 0 && (
+              <CollapsibleListCard
+                title="Effects of Deficiency"
+                subtitle="What happens when this nutrient is lacking"
+                icon={BadgeCheck}
+                items={deficiencyEffects}
+                colorScheme="violet"
+              />
+            )}
+
+            {/* Product Info (Suitability, Directions, Safety, Storage) */}
+            {Object.keys(productDetails).length > 0 && (
+              <ProductInfoPanel details={productDetails} />
             )}
 
             {/* Additives Quick-Access */}

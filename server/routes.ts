@@ -304,7 +304,24 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "name": "Specific brand + product name (e.g., Siggi's Plain Whole Milk Yogurt)",
       "score": <integer 80-100>
     }
-  ]
+  ],
+  "productDetails": {
+    "specifications": [
+      { "label": "Specification badge text (e.g. Vegan, Gluten-Free, No Artificial Colors, Organic, Halal, High Fiber, Contains Probiotics)", "color": "<green|blue|amber|red|purple|teal>" }
+    ],
+    "suitability": {
+      "adults": "<Suitable|Suitable with moderation|Consult doctor|Not recommended>",
+      "children": "<Suitable|Not suitable under 12|Not suitable under 18|Consult paediatrician|Not recommended>",
+      "pregnant": "<Generally safe|Consult doctor|Not recommended|Avoid>",
+      "elderly": "<Generally suitable|Suitable with care|Consult doctor|Not recommended>"
+    },
+    "directionsForUse": "How to consume/use this product, serving suggestion, timing. Leave empty string if not applicable.",
+    "safetyInfo": "Important safety warnings, allergen notices, do-not-exceed notices. Leave empty string if none.",
+    "storageInfo": "Storage conditions (temperature, light, humidity). Leave empty string if obvious.",
+    "contraindications": ["Condition or medication that conflicts with this product. Empty array for regular foods."],
+    "sideEffects": ["Potential side effect if overconsumed or for sensitive individuals. Empty array if none notable."],
+    "deficiencyEffects": ["What happens if the key nutrient/ingredient in this product is deficient. Empty array for non-nutritive products."]
+  }
 }
 
 IMPORTANT RULES:
@@ -315,6 +332,8 @@ IMPORTANT RULES:
 - For additives, list ALL additives identified in the ingredients list
 - Citations must be specific to THIS product's ingredients, not generic health advice
 - Keep descriptions concise but informative
+- productDetails.specifications: 2-6 accurate badges relevant to this specific product
+- productDetails.contraindications/sideEffects/deficiencyEffects: populate fully for supplements/vitamins/medications; for regular food use short factual lists only if genuinely relevant; otherwise empty array
 `;
 
       const response = await ai.models.generateContent({
@@ -446,7 +465,24 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "name": "Specific brand + product name",
       "score": <integer 80-100>
     }
-  ]
+  ],
+  "productDetails": {
+    "specifications": [
+      { "label": "Specification badge text (e.g. Vegan, Gluten-Free, No Artificial Colors, Organic, Halal, High Fiber, Contains Probiotics)", "color": "<green|blue|amber|red|purple|teal>" }
+    ],
+    "suitability": {
+      "adults": "<Suitable|Suitable with moderation|Consult doctor|Not recommended>",
+      "children": "<Suitable|Not suitable under 12|Not suitable under 18|Consult paediatrician|Not recommended>",
+      "pregnant": "<Generally safe|Consult doctor|Not recommended|Avoid>",
+      "elderly": "<Generally suitable|Suitable with care|Consult doctor|Not recommended>"
+    },
+    "directionsForUse": "How to consume/use this product, serving suggestion, timing. Leave empty string if not applicable.",
+    "safetyInfo": "Important safety warnings, allergen notices, do-not-exceed notices. Leave empty string if none.",
+    "storageInfo": "Storage conditions (temperature, light, humidity). Leave empty string if obvious.",
+    "contraindications": ["Condition or medication that conflicts with this product. Empty array for regular foods."],
+    "sideEffects": ["Potential side effect if overconsumed or for sensitive individuals. Empty array if none notable."],
+    "deficiencyEffects": ["What happens if the key nutrient/ingredient in this product is deficient. Empty array for non-nutritive products."]
+  }
 }
 
 IMPORTANT RULES:
@@ -456,6 +492,8 @@ IMPORTANT RULES:
 - Analyze ONLY the provided ingredients list
 - For additives, list ALL additives identified
 - Citations must be specific to THIS product's ingredients
+- productDetails.specifications: 2-6 accurate badges relevant to this specific product
+- productDetails.contraindications/sideEffects/deficiencyEffects: populate fully for supplements/vitamins/medications; for regular food use short factual lists only if genuinely relevant; otherwise empty array
 `;
 
       const response = await ai.models.generateContent({
