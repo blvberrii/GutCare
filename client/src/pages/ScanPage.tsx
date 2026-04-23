@@ -311,7 +311,7 @@ export default function ScanPage() {
   // ── Main UI ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-black flex flex-col relative">
+    <div className="h-[100dvh] bg-black flex flex-col relative overflow-hidden">
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-4">
         <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" onClick={() => { stopZxing(); stopPhotoCamera(); setLocation("/"); }} data-testid="button-back">
@@ -442,7 +442,7 @@ export default function ScanPage() {
       <canvas ref={canvasRef} className="hidden" />
 
       {/* Bottom controls */}
-      <div className="bg-black/90 p-6 pb-10 backdrop-blur-md">
+      <div className="bg-black/90 px-4 pt-4 pb-5 sm:p-6 sm:pb-10 backdrop-blur-md">
         <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleFileChange} data-testid="input-file" />
 
         {mode === "barcode" && !detected && (

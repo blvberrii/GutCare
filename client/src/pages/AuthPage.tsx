@@ -103,28 +103,29 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
   });
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] flex flex-col">
+    <div className="min-h-[100dvh] sm:min-h-screen bg-[#FDFCF8] flex flex-col">
       {/* Back to home */}
-      <div className="p-4">
+      <div className="px-3 pt-2 pb-0 sm:p-4">
         <Link href="/">
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground h-8">
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
         </Link>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-1 pb-3 sm:py-8">
         {/* Logo */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="flex flex-col items-center gap-3 mb-10"
+          className="flex flex-col items-center gap-1 sm:gap-3 mb-3 sm:mb-10"
         >
-          <TotoAvatar size="lg" mood="happy" />
+          <div className="hidden sm:block"><TotoAvatar size="lg" mood="happy" /></div>
+          <div className="sm:hidden"><TotoAvatar size="md" mood="happy" /></div>
           <div className="text-center">
-            <h1 className="font-display font-bold text-3xl text-teal-700">GutCare</h1>
-            <p className="text-sm text-muted-foreground mt-1">Your personal gut health companion</p>
+            <h1 className="font-display font-bold text-2xl sm:text-3xl text-teal-700">GutCare</h1>
+            <p className="hidden sm:block text-sm text-muted-foreground mt-1">Your personal gut health companion</p>
           </div>
         </motion.div>
 
@@ -142,7 +143,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                 key={t}
                 onClick={() => setTab(t)}
                 data-testid={`tab-${t}`}
-                className={`flex-1 py-4 text-sm font-black transition-colors ${
+                className={`flex-1 py-3 sm:py-4 text-sm font-black transition-colors ${
                   tab === t
                     ? "text-teal-700 border-b-2 border-teal-600"
                     : "text-muted-foreground hover:text-foreground"
@@ -153,13 +154,13 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
             ))}
           </div>
 
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {/* Social sign-in */}
-            <div className="space-y-2.5 mb-5">
+            <div className="space-y-2 sm:space-y-2.5 mb-3 sm:mb-5">
               <a
                 href="/api/auth/replit"
                 data-testid="button-google-oauth"
-                className="flex items-center justify-center gap-3 w-full py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
+                className="flex items-center justify-center gap-3 w-full py-2.5 sm:py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -172,7 +173,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
               <a
                 href="/api/auth/replit"
                 data-testid="button-apple-oauth"
-                className="flex items-center justify-center gap-3 w-full py-3 rounded-xl bg-black hover:bg-gray-900 transition-colors text-sm font-bold text-white"
+                className="flex items-center justify-center gap-3 w-full py-2.5 sm:py-3 rounded-xl bg-black hover:bg-gray-900 transition-colors text-sm font-bold text-white"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                   <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
@@ -182,14 +183,14 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
               <a
                 href="/api/auth/replit"
                 data-testid="button-email-oauth"
-                className="flex items-center justify-center gap-3 w-full py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
+                className="flex items-center justify-center gap-3 w-full py-2.5 sm:py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
               >
                 <Mail className="w-[18px] h-[18px] text-teal-600" />
                 Continue with Email
               </a>
             </div>
 
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-3 mb-3 sm:mb-5">
               <div className="flex-1 h-px bg-black/10" />
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">or</span>
               <div className="flex-1 h-px bg-black/10" />
@@ -203,7 +204,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
                   onSubmit={handleLoginSubmit}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
                   <div>
                     <Label htmlFor="login-username" className="text-xs font-black uppercase tracking-wide text-muted-foreground">
@@ -265,7 +266,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                     type="submit"
                     data-testid="button-login-submit"
                     disabled={loginMutation.isPending}
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-black py-5"
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-black py-4 sm:py-5"
                   >
                     {loginMutation.isPending ? "Signing in…" : "Sign In"}
                   </Button>
@@ -284,7 +285,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   onSubmit={registerForm.handleSubmit((d) => registerMutation.mutate(d))}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
                   <div>
                     <Label htmlFor="reg-firstName" className="text-xs font-black uppercase tracking-wide text-muted-foreground">
@@ -382,7 +383,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                     type="submit"
                     data-testid="button-register-submit"
                     disabled={registerMutation.isPending}
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-black py-5"
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-black py-4 sm:py-5"
                   >
                     {registerMutation.isPending ? "Creating account…" : "Create Account"}
                   </Button>
