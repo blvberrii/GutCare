@@ -385,7 +385,7 @@ export default function Home() {
       <TotoAvatar mood="thinking" />
     </div>
   );
-  if (!profile || !profile.conditions || profile.conditions.length === 0) return <Redirect to="/onboarding" />;
+  if (!profile || !profile.firstName) return <Redirect to="/onboarding" />;
 
   const getGreeting = () => {
     const h = new Date().getHours();
