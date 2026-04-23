@@ -598,18 +598,37 @@ Rules:
     }
   });
 
-  // === Barcode Lookup (DB first, Gemini fallback) ===
-  app.get("/api/barcode/:barcode", isAuthenticated, async (req: any, res) => {
+  // === Barcode Lookup (local DB → Open Food Facts → Gemini) ===
+  // Open Food Facts is a free, crowdsourced database with ~3M real products
+  // worldwide. Successful lookups are cached into our DB so the catalog
+  // grows organically with use.
+  async function fetchFromOpenFoodFacts(barcode: string) {
     try {
-      const { barcode } = req.params;
+      const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_en,brands,categories,ingredients_text,ingredients_text_en,image_front_url,image_url,countries`;
+      const r = await fetch(url, { headers: { "User-Agent": "GutCare/1.0 (gutcare-app)" } });
+      if (!r.ok) return null;
+      const data: any = await r.json();
+      if (data.status !== 1 || !data.product) return null;
+      const p = data.product;
+      const name = p.product_name_en || p.product_name;
+      if (!name) return null;
+      const ingredients = p.ingredients_text_en || p.ingredients_text || "";
+      return {
+        productName: String(name).slice(0, 200),
+        brand: String(p.brands || "").split(",")[0].trim().slice(0, 100),
+        category: String(p.categories || "").split(",").pop()?.trim().slice(0, 100) || "Food",
+        ingredients: String(ingredients).slice(0, 2000),
+        imageUrl: p.image_front_url || p.image_url || null,
+        country: String(p.countries || "").includes("Indonesia") ? "ID" : "INT",
+      };
+    } catch {
+      return null;
+    }
+  }
 
-      // Try local DB first
-      const product = await storage.lookupBarcode(barcode);
-      if (product) return res.json(product);
-
-      // Gemini fallback: try to identify the barcode
-      try {
-        const prompt = `A user scanned barcode: "${barcode}"
+  async function fetchFromGemini(barcode: string) {
+    try {
+      const prompt = `A user scanned barcode: "${barcode}"
 
 If you know which product this barcode belongs to (focus on Indonesian, Southeast Asian, or internationally distributed products), return its details.
 If you are not confident about this specific barcode, return null.
@@ -621,37 +640,60 @@ Return ONLY a valid JSON object or the literal null:
   "category": "Product category",
   "ingredients": "Full ingredient list as readable comma-separated text"
 }`;
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        config: { responseMimeType: "application/json" },
+      });
+      const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text || text.trim() === "null") return null;
+      const guess = JSON.parse(text);
+      if (!guess || !guess.productName) return null;
+      return {
+        productName: String(guess.productName).slice(0, 200),
+        brand: String(guess.brand || "").slice(0, 100),
+        category: String(guess.category || "Food").slice(0, 100),
+        ingredients: String(guess.ingredients || "").slice(0, 2000),
+        imageUrl: null,
+        country: "ID",
+      };
+    } catch {
+      return null;
+    }
+  }
 
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          config: { responseMimeType: "application/json" },
-        });
+  app.get("/api/barcode/:barcode", isAuthenticated, async (req: any, res) => {
+    try {
+      const { barcode } = req.params;
 
-        const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!text || text.trim() === "null") {
-          return res.status(404).json({ message: "Barcode not found" });
-        }
+      // 1) Local DB
+      const cached = await storage.lookupBarcode(barcode);
+      if (cached) return res.json(cached);
 
-        const aiProduct = JSON.parse(text);
-        if (!aiProduct || !aiProduct.productName) {
-          return res.status(404).json({ message: "Barcode not found" });
-        }
+      // 2) Open Food Facts (real, free, ~3M products)
+      let found = await fetchFromOpenFoodFacts(barcode);
 
-        // Return as a pseudo-product (not persisted in DB)
-        return res.json({
-          id: -1,
-          barcode,
-          productName: aiProduct.productName,
-          brand: aiProduct.brand || "",
-          category: aiProduct.category || "",
-          ingredients: aiProduct.ingredients || "",
-          imageUrl: null,
-          country: "ID",
-          createdAt: new Date(),
-        });
-      } catch {
-        return res.status(404).json({ message: "Barcode not found" });
+      // 3) Gemini fallback (best-effort, lower confidence)
+      if (!found) found = await fetchFromGemini(barcode);
+
+      if (!found) return res.status(404).json({ message: "Barcode not found" });
+
+      // Cache into our DB for future scans
+      try {
+        const { db } = await import("./db");
+        const { barcodeProducts } = await import("@shared/schema");
+        const [saved] = await db
+          .insert(barcodeProducts)
+          .values({ barcode, ...found })
+          .onConflictDoUpdate({
+            target: barcodeProducts.barcode,
+            set: found,
+          })
+          .returning();
+        return res.json(saved);
+      } catch (e) {
+        console.error("Cache insert failed:", e);
+        return res.json({ id: -1, barcode, ...found, createdAt: new Date() });
       }
     } catch (err) {
       console.error("Barcode lookup error:", err);
