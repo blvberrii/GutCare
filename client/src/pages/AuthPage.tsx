@@ -105,14 +105,14 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
   return (
     <div className="relative isolate min-h-[100dvh] sm:min-h-screen bg-[#FFFDF9] flex flex-col overflow-x-clip">
       {/* Scattered ambient gradient blobs */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[28rem] h-[28rem] bg-teal-300/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[26rem] h-[26rem] bg-coral-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[30%] -left-32 w-[24rem] h-[24rem] bg-coral-200/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[35%] -right-24 w-[26rem] h-[26rem] bg-teal-200/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[65%] -right-32 w-[28rem] h-[28rem] bg-coral-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 left-1/4 w-[28rem] h-[28rem] bg-coral-200/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-32 right-1/4 w-[26rem] h-[26rem] bg-teal-200/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[28rem] h-[28rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[30%] -left-32 w-[24rem] h-[24rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[35%] -right-24 w-[26rem] h-[26rem] bg-teal-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] -left-24 w-[26rem] h-[26rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[65%] -right-32 w-[28rem] h-[28rem] bg-coral-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 left-1/4 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-32 right-1/4 w-[26rem] h-[26rem] bg-teal-200/55 rounded-full blur-[110px]" />
       {/* Back to home */}
       <div className="px-3 pt-2 pb-0 sm:p-4">
         <Link href="/">

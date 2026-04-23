@@ -93,20 +93,20 @@ export default function Landing() {
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] text-[#2D2D2D] selection:bg-teal-100 overflow-x-clip">
       {/* Scattered ambient gradient blobs — edges + interior, with white gaps in between */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/35 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/35 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/35 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/38 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/50 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/50 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/50 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
@@ -129,8 +129,8 @@ export default function Landing() {
       {/* Hero Section */}
       <header className="px-6 pt-12 pb-20 max-w-7xl mx-auto text-center relative">
         {/* Decorative blobs */}
-        <div className="absolute top-8 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-3xl opacity-40 -z-10" />
-        <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-3xl opacity-30 -z-10" />
+        <div className="absolute top-8 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-[110px] opacity-40 -z-10" />
+        <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-[110px] opacity-30 -z-10" />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
@@ -246,7 +246,7 @@ export default function Landing() {
               </ul>
             </motion.div>
             <div className="relative">
-              <div className="absolute inset-0 bg-teal-100 rounded-full blur-3xl opacity-30 -z-10 animate-pulse" />
+              <div className="absolute inset-0 bg-teal-100 rounded-full blur-[110px] opacity-30 -z-10 animate-pulse" />
               <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
                 <div className="bg-white h-full w-full rounded-[1.5rem] flex items-center justify-center p-6 text-center">
                   <div>
@@ -262,7 +262,7 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-2 gap-16 items-center flex-row-reverse">
             <div className="relative order-2 md:order-1">
-              <div className="absolute inset-0 bg-coral-100 rounded-full blur-3xl opacity-30 -z-10" />
+              <div className="absolute inset-0 bg-coral-100 rounded-full blur-[110px] opacity-30 -z-10" />
               <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
                 <div className="bg-white h-full w-full rounded-[1.5rem] p-5">
                   <h4 className="font-bold text-gray-800 mb-1 text-sm">Better Alternatives</h4>
@@ -385,7 +385,7 @@ export default function Landing() {
       {/* About the Founder Section */}
       <section className="py-28 px-6 bg-teal-700 text-white relative overflow-hidden">
         {/* Glow blobs — kept away from edges so they don't bleed into waves */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-teal-600 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2 z-0" />
+        <div className="absolute top-0 left-0 w-96 h-96 bg-teal-600 rounded-full blur-[110px] opacity-30 -translate-x-1/2 -translate-y-1/2 z-0" />
         {/* Wave top — renders above blobs */}
         <div className="absolute top-0 left-0 w-full leading-none z-10">
           <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-16 block">
@@ -471,7 +471,7 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto bg-teal-600 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-[110px] -translate-y-1/2 translate-x-1/2 opacity-50" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-700 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 opacity-50" />
           {/* Floating condition pills inside CTA */}
           <div className="flex flex-wrap justify-center gap-2 mb-8 opacity-60 relative z-10">
