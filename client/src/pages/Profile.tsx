@@ -31,7 +31,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 35% 25% at 0% 0%, rgba(94,193,201,0.55), transparent 70%), radial-gradient(ellipse 35% 25% at 100% 0%, rgba(255,158,128,0.45), transparent 70%), radial-gradient(ellipse 45% 30% at 50% 100%, rgba(255,180,150,0.55), transparent 70%), #FFFDF9"}}>
+    <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 70% 45% at 0% 0%, rgba(94,193,201,0.55), transparent 75%), radial-gradient(ellipse 70% 45% at 100% 0%, rgba(255,158,128,0.50), transparent 75%), radial-gradient(ellipse 90% 50% at 50% 100%, rgba(255,180,150,0.60), transparent 75%), #FFFDF9"}}>
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/3 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
       {/* Header */}
