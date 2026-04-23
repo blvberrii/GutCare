@@ -136,6 +136,29 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
           </div>
 
           <div className="p-6">
+            {/* Social sign-in */}
+            <div className="space-y-3 mb-5">
+              <a
+                href="/api/auth/replit"
+                data-testid="button-replit-oauth"
+                className="flex items-center justify-center gap-3 w-full py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21.35 11.1H12v2.95h5.35c-.25 1.4-1.95 4.1-5.35 4.1-3.2 0-5.85-2.65-5.85-5.9s2.65-5.9 5.85-5.9c1.85 0 3.05.8 3.75 1.45l2.55-2.45C16.7 3.85 14.6 3 12 3 7 3 3 7 3 12s4 9 9 9c5.2 0 8.65-3.65 8.65-8.8 0-.55-.05-1.05-.3-1.1z" fill="#4285F4"/>
+                </svg>
+                Continue with Google
+              </a>
+              <p className="text-[11px] text-center text-muted-foreground leading-snug">
+                Also supports Apple, GitHub, X &amp; email — powered by Replit Auth
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex-1 h-px bg-black/10" />
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">or</span>
+              <div className="flex-1 h-px bg-black/10" />
+            </div>
+
             <AnimatePresence mode="wait">
               {tab === "login" ? (
                 <motion.form

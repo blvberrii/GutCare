@@ -67,9 +67,19 @@ export function registerAuthRoutes(app: Express): void {
   });
 
   app.post("/api/logout", (req: any, res) => {
-    req.session.destroy(() => {
-      res.json({ ok: true });
-    });
+    const finishDestroy = () =>
+      req.session.destroy(() => {
+        res.clearCookie("connect.sid");
+        res.json({ ok: true });
+      });
+    if (typeof req.logout === "function" && req.user) {
+      req.logout((err: any) => {
+        if (err) console.error("Passport logout error:", err);
+        finishDestroy();
+      });
+    } else {
+      finishDestroy();
+    }
   });
 
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
