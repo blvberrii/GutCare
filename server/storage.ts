@@ -16,6 +16,9 @@ import { eq, desc, ilike, or } from "drizzle-orm";
 export type BarcodeProduct = typeof barcodeProducts.$inferSelect;
 
 export interface IStorage {
+  // Users
+  updateUserAvatar(userId: string, profileImageUrl: string): Promise<void>;
+
   // Profiles
   getProfile(userId: string): Promise<UserProfile | undefined>;
   createProfile(profile: InsertUserProfile): Promise<UserProfile>;
@@ -34,6 +37,11 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Users
+  async updateUserAvatar(userId: string, profileImageUrl: string): Promise<void> {
+    await db.update(users).set({ profileImageUrl, updatedAt: new Date() }).where(eq(users.id, userId));
+  }
+
   // Profiles
   async getProfile(userId: string): Promise<UserProfile | undefined> {
     const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));

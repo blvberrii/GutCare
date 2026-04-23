@@ -1,7 +1,9 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useProfile, useUpdateProfile } from "@/hooks/use-profile";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, User, Shield, Heart, AlertCircle, ChevronRight, HelpCircle, FileText, Lock } from "lucide-react";
+import { ChevronLeft, LogOut, User, Shield, Heart, AlertCircle, ChevronRight, HelpCircle, FileText, Lock, Camera } from "lucide-react";
+import { useRef, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Link, Redirect } from "wouter";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -40,8 +42,53 @@ export default function SettingsPage() {
   const { user, logout } = useAuth();
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
 
   if (!user) return <Redirect to="/" />;
+
+  const handleAvatarPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!/^image\//.test(file.type)) {
+      toast({ title: "Please choose an image file" });
+      return;
+    }
+    setUploading(true);
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = dataUrl;
+      });
+      const size = 256;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d")!;
+      const ratio = Math.max(size / img.width, size / img.height);
+      const w = img.width * ratio;
+      const h = img.height * ratio;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      const resized = canvas.toDataURL("image/jpeg", 0.85);
+      await apiRequest("POST", "/api/user/avatar", { url: resized });
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      toast({ title: "Profile picture updated" });
+    } catch (err: any) {
+      toast({ title: "Couldn't update picture", description: err?.message ?? "Try a smaller image" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const handleUpdate = (field: string, value: any) => {
     updateProfile.mutate({ [field]: value });
@@ -93,6 +140,42 @@ export default function SettingsPage() {
             <User className="w-3 h-3" /> Account Details
           </h2>
           <div className="bg-white rounded-[2rem] border border-border/50 shadow-sm p-6 space-y-5">
+            <div className="flex flex-col items-center gap-3 pb-2">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="relative group disabled:opacity-60"
+                data-testid="button-change-avatar"
+              >
+                {user.profileImageUrl ? (
+                  <img
+                    src={user.profileImageUrl}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg ring-2 ring-primary/20"
+                    data-testid="img-avatar-preview"
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center border-4 border-white shadow-lg ring-2 ring-primary/20">
+                    <User className="w-10 h-10 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="absolute bottom-0 right-0 bg-primary p-2 rounded-full border-2 border-white shadow-md group-hover:scale-110 transition-transform">
+                  <Camera className="w-3.5 h-3.5 text-white" />
+                </div>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarPick}
+                data-testid="input-avatar-file"
+              />
+              <p className="text-xs text-muted-foreground font-medium">
+                {uploading ? "Uploading..." : "Tap to change profile picture"}
+              </p>
+            </div>
             <div className="space-y-2">
               <Label className="font-bold text-sm pl-1">Display Name</Label>
               <Input

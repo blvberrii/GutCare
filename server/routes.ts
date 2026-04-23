@@ -128,6 +128,26 @@ export async function registerRoutes(
     }
   });
 
+  app.post("/api/user/avatar", isAuthenticated, async (req: any, res) => {
+    const userId = req.user.claims.sub;
+    try {
+      const { url } = z.object({
+        url: z.string().refine(
+          (v) => /^data:image\/(png|jpeg|jpg|webp);base64,/.test(v) && v.length < 800_000,
+          "Invalid image (must be PNG/JPEG/WEBP under ~600KB)"
+        ),
+      }).parse(req.body);
+      await storage.updateUserAvatar(userId, url);
+      res.json({ ok: true });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ message: err.errors[0].message });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   app.delete(api.profile.delete.path, isAuthenticated, async (req: any, res) => {
     const userId = req.user.claims.sub;
     try {
