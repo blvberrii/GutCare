@@ -172,7 +172,7 @@ export default function Landing() {
       </header>
 
       {/* How it works */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-3">Simple as 1-2-3</span>
@@ -189,7 +189,7 @@ export default function Landing() {
       </section>
 
       {/* Conditions we support */}
-      <section className="py-16 px-6 bg-[#FFFDF9]">
+      <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-display font-bold mb-2">Built for <span className="text-teal-600">your</span> gut condition</h2>
@@ -211,7 +211,7 @@ export default function Landing() {
       </section>
 
       {/* Features with Screenshots Section */}
-      <section className="bg-white py-24 px-6 overflow-hidden">
+      <section className="py-24 px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-display font-bold mb-4">Precision for your unique gut.</h2>
@@ -312,7 +312,7 @@ export default function Landing() {
       </section>
 
       {/* Benefits Grid */}
-      <section className="py-20 px-6 bg-[#FFFDF9]">
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-display font-bold mb-4">Everything your gut needs</h2>
@@ -330,7 +330,7 @@ export default function Landing() {
       </section>
 
       {/* Comparisons Section */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-display font-bold text-center mb-16">Compare what works for you.</h2>
           <div className="grid sm:grid-cols-2 gap-8">
@@ -427,7 +427,7 @@ export default function Landing() {
       </section>
 
       {/* Stats */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
