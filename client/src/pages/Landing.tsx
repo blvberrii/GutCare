@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Link, Redirect } from "wouter";
+import { Link, Redirect, useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { 
   Scan, 
@@ -75,6 +76,16 @@ const ConditionPill = ({ emoji, label, color }: { emoji: string; label: string; 
 
 export default function Landing() {
   const { user, isLoading } = useAuth();
+  const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const handleAppStoreClick = () => {
+    toast({
+      title: "Coming soon to the App Store! 🐳",
+      description: "We're polishing the iOS app. In the meantime, GutCare works beautifully right here in your browser — taking you in now.",
+    });
+    setTimeout(() => setLocation("/auth"), 1200);
+  };
 
   if (isLoading) return null;
   if (user) return <Redirect to="/home" />;
@@ -119,7 +130,13 @@ export default function Landing() {
               </Button>
             </Link>
             <div className="flex gap-2">
-              <Button variant="outline" size="lg" className="rounded-full px-8 py-7 border-2">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleAppStoreClick}
+                data-testid="button-app-store-hero"
+                className="rounded-full px-8 py-7 border-2 hover:bg-teal-50 hover:border-teal-300 transition-colors"
+              >
                 <Download className="mr-2 w-5 h-5" /> App Store
               </Button>
             </div>
@@ -450,13 +467,17 @@ export default function Landing() {
               Get Started for Free
             </Button>
           </Link>
-          <div className="flex justify-center gap-4 opacity-80 scale-90 md:scale-100 relative z-10">
+          <button
+            onClick={handleAppStoreClick}
+            data-testid="button-app-store-cta"
+            className="mx-auto flex items-center justify-center gap-4 opacity-90 hover:opacity-100 scale-90 md:scale-100 relative z-10 bg-black/20 hover:bg-black/30 px-6 py-3 rounded-2xl transition-all border border-white/20 hover:border-white/40 cursor-pointer"
+          >
             <Download className="w-8 h-8" />
             <div className="text-left">
               <div className="text-xs uppercase tracking-widest font-bold">Download on the</div>
               <div className="text-xl font-bold">App Store</div>
             </div>
-          </div>
+          </button>
         </div>
       </section>
 
