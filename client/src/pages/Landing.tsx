@@ -25,6 +25,7 @@ import { TotoAvatar } from "@/components/TotoAvatar";
 import { useAuth } from "@/hooks/use-auth";
 import founderImg from "@/assets/images/founder.png";
 import scanResultImg from "@assets/Screenshot_2026-04-23_192114_1776948506372.png";
+import oreoResultsImg from "@assets/cropped/oreo_results_clean.png";
 
 
 const StepCard = ({ num, icon, title, desc, color }: { num: string; icon: React.ReactNode; title: string; desc: string; color: string }) => (
@@ -272,26 +273,8 @@ export default function Landing() {
           <div className="grid md:grid-cols-2 gap-16 items-center flex-row-reverse">
             <div className="relative order-2 md:order-1">
               <div className="absolute inset-0 bg-coral-100 rounded-full blur-[110px] opacity-30 -z-10" />
-              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
-                <div className="bg-white h-full w-full rounded-[1.5rem] p-5">
-                  <h4 className="font-bold text-gray-800 mb-1 text-sm">Better Alternatives</h4>
-                  <p className="text-xs text-gray-400 mb-4">Gut-friendly swaps for you</p>
-                  <div className="space-y-3">
-                    {[
-                      { grade: "A", color: "bg-teal-500", label: "Sourdough Rye", sub: "Low FODMAP" },
-                      { grade: "A-", color: "bg-teal-400", label: "Spelt Bread", sub: "Fermented" },
-                      { grade: "B+", color: "bg-emerald-400", label: "Rice Crackers", sub: "Gluten-free" },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                        <div className={`w-9 h-9 ${item.color} rounded-xl flex items-center justify-center text-white font-black text-sm`}>{item.grade}</div>
-                        <div className="flex-1">
-                          <div className="font-semibold text-xs text-gray-800">{item.label}</div>
-                          <div className="text-xs text-gray-400">{item.sub}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              <div className="bg-white rounded-[2.5rem] p-0 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
+                <img src={oreoResultsImg} alt="Oreo scan result with better alternatives" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
               </div>
             </div>
             <motion.div 
