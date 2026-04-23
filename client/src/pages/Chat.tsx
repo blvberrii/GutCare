@@ -114,9 +114,13 @@ export default function Chat() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center text-center pt-6 pb-4"
             >
-              <div className="mb-6 ring-4 ring-white shadow-xl rounded-full">
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="mb-6 ring-4 ring-white shadow-xl rounded-full"
+              >
                 <TotoAvatar size="xl" mood="happy" />
-              </div>
+              </motion.div>
 
               <h2 className="text-2xl font-black mb-2">
                 Hey {firstName}! 👋
