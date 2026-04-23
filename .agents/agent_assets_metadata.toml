@@ -83,3 +83,9 @@ id = "DUF0uv7n0mb3H2rlUCQZR"
 uri = "file://attached_assets/appstore_screenshots/ip_02_login.jpg"
 type = "image"
 title = "Log in"
+
+[[outputs]]
+id = "zfpaRKw0H2xsgl6X7Wfnm"
+uri = "file://attached_assets/cropped/oreo_results_clean.png"
+type = "image"
+title = "Oreo results — scrollbar removed"
