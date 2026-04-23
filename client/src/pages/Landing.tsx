@@ -127,8 +127,8 @@ export default function Landing() {
         <div className="flex items-center justify-between px-4 py-3 sm:p-6 max-w-7xl mx-auto gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className="hidden sm:block"><TotoAvatar size="lg" mood="happy" /></div>
-          <div className="sm:hidden"><TotoAvatar size="sm" mood="happy" /></div>
-          <span className="font-display font-bold text-xl sm:text-4xl text-teal-700">GutCare</span>
+          <div className="sm:hidden"><TotoAvatar size="md" mood="happy" /></div>
+          <span className="font-display font-bold text-2xl sm:text-4xl text-teal-700">GutCare</span>
         </div>
         <div className="flex gap-1 sm:gap-4 items-center shrink-0">
           <Link href="/login">
