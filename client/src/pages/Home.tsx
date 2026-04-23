@@ -457,7 +457,7 @@ export default function Home() {
   const isSearching = query.trim().length > 0;
 
   return (
-    <div className="relative isolate min-h-screen pb-32 overflow-hidden bg-[#FFFDF9]">
+    <div className="relative isolate min-h-screen pb-32 overflow-x-clip bg-[#FFFDF9]">
       {/* ── Headspace-style scattered atmosphere blobs (behind everything) ── */}
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/40 rounded-full blur-3xl" />
@@ -477,7 +477,7 @@ export default function Home() {
             </div>
             <Link href="/profile">
               <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
-                <TotoAvatar size="lg" mood="happy" />
+                <TotoAvatar size="xl" mood="happy" />
               </div>
             </Link>
           </header>
