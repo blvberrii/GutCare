@@ -15,7 +15,6 @@ import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
 
 const registerSchema = z.object({
-  firstName: z.string().min(1, "Display name is required").max(50),
   username: z
     .string()
     .min(3, "Username must be at least 3 characters")
@@ -46,7 +45,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
 
   const registerForm = useForm<RegisterForm>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { firstName: "", username: "", password: "", confirmPassword: "" },
+    defaultValues: { username: "", password: "", confirmPassword: "" },
   });
 
   const loginForm = useForm<LoginForm>({
@@ -310,25 +309,6 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
                   onSubmit={registerForm.handleSubmit((d) => registerMutation.mutate(d))}
                   className="space-y-3"
                 >
-                  <div>
-                    <Label htmlFor="reg-firstName" className="text-xs font-black uppercase tracking-wide text-muted-foreground">
-                      Display Name
-                    </Label>
-                    <div className="relative mt-1.5">
-                      <Smile className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="reg-firstName"
-                        data-testid="input-reg-firstname"
-                        placeholder="e.g. Sarah"
-                        className="pl-10 rounded-xl"
-                        {...registerForm.register("firstName")}
-                      />
-                    </div>
-                    {registerForm.formState.errors.firstName && (
-                      <p className="text-xs text-red-500 mt-1">{registerForm.formState.errors.firstName.message}</p>
-                    )}
-                  </div>
-
                   <div>
                     <Label htmlFor="reg-username" className="text-xs font-black uppercase tracking-wide text-muted-foreground">
                       Username
