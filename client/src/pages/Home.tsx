@@ -463,23 +463,22 @@ export default function Home() {
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[40%] -right-40 w-[30rem] h-[30rem] bg-coral-100/50 rounded-full blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
-      {/* ── Greeting (scrolls naturally with the page) ── */}
-      {!isSearching && (
-        <header className="flex justify-between items-center px-6 pt-12 pb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-primary">{getGreeting()},</h1>
-            <p className="text-xl font-bold text-coral-500">{profile?.firstName || user?.firstName || "Friend"}!</p>
-          </div>
-          <Link href="/profile">
-            <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
-              <TotoAvatar size="sm" mood="happy" />
+      {/* ── Sticky frosted header: greeting + search stay pinned, content scrolls underneath ── */}
+      <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
+        {!isSearching && (
+          <header className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-primary">{getGreeting()},</h1>
+              <p className="text-xl font-bold text-coral-500">{profile?.firstName || user?.firstName || "Friend"}!</p>
             </div>
-          </Link>
-        </header>
-      )}
+            <Link href="/profile">
+              <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
+                <TotoAvatar size="sm" mood="happy" />
+              </div>
+            </Link>
+          </header>
+        )}
 
-      {/* ── Search bar (scrolls with page) ── */}
-      <div className={`px-6 ${isSearching ? "sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md pt-4 pb-3 border-b border-black/5" : "pt-2 pb-4"}`}>
         {/* Search bar */}
         <div className="flex items-center gap-2.5 bg-white/70 backdrop-blur-sm border border-black/5 rounded-2xl px-4 py-3 shadow-sm">
           <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
