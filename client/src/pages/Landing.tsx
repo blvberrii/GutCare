@@ -93,20 +93,20 @@ export default function Landing() {
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] text-[#2D2D2D] selection:bg-teal-100 overflow-x-clip">
       {/* Scattered ambient gradient blobs — edges + interior, with white gaps in between */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/50 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/50 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/50 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/50 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/50 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/50 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
