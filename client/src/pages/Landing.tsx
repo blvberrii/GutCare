@@ -108,6 +108,12 @@ export default function Landing() {
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
 
+      {/* Mobile-friendly center blobs */}
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[15%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-200/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[40%] left-[40%] w-[22rem] h-[22rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[65%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[88%] left-[45%] w-[18rem] h-[18rem] bg-teal-200/55 rounded-full blur-[110px]" />
+
       {/* Desktop-only center blobs */}
       <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[12%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/55 rounded-full blur-[200px] md:scale-[1.6]" />
       <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-[45%] w-[30rem] h-[30rem] bg-teal-300/55 rounded-full blur-[200px] md:scale-[1.6]" />
@@ -118,25 +124,25 @@ export default function Landing() {
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
-        <div className="flex items-center justify-between p-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-4 py-3 sm:p-6 max-w-7xl mx-auto gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <div className="hidden sm:block"><TotoAvatar size="lg" mood="happy" /></div>
-          <div className="sm:hidden"><TotoAvatar size="md" mood="happy" /></div>
-          <span className="font-display font-bold text-2xl sm:text-4xl text-teal-700">GutCare</span>
+          <div className="sm:hidden"><TotoAvatar size="sm" mood="happy" /></div>
+          <span className="font-display font-bold text-xl sm:text-4xl text-teal-700">GutCare</span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-1 sm:gap-4 items-center shrink-0">
           <Link href="/login">
-            <Button variant="ghost" className="text-teal-700 font-medium">Log In</Button>
+            <Button variant="ghost" className="text-teal-700 font-medium px-2 sm:px-4 text-sm sm:text-base">Log In</Button>
           </Link>
           <Link href="/auth">
-            <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">Get Started</Button>
+            <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-3 sm:px-6 text-sm sm:text-base">Get Started</Button>
           </Link>
         </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="px-6 pt-12 pb-20 max-w-7xl mx-auto text-center relative">
+      <header className="px-6 pt-6 sm:pt-12 pb-20 max-w-7xl mx-auto text-center relative">
         {/* Decorative blobs */}
         <div className="absolute top-8 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-[110px] opacity-40 -z-10" />
         <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-[110px] opacity-30 -z-10" />
