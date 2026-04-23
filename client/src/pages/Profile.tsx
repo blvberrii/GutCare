@@ -45,14 +45,13 @@ export default function Profile() {
       {/* Header */}
       <div className="bg-primary text-white pt-16 pb-20 px-6 relative overflow-hidden rounded-b-[3.5rem] shadow-2xl shadow-primary/20">
         {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
         <div className="absolute top-10 left-8 w-24 h-24 bg-coral-400/30 rounded-full blur-2xl" />
 
         <div className="absolute top-0 right-0 p-6 pt-12 z-10">
           <Link href="/settings">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" data-testid="button-settings">
-              <Settings className="w-6 h-6" />
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full w-12 h-12" data-testid="button-settings">
+              <Settings className="!w-7 !h-7" />
             </Button>
           </Link>
         </div>
