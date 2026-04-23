@@ -135,7 +135,7 @@ export default function SearchPage() {
   const showNoResults = debouncedQuery.trim() && !anyLoading && !hasAnyResults;
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{background:"radial-gradient(ellipse 70% 45% at 0% 0%, rgba(94,193,201,0.55), transparent 75%), radial-gradient(ellipse 70% 45% at 100% 0%, rgba(255,158,128,0.50), transparent 75%), radial-gradient(ellipse 90% 50% at 50% 100%, rgba(255,180,150,0.60), transparent 75%), #FFFDF9"}}>
       {/* Search Header */}
       <div className="sticky top-0 z-20 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5 px-4 pt-4 pb-3">
         <div className="flex items-center gap-3 max-w-lg mx-auto">
