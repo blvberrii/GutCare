@@ -61,7 +61,6 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
     mutationFn: (data: RegisterForm) =>
       apiRequest("POST", "/api/auth/register", {
         username: data.username,
-        firstName: data.firstName,
         password: data.password,
       }),
     onSuccess: () => {
