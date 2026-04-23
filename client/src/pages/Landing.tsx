@@ -445,7 +445,7 @@ export default function Landing() {
           </div>
 
           <div className="max-w-3xl mx-auto text-center">
-            <Quote className="w-12 h-12 text-teal-200 mx-auto mb-8" />
+            <Quote className="w-12 h-12 text-teal-600 mx-auto mb-8" />
             <h3 className="text-2xl italic font-medium leading-relaxed mb-8 text-gray-700">
               "For the first time in years, I can grocery shop without anxiety. Toto makes understanding complex labels so simple."
             </h3>
