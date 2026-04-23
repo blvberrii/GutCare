@@ -37,6 +37,7 @@ export default function Profile() {
         {/* Decorative circles */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-10 left-8 w-24 h-24 bg-coral-400/30 rounded-full blur-2xl" />
 
         <div className="absolute top-0 right-0 p-6 pt-12 z-10">
           <Link href="/settings">
@@ -83,12 +84,12 @@ export default function Profile() {
               <div className="text-2xl font-black">{recentScans.length}</div>
               <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Scans</div>
             </div>
-            <div className="w-px bg-white/20" />
+            <div className="w-px bg-coral-300/40" />
             <div className="text-center">
               <div className="text-2xl font-black">{favoriteScans.length}</div>
               <div className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Saved</div>
             </div>
-            <div className="w-px bg-white/20" />
+            <div className="w-px bg-coral-300/40" />
             <div className="text-center">
               <div className="text-2xl font-black">
                 {recentScans.length > 0
@@ -198,7 +199,7 @@ export default function Profile() {
             <div className="flex items-center justify-between px-1 mb-4">
               <h3 className="font-black text-xl">Recent Scans</h3>
               <Link href="/history">
-                <span className="text-xs font-black text-primary uppercase tracking-widest">See all</span>
+                <span className="text-xs font-black text-coral-600 uppercase tracking-widest">See all →</span>
               </Link>
             </div>
             <div className="space-y-3">

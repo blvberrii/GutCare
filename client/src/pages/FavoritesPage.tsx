@@ -117,7 +117,7 @@ export default function FavoritesPage() {
                     </div>
                     <button
                       onClick={(e) => handleUnfavorite(scan.id, e)}
-                      className="text-primary hover:text-red-500 transition-colors"
+                      className="text-coral-500 hover:text-coral-700 transition-colors"
                       data-testid={`button-unfavorite-${scan.id}`}
                     >
                       <BookmarkCheck className="w-5 h-5 fill-current" />

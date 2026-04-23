@@ -635,7 +635,7 @@ function RecentScanCard({ scan }: { scan: ScanType }) {
           </div>
         </div>
         <h4 className="font-bold text-xs line-clamp-2 mb-1 leading-tight">{scan.productName}</h4>
-        <div className="text-[10px] font-bold text-primary bg-primary/5 self-start px-2 py-1 rounded-lg mt-auto">{scan.score}/100</div>
+        <div className="text-[10px] font-bold text-coral-600 bg-coral-50 self-start px-2 py-1 rounded-lg mt-auto">{scan.score}/100</div>
       </motion.div>
     </Link>
   );

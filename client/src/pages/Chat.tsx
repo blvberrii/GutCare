@@ -125,7 +125,7 @@ export default function Chat() {
                 <div className="space-y-2.5">
                   {TOTO_FACTS.map((fact, i) => (
                     <div key={i} className="flex items-center gap-2.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
+                      <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${i % 2 === 0 ? "bg-primary" : "bg-coral-500"}`} />
                       <p className="text-xs text-muted-foreground font-medium leading-snug">{fact}</p>
                     </div>
                   ))}
@@ -143,16 +143,16 @@ export default function Chat() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.07 }}
                     onClick={() => sendMessage(q)}
-                    className="w-full flex items-center gap-3 p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-primary/30 hover:shadow-md transition-all text-left group"
+                    className="w-full flex items-center gap-3 p-4 bg-white rounded-2xl border border-black/5 shadow-sm hover:border-coral-300 hover:shadow-md transition-all text-left group"
                     data-testid={`button-quick-${i}`}
                   >
                     <span className="text-sm font-medium text-foreground flex-1">{q}</span>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary transition-colors flex-shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-coral-500 transition-colors flex-shrink-0" />
                   </motion.button>
                 ))}
               </div>
               <p className="text-xs text-muted-foreground/60 mt-4 font-medium">
-                You can also type <span className="text-primary font-bold">any question</span> in the box below ↓
+                You can also type <span className="text-coral-600 font-bold">any question</span> in the box below ↓
               </p>
             </motion.div>
           )}
@@ -234,7 +234,7 @@ export default function Chat() {
                 <button
                   key={i}
                   onClick={() => sendMessage(q)}
-                  className="px-3 py-1.5 bg-white border border-black/10 rounded-full text-xs font-bold text-muted-foreground hover:border-primary hover:text-primary transition-all shadow-sm"
+                  className="px-3 py-1.5 bg-white border border-black/10 rounded-full text-xs font-bold text-muted-foreground hover:border-coral-400 hover:text-coral-600 transition-all shadow-sm"
                 >
                   {q}
                 </button>
