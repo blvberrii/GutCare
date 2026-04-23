@@ -120,8 +120,9 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
         <div className="flex items-center justify-between p-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <TotoAvatar size="lg" mood="happy" />
-          <span className="font-display font-bold text-4xl text-teal-700">GutCare</span>
+          <div className="hidden sm:block"><TotoAvatar size="lg" mood="happy" /></div>
+          <div className="sm:hidden"><TotoAvatar size="md" mood="happy" /></div>
+          <span className="font-display font-bold text-2xl sm:text-4xl text-teal-700">GutCare</span>
         </div>
         <div className="flex gap-4">
           <Link href="/login">
