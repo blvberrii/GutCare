@@ -23,11 +23,10 @@ export function TotoAvatar({ size = "md", className = "" }: TotoAvatarProps) {
     <motion.div
       className={`relative ${sizeClass} ${className} rounded-full bg-white overflow-hidden`}
     >
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] rounded-full bg-primary/40 blur-2xl" />
       <img
         src={totoLogo}
         alt="Toto the whale"
-        className="relative w-full h-full object-contain"
+        className="w-full h-full object-contain"
         style={{ objectPosition: "33% 68%" }}
         draggable={false}
       />
