@@ -264,7 +264,7 @@ export default function Landing() {
             <div className="relative">
               <div className="absolute inset-0 bg-teal-100 rounded-full blur-[110px] opacity-30 -z-10 animate-pulse" />
               <div className="bg-white rounded-[2.5rem] p-0 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
-                <img src={scanResultImg} alt="Scan result example" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
+                <img src={scanResultImg} alt="Scan result example" className="w-full h-full object-cover object-left-top rounded-[1.5rem] scale-[1.08] origin-top-left" style={{ clipPath: 'inset(0 7% 0 0)' }} />
               </div>
             </div>
           </div>
