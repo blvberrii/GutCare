@@ -396,8 +396,8 @@ export default function Landing() {
         <div className="absolute top-0 left-0 w-96 h-96 bg-teal-600 rounded-full blur-[110px] opacity-30 -translate-x-1/2 -translate-y-1/2 z-0" />
         {/* Wave top */}
         <div className="absolute top-0 left-0 w-full leading-none z-10">
-          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-16 block">
-            <path d="M0,0 L1440,0 L1440,55 C1200,75 960,25 720,55 C480,80 240,30 0,55 Z" fill="#FFFDF9" />
+          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-24 block">
+            <path d="M0,0 L1440,0 L1440,30 C1200,70 960,5 720,40 C480,75 240,10 0,45 Z" fill="#FFFDF9" />
           </svg>
         </div>
         {/* Wave bottom */}
