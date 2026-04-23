@@ -459,13 +459,13 @@ export default function Home() {
   return (
     <div className="relative isolate min-h-screen pb-32 overflow-x-clip bg-[#FFFDF9]">
       {/* ── Headspace-style scattered atmosphere blobs (behind everything) ── */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-teal-200/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/45 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/70 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-teal-200/45 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-32 w-[24rem] h-[24rem] bg-coral-200/50 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] right-[10%] w-[20rem] h-[20rem] bg-teal-200/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] -left-20 w-[22rem] h-[22rem] bg-coral-300/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[20%] w-[24rem] h-[24rem] bg-coral-200/55 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] right-[10%] w-[20rem] h-[20rem] bg-teal-200/45 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] -left-20 w-[22rem] h-[22rem] bg-coral-300/70 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[20%] w-[24rem] h-[24rem] bg-coral-200/70 rounded-full blur-3xl md:blur-[200px] md:scale-[1.6]" />
 
       {/* ── Sticky frosted header: greeting + search stay pinned, content scrolls underneath ── */}
       <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
