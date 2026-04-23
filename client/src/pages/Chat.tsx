@@ -77,7 +77,12 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2]" style={{ height: "calc(100dvh - 76px)" }}>
+    <div className="relative flex flex-col bg-[#FFFDF9] overflow-hidden" style={{ height: "calc(100dvh - 76px)" }}>
+      {/* ── Soft background atmosphere ── */}
+      <div aria-hidden className="pointer-events-none absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-teal-300/25 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute top-1/2 -right-32 w-[28rem] h-[28rem] bg-coral-300/30 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-32 left-1/4 w-[26rem] h-[26rem] bg-coral-200/35 rounded-full blur-3xl" />
+
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
         <div className="flex items-center gap-4 p-4 max-w-lg mx-auto">

@@ -31,7 +31,12 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2] pb-32">
+    <div className="relative min-h-screen bg-[#FFFDF9] pb-32 overflow-hidden">
+      {/* ── Soft background atmosphere ── */}
+      <div aria-hidden className="pointer-events-none absolute top-[55%] -left-40 w-[30rem] h-[30rem] bg-teal-300/25 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute top-[40%] -right-40 w-[30rem] h-[30rem] bg-coral-300/30 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/3 w-[28rem] h-[28rem] bg-coral-200/35 rounded-full blur-3xl" />
+
       {/* Header */}
       <div className="bg-primary text-white pt-16 pb-20 px-6 relative overflow-hidden rounded-b-[3.5rem] shadow-2xl shadow-primary/20">
         {/* Decorative circles */}
