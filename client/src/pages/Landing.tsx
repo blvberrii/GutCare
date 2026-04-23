@@ -108,6 +108,14 @@ export default function Landing() {
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
 
+      {/* Desktop-only center blobs */}
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[12%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-[45%] w-[30rem] h-[30rem] bg-teal-300/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[44%] left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-coral-300/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[58%] left-[40%] w-[30rem] h-[30rem] bg-teal-200/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[72%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[86%] left-[48%] w-[28rem] h-[28rem] bg-teal-300/55 rounded-full blur-[200px] md:scale-[1.6]" />
+
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
         <div className="flex items-center justify-between p-6 max-w-7xl mx-auto">
