@@ -311,7 +311,7 @@ export default function ScanPage() {
   // ── Main UI ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="h-[100dvh] bg-black flex flex-col relative overflow-hidden">
+    <div className="h-[100dvh] bg-[#0a2d33] flex flex-col relative overflow-hidden">
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 pt-4">
         <Button variant="ghost" size="icon" className="text-white hover:bg-white/20 rounded-full" onClick={() => { stopZxing(); stopPhotoCamera(); setLocation("/"); }} data-testid="button-back">
@@ -342,7 +342,7 @@ export default function ScanPage() {
       </div>
 
       {/* Camera feed */}
-      <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-gray-950">
+      <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a2d33]">
         {image ? (
           <img src={image} alt="Preview" className="w-full h-full object-contain" />
         ) : (
@@ -350,17 +350,19 @@ export default function ScanPage() {
             <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
 
             {!cameraReady && !cameraError && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950">
-                <Camera className="w-16 h-16 text-white/20 mb-3 animate-pulse" />
-                <p className="text-white/30 text-sm font-bold">Starting camera...</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#0a2d33] via-[#0d3d44] to-[#0a2d33]">
+                <Camera className="w-16 h-16 text-coral-400/40 mb-3 animate-pulse" />
+                <p className="text-white/40 text-sm font-bold">Starting camera...</p>
               </div>
             )}
 
             {cameraError && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-950 p-8 text-center">
-                <ImageIcon className="w-14 h-14 text-white/15 mb-4" />
-                <p className="text-white/40 text-sm font-bold mb-1">Camera unavailable</p>
-                <p className="text-white/25 text-xs">Upload a photo from your gallery below</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#0a2d33] via-[#0d3d44] to-[#0a2d33] p-8 text-center">
+                <div className="w-24 h-24 rounded-3xl bg-coral-500/15 border border-coral-400/30 flex items-center justify-center mb-5 shadow-2xl shadow-coral-500/10">
+                  <Camera className="w-11 h-11 text-coral-300" />
+                </div>
+                <p className="text-white text-base font-bold mb-1.5">Point your camera at a product</p>
+                <p className="text-white/50 text-xs max-w-[240px] leading-relaxed">Or upload a photo from your gallery using the button below</p>
               </div>
             )}
 
