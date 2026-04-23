@@ -31,10 +31,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="relative isolate min-h-screen bg-[#FFFDF9] pb-32 overflow-hidden">
-      {/* ── Soft background atmosphere ── */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[55%] -left-40 w-[30rem] h-[30rem] bg-teal-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[40%] -right-40 w-[30rem] h-[30rem] bg-coral-100/50 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-[#FFFDF9] pb-32">
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/3 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
       {/* Header */}

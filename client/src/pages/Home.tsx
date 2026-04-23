@@ -457,12 +457,7 @@ export default function Home() {
   const isSearching = query.trim().length > 0;
 
   return (
-    <div className="relative isolate min-h-screen bg-[#FFFDF9] pb-32 overflow-hidden">
-      {/* ── Soft background atmosphere (decorative blobs, behind everything) ── */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[40%] -right-40 w-[30rem] h-[30rem] bg-coral-100/50 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
-
+    <div className="min-h-screen bg-[#FFFDF9] pb-32">
       {/* ── Sticky frosted header: greeting + search stay pinned, content scrolls underneath ── */}
       <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
         {!isSearching && (
