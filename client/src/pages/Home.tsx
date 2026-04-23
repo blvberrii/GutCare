@@ -468,7 +468,7 @@ export default function Home() {
             </div>
             <Link href="/profile">
               <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
-                <TotoAvatar size="sm" mood="happy" />
+                <TotoAvatar size="md" mood="happy" />
               </div>
             </Link>
           </header>
