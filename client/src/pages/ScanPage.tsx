@@ -442,7 +442,7 @@ export default function ScanPage() {
       <canvas ref={canvasRef} className="hidden" />
 
       {/* Bottom controls */}
-      <div className="bg-black/90 px-4 pt-4 pb-5 sm:p-6 sm:pb-10 backdrop-blur-md">
+      <div className="px-4 pt-4 pb-5 sm:p-6 sm:pb-10">
         <input type="file" accept="image/*" ref={fileInputRef} className="hidden" onChange={handleFileChange} data-testid="input-file" />
 
         {mode === "barcode" && !detected && (
