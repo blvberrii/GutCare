@@ -263,7 +263,7 @@ export default function Landing() {
             </motion.div>
             <div className="relative">
               <div className="absolute inset-0 bg-teal-100 rounded-full blur-[110px] opacity-30 -z-10 animate-pulse" />
-              <div className="bg-gray-100 rounded-[2.5rem] p-3 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
+              <div className="bg-white rounded-[2.5rem] p-0 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
                 <img src={scanResultImg} alt="Scan result example" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
               </div>
             </div>
