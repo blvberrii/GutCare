@@ -39,7 +39,7 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] pb-32">
+    <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 60% 50% at 0% 0%, rgba(94,193,201,0.18), transparent 60%), radial-gradient(ellipse 70% 50% at 100% 35%, rgba(255,158,128,0.16), transparent 60%), radial-gradient(ellipse 80% 50% at 30% 100%, rgba(255,180,150,0.18), transparent 60%), #FFFDF9"}}>
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
       <header className="sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">

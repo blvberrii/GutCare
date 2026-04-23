@@ -457,7 +457,7 @@ export default function Home() {
   const isSearching = query.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] pb-32">
+    <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 60% 50% at 0% 0%, rgba(94,193,201,0.18), transparent 60%), radial-gradient(ellipse 70% 50% at 100% 35%, rgba(255,158,128,0.16), transparent 60%), radial-gradient(ellipse 80% 50% at 30% 100%, rgba(255,180,150,0.18), transparent 60%), #FFFDF9"}}>
       {/* ── Sticky frosted header: greeting + search stay pinned, content scrolls underneath ── */}
       <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
         {!isSearching && (
