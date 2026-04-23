@@ -27,7 +27,7 @@ export function TotoAvatar({ size = "md", className = "" }: TotoAvatarProps) {
       <img
         src={totoLogo}
         alt="Toto the whale"
-        className="w-full h-full object-contain drop-shadow-md scale-125 translate-x-[-2%] translate-y-[2%]"
+        className="w-full h-full object-contain drop-shadow-md"
         draggable={false}
       />
     </motion.div>
