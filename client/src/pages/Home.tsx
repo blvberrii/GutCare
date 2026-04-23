@@ -553,7 +553,7 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white/50 border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">
+                <div className="bg-white border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">
                   <p className="text-muted-foreground font-bold">Start scanning items!</p>
                 </div>
               )}
@@ -597,7 +597,7 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <div className="bg-white/50 border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">
+                <div className="bg-white border-2 border-dashed border-primary/20 rounded-[2rem] p-10 text-center">
                   <p className="text-muted-foreground font-bold">Could not load recommendations. Try refreshing.</p>
                 </div>
               )}
