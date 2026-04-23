@@ -34,7 +34,7 @@ export function Navigation() {
 
   return (
     <>
-      <div className="fixed bottom-0 left-0 right-0 bg-white/55 backdrop-blur-2xl border-t border-white/40 pb-safe pt-2 px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-black/5 pb-safe pt-2 px-6 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
         <div className="flex justify-around items-end pb-4 max-w-md mx-auto">
           {navItems.map((item) => {
             const active = item.isActive(location);
