@@ -42,7 +42,7 @@ export default function HistoryPage() {
     <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 60% 50% at 0% 0%, rgba(94,193,201,0.45), transparent 60%), radial-gradient(ellipse 70% 50% at 100% 35%, rgba(255,158,128,0.40), transparent 60%), radial-gradient(ellipse 80% 50% at 30% 100%, rgba(255,180,150,0.45), transparent 60%), #FFFDF9"}}>
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
-      <header className="sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
+      <header className="sticky top-0 z-20 bg-[#FFFDF9] border-b border-black/5 px-4 py-3 flex items-center gap-4">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" data-testid="button-back">
             <ChevronLeft className="w-6 h-6" />

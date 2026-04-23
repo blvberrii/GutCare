@@ -459,7 +459,7 @@ export default function Home() {
   return (
     <div className="min-h-screen pb-32" style={{background:"radial-gradient(ellipse 60% 50% at 0% 0%, rgba(94,193,201,0.45), transparent 60%), radial-gradient(ellipse 70% 50% at 100% 35%, rgba(255,158,128,0.40), transparent 60%), radial-gradient(ellipse 80% 50% at 30% 100%, rgba(255,180,150,0.45), transparent 60%), #FFFDF9"}}>
       {/* ── Sticky frosted header: greeting + search stay pinned, content scrolls underneath ── */}
-      <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
+      <div className={`sticky top-0 z-20 bg-[#FFFDF9] px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
         {!isSearching && (
           <header className="flex justify-between items-center mb-6">
             <div>
@@ -527,7 +527,6 @@ export default function Home() {
                 </Link>
               </div>
               <div className="absolute top-[-20px] right-[-20px] w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-[-30px] right-[40px] w-32 h-32 bg-coral-400/30 rounded-full blur-2xl" />
             </motion.div>
 
             {/* Recently Viewed */}
