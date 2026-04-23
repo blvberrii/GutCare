@@ -91,7 +91,7 @@ export default function Chat() {
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
         <div className="flex items-center gap-4 p-4 max-w-lg mx-auto">
-          <div className="relative">
+          <div className="relative ring-4 ring-white shadow-xl rounded-full">
             <TotoAvatar size="sm" mood={isTyping ? "thinking" : "happy"} />
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white" />
           </div>

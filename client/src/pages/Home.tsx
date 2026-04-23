@@ -475,7 +475,7 @@ export default function Home() {
               <h1 className="text-3xl font-bold text-primary">{getGreeting()},</h1>
               <p className="text-xl font-bold text-coral-500">{profile?.firstName || user?.firstName || "Friend"}!</p>
             </div>
-            <Link href="/profile">
+            <Link href="/chat">
               <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
                 <TotoAvatar size="lg" mood="happy" />
               </div>
