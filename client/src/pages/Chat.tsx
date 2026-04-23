@@ -77,7 +77,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD]" style={{ height: "calc(100dvh - 76px)" }}>
+    <div className="flex flex-col bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2]" style={{ height: "calc(100dvh - 76px)" }}>
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
         <div className="flex items-center gap-4 p-4 max-w-lg mx-auto">

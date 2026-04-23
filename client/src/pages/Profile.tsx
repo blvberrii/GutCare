@@ -31,7 +31,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD] pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2] pb-32">
       {/* Header */}
       <div className="bg-primary text-white pt-16 pb-20 px-6 relative overflow-hidden rounded-b-[3.5rem] shadow-2xl shadow-primary/20">
         {/* Decorative circles */}

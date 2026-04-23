@@ -48,8 +48,8 @@ export default function FavoritesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD] pb-32">
-      <header className="sticky top-0 z-20 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2] pb-32">
+      <header className="sticky top-0 z-20 bg-[#DFEFF1]/80 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" data-testid="button-back">
             <ChevronLeft className="w-6 h-6" />

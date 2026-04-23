@@ -457,9 +457,9 @@ export default function Home() {
   const isSearching = query.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD] pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-[#DFEFF1] via-[#FFFDF9] to-[#FFD9C2] pb-32">
       {/* ── Sticky header with greeting + search ── */}
-      <div className={`sticky top-0 z-20 bg-[#FFFDF9]/85 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
+      <div className={`sticky top-0 z-20 bg-[#DFEFF1]/80 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-12 pb-4"}`}>
         {!isSearching && (
           <header className="flex justify-between items-center mb-6">
             <div>
