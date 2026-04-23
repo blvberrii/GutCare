@@ -221,6 +221,16 @@ export async function registerRoutes(
 
       if (!image) return res.status(400).json({ message: "Image is required" });
 
+      // Strip data URL prefix if present (e.g. "data:image/jpeg;base64,")
+      // Also detect mime type so PNG photos still work.
+      let mimeType = "image/jpeg";
+      let base64 = image as string;
+      const dataUrlMatch = base64.match(/^data:(image\/[a-zA-Z+.-]+);base64,(.*)$/);
+      if (dataUrlMatch) {
+        mimeType = dataUrlMatch[1];
+        base64 = dataUrlMatch[2];
+      }
+
       const userConditions = profile?.conditions?.join(", ") || "None specified";
       const userAllergies = profile?.allergies?.join(", ") || "None specified";
       const userSymptoms = profile?.symptoms?.join(", ") || "None specified";
@@ -343,7 +353,7 @@ IMPORTANT RULES:
             role: "user",
             parts: [
               { text: systemPrompt },
-              { inlineData: { data: image, mimeType: "image/jpeg" } }
+              { inlineData: { data: base64, mimeType } }
             ]
           }
         ],
