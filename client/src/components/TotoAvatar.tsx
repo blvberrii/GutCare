@@ -33,7 +33,7 @@ export function TotoAvatar({ size = "md", className = "", noAnimate = false }: T
       <img
         src={totoLogo}
         alt="Toto the whale"
-        className="w-full h-full object-contain drop-shadow-md"
+        className="w-full h-full object-contain drop-shadow-md scale-125 translate-x-[-2%] translate-y-[2%]"
         draggable={false}
       />
     </motion.div>
