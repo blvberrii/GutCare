@@ -67,9 +67,16 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       navigate("/onboarding");
     },
-    onError: async (err: any) => {
-      const body = await err.json?.().catch(() => ({ message: "Registration failed" }));
-      toast({ title: body.message || "Registration failed", variant: "destructive" });
+    onError: (err: any) => {
+      const raw = String(err?.message || "");
+      const jsonStart = raw.indexOf("{");
+      let message = "Registration failed";
+      if (jsonStart >= 0) {
+        try { message = JSON.parse(raw.slice(jsonStart)).message || message; } catch {}
+      } else if (raw) {
+        message = raw;
+      }
+      toast({ title: message, variant: "destructive" });
     },
   });
 
