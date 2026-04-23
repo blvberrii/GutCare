@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "Ttlxr9WvbbKeC9TlTpAIH"
@@ -12,3 +11,21 @@ id = "nNBUbl__Tyiq3XNtpMDCg"
 uri = "file://client/src/assets/images/founder.jpg.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "aGSiBnN2CTw4L4B9rKNjq"
+uri = "file://attached_assets/appstore_screenshots/01_landing.jpg"
+type = "image"
+title = "Landing — Hero"
+
+[[outputs]]
+id = "4rJ2O-BXZahG4v1hTfT-f"
+uri = "file://attached_assets/appstore_screenshots/02_login.jpg"
+type = "image"
+title = "Login screen"
+
+[[outputs]]
+id = "RbHrZrcNhbTzPbae-Mbmp"
+uri = "file://attached_assets/appstore_screenshots/03_signup.jpg"
+type = "image"
+title = "Sign up screen"
