@@ -77,7 +77,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex flex-col" style={{ height: "calc(100dvh - 76px)", background: "radial-gradient(ellipse 60% 50% at 0% 0%, rgba(94,193,201,0.45), transparent 60%), radial-gradient(ellipse 70% 50% at 100% 35%, rgba(255,158,128,0.40), transparent 60%), radial-gradient(ellipse 80% 50% at 30% 100%, rgba(255,180,150,0.45), transparent 60%), #FFFDF9" }}>
+    <div className="flex flex-col" style={{ height: "calc(100dvh - 76px)", background: "radial-gradient(ellipse 35% 25% at 0% 0%, rgba(94,193,201,0.55), transparent 70%), radial-gradient(ellipse 35% 25% at 100% 0%, rgba(255,158,128,0.45), transparent 70%), radial-gradient(ellipse 45% 30% at 50% 100%, rgba(255,180,150,0.55), transparent 70%), #FFFDF9" }}>
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-32 left-1/4 w-[26rem] h-[26rem] bg-coral-100/50 rounded-full blur-3xl" />
 
       {/* Header */}
