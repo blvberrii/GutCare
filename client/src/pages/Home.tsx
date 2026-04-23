@@ -464,7 +464,7 @@ export default function Home() {
           <header className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold text-primary">{getGreeting()},</h1>
-              <p className="text-xl font-bold opacity-80">{profile?.firstName || user?.firstName || "Friend"}!</p>
+              <p className="text-xl font-bold text-coral-500">{profile?.firstName || user?.firstName || "Friend"}!</p>
             </div>
             <Link href="/profile">
               <div className="cursor-pointer ring-4 ring-white shadow-xl rounded-full">
@@ -527,6 +527,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="absolute top-[-20px] right-[-20px] w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+              <div className="absolute bottom-[-30px] right-[40px] w-32 h-32 bg-coral-400/30 rounded-full blur-2xl" />
             </motion.div>
 
             {/* Recently Viewed */}
@@ -568,7 +569,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-xl font-bold">For You</h3>
                 </div>
-                <span className="text-xs text-muted-foreground font-bold bg-primary/5 px-3 py-1 rounded-full">Toto picks</span>
+                <span className="text-xs font-bold bg-coral-50 text-coral-600 px-3 py-1 rounded-full border border-coral-100">Toto picks</span>
               </div>
               <p className="text-sm text-muted-foreground mb-5">Tap any product to see its full gut health breakdown</p>
               {isRecsLoading ? (
