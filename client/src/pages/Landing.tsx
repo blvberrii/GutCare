@@ -437,7 +437,7 @@ export default function Landing() {
       </section>
 
       {/* Stats */}
-      <section className="pt-8 pb-20 px-6 -mt-8">
+      <section className="pt-16 pb-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
