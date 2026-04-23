@@ -135,7 +135,15 @@ export default function SearchPage() {
   const showNoResults = debouncedQuery.trim() && !anyLoading && !hasAnyResults;
 
   return (
-    <div className="min-h-screen flex flex-col" style={{background:"radial-gradient(ellipse 70% 45% at 0% 0%, rgba(94,193,201,0.55), transparent 75%), radial-gradient(ellipse 70% 45% at 100% 0%, rgba(255,158,128,0.50), transparent 75%), radial-gradient(ellipse 90% 50% at 50% 100%, rgba(255,180,150,0.60), transparent 75%), #FFFDF9"}}>
+    <div className="relative isolate min-h-screen flex flex-col overflow-hidden bg-[#FFFDF9]">
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-amber-200/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-32 w-[24rem] h-[24rem] bg-coral-200/50 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] right-[10%] w-[20rem] h-[20rem] bg-teal-200/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] -left-20 w-[22rem] h-[22rem] bg-coral-300/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[20%] w-[24rem] h-[24rem] bg-amber-200/40 rounded-full blur-3xl" />
+
       {/* Search Header */}
       <div className="sticky top-0 z-20 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5 px-4 pt-4 pb-3">
         <div className="flex items-center gap-3 max-w-lg mx-auto">
