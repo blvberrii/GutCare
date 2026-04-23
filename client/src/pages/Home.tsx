@@ -478,8 +478,8 @@ export default function Home() {
         </header>
       )}
 
-      {/* ── Sticky frosted search bar ── */}
-      <div className={`sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md px-6 ${isSearching ? "pt-4 pb-3 border-b border-black/5" : "pt-2 pb-4"}`}>
+      {/* ── Search bar (scrolls with page) ── */}
+      <div className={`px-6 ${isSearching ? "sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md pt-4 pb-3 border-b border-black/5" : "pt-2 pb-4"}`}>
         {/* Search bar */}
         <div className="flex items-center gap-2.5 bg-white/70 backdrop-blur-sm border border-black/5 rounded-2xl px-4 py-3 shadow-sm">
           <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
