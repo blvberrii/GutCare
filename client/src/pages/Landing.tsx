@@ -109,7 +109,8 @@ export default function Landing() {
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/40 rounded-full blur-3xl" />
 
       {/* Navigation */}
-      <nav className="flex items-center justify-between p-6 max-w-7xl mx-auto sticky top-0 bg-[#FFFDF9]/70 backdrop-blur-md z-50">
+      <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
+        <div className="flex items-center justify-between p-6 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <TotoAvatar size="sm" mood="happy" />
           <span className="font-display font-bold text-2xl text-teal-700">GutCare</span>
@@ -121,6 +122,7 @@ export default function Landing() {
           <Link href="/auth">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white rounded-full px-6">Get Started</Button>
           </Link>
+        </div>
         </div>
       </nav>
 
