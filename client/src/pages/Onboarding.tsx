@@ -306,7 +306,27 @@ export default function Onboarding() {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col p-6">
+    <div className="relative isolate min-h-screen bg-[#FFFDF9] flex flex-col p-6 overflow-x-clip">
+      {/* Scattered ambient gradient blobs */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/55 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
+
+      {/* Mobile center blobs */}
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[35%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-teal-300/55 rounded-full blur-[110px]" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[70%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-300/55 rounded-full blur-[110px]" />
+
+      {/* Desktop center blobs */}
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/55 rounded-full blur-[200px] md:scale-[1.6]" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[58%] left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-teal-300/55 rounded-full blur-[200px] md:scale-[1.6]" />
+
       <div className="flex-1 max-w-md mx-auto w-full flex flex-col justify-center">
         <AnimatePresence mode="wait">
           {step === 0 ? (
