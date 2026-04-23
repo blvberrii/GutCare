@@ -39,7 +39,7 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCF8] pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD] pb-32">
       <header className="sticky top-0 z-20 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" data-testid="button-back">

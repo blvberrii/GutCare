@@ -67,7 +67,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFFDF9] via-[#EAF5F6] to-[#FFE9DD] pb-24 font-sans">
       <header className="p-6 pt-12 flex items-center bg-white border-b sticky top-0 z-10">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full">
