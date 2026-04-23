@@ -162,13 +162,13 @@ export default function Landing() {
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <div className="flex gap-2">
+            <div className="flex gap-2 relative z-10">
               <Button
                 variant="outline"
                 size="lg"
                 onClick={handleAppStoreClick}
                 data-testid="button-app-store-hero"
-                className="rounded-full px-8 py-7 border-2 hover:bg-teal-50 hover:border-teal-300 transition-colors"
+                className="rounded-full px-8 py-7 border-2 bg-[#FFFDF9] hover:bg-teal-50 hover:border-teal-300 transition-colors"
               >
                 <Download className="mr-2 w-5 h-5" /> App Store
               </Button>
