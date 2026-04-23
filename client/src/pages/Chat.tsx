@@ -77,11 +77,11 @@ export default function Chat() {
   };
 
   return (
-    <div className="relative flex flex-col bg-[#FFFDF9] overflow-hidden" style={{ height: "calc(100dvh - 76px)" }}>
+    <div className="relative isolate flex flex-col bg-[#FFFDF9] overflow-hidden" style={{ height: "calc(100dvh - 76px)" }}>
       {/* ── Soft background atmosphere ── */}
-      <div aria-hidden className="pointer-events-none absolute -top-32 -left-32 w-[28rem] h-[28rem] bg-teal-200/40 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute top-1/2 -right-32 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-32 left-1/4 w-[26rem] h-[26rem] bg-coral-100/50 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-32 w-[28rem] h-[28rem] bg-teal-200/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-1/2 -right-32 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-32 left-1/4 w-[26rem] h-[26rem] bg-coral-100/50 rounded-full blur-3xl" />
 
       {/* Header */}
       <div className="flex-shrink-0 bg-white border-b border-black/5 shadow-sm">
