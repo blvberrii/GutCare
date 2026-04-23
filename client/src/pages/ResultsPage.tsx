@@ -6,7 +6,8 @@ import {
   ChevronLeft, CheckCircle2, AlertCircle, Bookmark, BookmarkCheck,
   GraduationCap, ChevronDown, ExternalLink, Heart, Leaf, Zap, Droplets,
   AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, Info, Loader2, X,
-  Baby, Users, User, ThermometerSun, BookOpen, ShieldX, BadgeCheck, Pill, FlaskConical
+  Baby, Users, User, ThermometerSun, BookOpen, ShieldX, BadgeCheck, Pill, FlaskConical,
+  ScanLine
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -703,8 +704,18 @@ export default function ResultsPage() {
               <div className="w-full h-full bg-white p-3">
                 <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" />
               </div>
+            ) : scan.barcode ? (
+              // Barcode scan with no image found — generic package icon
+              <div className="w-full h-full bg-gradient-to-br from-teal-50 to-cream flex flex-col items-center justify-center text-teal-600">
+                <Package className="w-16 h-16 mb-2" strokeWidth={1.5} />
+                <span className="text-[10px] font-bold uppercase tracking-wider opacity-70">No image</span>
+              </div>
             ) : (
-              <div className="w-full h-full bg-gray-100" />
+              // Label scan (no barcode) — show ingredient label vector
+              <div className="w-full h-full bg-gradient-to-br from-coral-50 to-cream flex flex-col items-center justify-center text-coral-500">
+                <ScanLine className="w-16 h-16 mb-2" strokeWidth={1.5} />
+                <span className="text-[10px] font-bold uppercase tracking-wider opacity-70">Label scan</span>
+              </div>
             )}
           </motion.div>
 

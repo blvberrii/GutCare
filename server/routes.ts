@@ -250,6 +250,14 @@ ${GUT_HEALTH_KNOWLEDGE_BASE}
 ## YOUR TASK
 Analyze the product image provided. Identify the product name and all visible ingredients. Then produce a personalized gut health assessment based on the user's specific profile.
 
+## CRITICAL TRANSCRIPTION RULES — READ FIRST
+This is a TRANSCRIPTION task, NOT a recall task.
+- The "productName" field MUST come from text literally visible on the packaging in the image. Read the brand name and product name directly off the label.
+- Do NOT use any prior knowledge about what products exist. Do NOT match the image to a "similar-looking" product you know.
+- If the brand or product name is unreadable, blurry, cut off, or you are not 100% confident in what you see, set "productName" to "Unknown Product" and leave "ingredients" as whatever text IS legible (or "" if none).
+- The "ingredients" field MUST also be transcribed from text visible in the image. If no ingredient list is visible, set it to "".
+- A wrong product name is much worse than "Unknown Product". When in doubt, return "Unknown Product".
+
 ## SCORING METHODOLOGY
 Use the evidence-based scoring framework in the knowledge base above. Score 0-100 based on:
 - Ingredient quality and processing level (+/- up to 40 points)
@@ -359,6 +367,7 @@ IMPORTANT RULES:
         ],
         config: {
           responseMimeType: "application/json",
+          temperature: 0,
         },
       });
 
