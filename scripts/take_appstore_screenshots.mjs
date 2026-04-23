@@ -34,7 +34,7 @@ const SAMPLE_SCAN_GOOD = {
   barcode: "8993175537017",
   score: 96,
   grade: "A",
-  imageUrl: "https://images.openfoodfacts.org/images/products/899/317/553/7017/front_id.5.400.jpg",
+  imageUrl: null,
   ingredients: "Mineral water from selected natural sources in Indonesia.",
   portionSize: "600ml",
   positives: [
@@ -58,7 +58,7 @@ const SAMPLE_SCAN_BAD = {
   barcode: "8992388101029",
   score: 38,
   grade: "D",
-  imageUrl: "https://images.openfoodfacts.org/images/products/899/238/810/1029/front_en.18.400.jpg",
+  imageUrl: null,
   ingredients: "Wheat flour, palm oil (contains TBHQ antioxidant), seasoning (salt, sugar, MSG E621, garlic powder, onion powder, chili powder, pepper, disodium inosinate E631, disodium guanylate E627), kecap manis (sugar, soy sauce, water).",
   portionSize: "85g (1 pack)",
   positives: [
@@ -135,8 +135,8 @@ const SAMPLE_SCAN_BAD = {
   await snap(page, "ip_02_login.jpg", "Login");
 
   // 4. Home
-  await page.goto(`${BASE}/home`, { waitUntil: "networkidle2" });
-  await new Promise((r) => setTimeout(r, 1500));
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle2" });
+  await new Promise((r) => setTimeout(r, 2000));
   await snap(page, "ip_03_home.jpg", "Home");
 
   // 5. Scan camera page

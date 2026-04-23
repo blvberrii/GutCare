@@ -29,3 +29,57 @@ id = "RbHrZrcNhbTzPbae-Mbmp"
 uri = "file://attached_assets/appstore_screenshots/03_signup.jpg"
 type = "image"
 title = "Sign up screen"
+
+[[outputs]]
+id = "qQZS3abgRXZlLBV7voFsm"
+uri = "file://attached_assets/appstore_screenshots/ip_03_home.jpg"
+type = "image"
+title = "Home — Recently scanned products"
+
+[[outputs]]
+id = "cnGejSrymv_-yIPoXHQm5"
+uri = "file://attached_assets/appstore_screenshots/ip_05_result_bad.jpg"
+type = "image"
+title = "Scan result — Indomie (D grade)"
+
+[[outputs]]
+id = "3aEg-NFh20nKRl4WKST3W"
+uri = "file://attached_assets/appstore_screenshots/ip_06_result_good.jpg"
+type = "image"
+title = "Scan result — Aqua (A grade)"
+
+[[outputs]]
+id = "pjj2v6D0MgnuykK_5x0qj"
+uri = "file://attached_assets/appstore_screenshots/ip_07_chat.jpg"
+type = "image"
+title = "Toto AI chat"
+
+[[outputs]]
+id = "f7MxOBEBjfTYhlOuAsQWK"
+uri = "file://attached_assets/appstore_screenshots/ip_08_profile.jpg"
+type = "image"
+title = "User profile — Sarah's gut profile"
+
+[[outputs]]
+id = "Iwl9RrtMH3X3k94qgo6US"
+uri = "file://attached_assets/appstore_screenshots/ip_04_scan_camera.jpg"
+type = "image"
+title = "Scan camera"
+
+[[outputs]]
+id = "z-0Qtxl6TaWKKKybrli1y"
+uri = "file://attached_assets/appstore_screenshots/ip_09_favorites.jpg"
+type = "image"
+title = "Favorites"
+
+[[outputs]]
+id = "Ue6pea41PowEVhQZWaWZT"
+uri = "file://attached_assets/appstore_screenshots/ip_01_signup.jpg"
+type = "image"
+title = "Sign up"
+
+[[outputs]]
+id = "DUF0uv7n0mb3H2rlUCQZR"
+uri = "file://attached_assets/appstore_screenshots/ip_02_login.jpg"
+type = "image"
+title = "Log in"
