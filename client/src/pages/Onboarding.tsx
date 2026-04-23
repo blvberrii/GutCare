@@ -306,7 +306,7 @@ export default function Onboarding() {
   ];
 
   return (
-    <div className="relative isolate min-h-screen bg-[#FFFDF9] flex flex-col p-6 overflow-x-clip">
+    <div className="relative isolate min-h-screen bg-[#FFFDF9] flex flex-col p-6 overflow-clip">
       {/* Scattered ambient gradient blobs */}
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/45 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/70 rounded-full blur-[110px] md:blur-[200px] md:scale-[1.6]" />
