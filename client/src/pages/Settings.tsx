@@ -69,9 +69,9 @@ export default function SettingsPage() {
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] pb-24 font-sans overflow-hidden">
       {/* ── Soft background atmosphere ── */}
-      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-300/25 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-coral-300/30 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-200/35 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-200/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-coral-100/50 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
       <header className="p-6 pt-12 flex items-center bg-white border-b sticky top-0 z-10">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full">

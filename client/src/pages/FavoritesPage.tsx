@@ -50,11 +50,11 @@ export default function FavoritesPage() {
   return (
     <div className="relative min-h-screen bg-[#FFFDF9] pb-32 overflow-hidden">
       {/* ── Soft background atmosphere ── */}
-      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-300/25 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-coral-300/30 rounded-full blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-200/35 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-[32rem] h-[32rem] bg-teal-200/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute top-1/3 -right-40 w-[30rem] h-[30rem] bg-coral-100/50 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-3xl" />
 
-      <header className="sticky top-0 z-20 bg-[#FFFDF9]/85 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
+      <header className="sticky top-0 z-20 bg-[#FFFDF9]/70 backdrop-blur-md border-b border-black/5 px-4 py-3 flex items-center gap-4">
         <Link href="/profile">
           <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" data-testid="button-back">
             <ChevronLeft className="w-6 h-6" />
