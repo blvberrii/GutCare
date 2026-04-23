@@ -77,7 +77,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="relative isolate flex flex-col overflow-x-clip bg-[#FFFDF9]" style={{ height: "calc(100dvh - 76px)" }}>
+    <div className="relative isolate flex flex-col overflow-x-clip bg-[#FFFDF9]" style={{ height: "calc(100dvh - 92px)" }}>
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/40 rounded-full blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-teal-200/40 rounded-full blur-3xl" />
@@ -114,13 +114,9 @@ export default function Chat() {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col items-center text-center pt-6 pb-4"
             >
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="mb-6"
-              >
+              <div className="mb-6 ring-4 ring-white shadow-xl rounded-full">
                 <TotoAvatar size="xl" mood="happy" />
-              </motion.div>
+              </div>
 
               <h2 className="text-2xl font-black mb-2">
                 Hey {firstName}! 👋
