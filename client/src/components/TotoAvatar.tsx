@@ -16,17 +16,11 @@ const SIZES = {
   xl:  "w-32 h-32",
 };
 
-export function TotoAvatar({ size = "md", className = "", noAnimate = false }: TotoAvatarProps) {
+export function TotoAvatar({ size = "md", className = "" }: TotoAvatarProps) {
   const sizeClass = SIZES[size];
-
-  const floatAnimation = noAnimate ? {} : {
-    animate: { y: [0, -6, 0] },
-    transition: { duration: 3.5, repeat: Infinity, ease: "easeInOut" },
-  };
 
   return (
     <motion.div
-      {...floatAnimation}
       className={`relative ${sizeClass} ${className}`}
     >
       <div className="absolute inset-0 rounded-full bg-primary/20 blur-md scale-90 -z-10" />
