@@ -103,7 +103,16 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
   });
 
   return (
-    <div className="min-h-[100dvh] sm:min-h-screen bg-[#FDFCF8] flex flex-col">
+    <div className="relative isolate min-h-[100dvh] sm:min-h-screen bg-[#FFFDF9] flex flex-col overflow-x-clip">
+      {/* Scattered ambient gradient blobs */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[28rem] h-[28rem] bg-teal-300/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[26rem] h-[26rem] bg-coral-300/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[30%] -left-32 w-[24rem] h-[24rem] bg-coral-200/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[35%] -right-24 w-[26rem] h-[26rem] bg-teal-200/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[65%] -right-32 w-[28rem] h-[28rem] bg-coral-300/40 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 left-1/4 w-[28rem] h-[28rem] bg-coral-200/45 rounded-full blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-32 right-1/4 w-[26rem] h-[26rem] bg-teal-200/40 rounded-full blur-3xl" />
       {/* Back to home */}
       <div className="px-3 pt-2 pb-0 sm:p-4">
         <Link href="/">
@@ -121,8 +130,8 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
           animate={{ scale: 1, opacity: 1 }}
           className="flex flex-col items-center gap-1 sm:gap-3 mb-3 sm:mb-10"
         >
-          <div className="hidden sm:block"><TotoAvatar size="lg" mood="happy" /></div>
-          <div className="sm:hidden"><TotoAvatar size="md" mood="happy" /></div>
+          <div className="hidden sm:block ring-4 ring-white shadow-xl rounded-full"><TotoAvatar size="xl" mood="happy" /></div>
+          <div className="sm:hidden ring-4 ring-white shadow-xl rounded-full"><TotoAvatar size="lg" mood="happy" /></div>
           <div className="text-center">
             <h1 className="font-display font-bold text-2xl sm:text-3xl text-teal-700">GutCare</h1>
             <p className="hidden sm:block text-sm text-muted-foreground mt-1">Your personal gut health companion</p>
