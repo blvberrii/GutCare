@@ -24,6 +24,7 @@ import {
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useAuth } from "@/hooks/use-auth";
 import founderImg from "@/assets/images/founder.png";
+import scanResultImg from "@assets/Screenshot_2026-04-23_192114_1776948506372.png";
 
 
 const StepCard = ({ num, icon, title, desc, color }: { num: string; icon: React.ReactNode; title: string; desc: string; color: string }) => (
@@ -262,15 +263,8 @@ export default function Landing() {
             </motion.div>
             <div className="relative">
               <div className="absolute inset-0 bg-teal-100 rounded-full blur-[110px] opacity-30 -z-10 animate-pulse" />
-              <div className="bg-gray-100 rounded-[2.5rem] p-4 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
-                <div className="bg-white h-full w-full rounded-[1.5rem] flex items-center justify-center p-6 text-center">
-                  <div>
-                    <TotoAvatar size="lg" mood="happy" />
-                    <p className="mt-4 font-bold text-teal-700">Scan Complete!</p>
-                    <div className="mt-2 text-6xl font-display font-black text-teal-600">A</div>
-                    <div className="mt-2 text-sm text-gray-400 font-medium">Great for your gut ✨</div>
-                  </div>
-                </div>
+              <div className="bg-gray-100 rounded-[2.5rem] p-3 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
+                <img src={scanResultImg} alt="Scan result example" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
               </div>
             </div>
           </div>
