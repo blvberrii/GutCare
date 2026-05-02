@@ -23,6 +23,18 @@ export default {
           800: "hsl(12 76% 30%)",
           900: "hsl(12 76% 20%)",
         },
+        teal: {
+          50:  "hsl(187 52% 96%)",
+          100: "hsl(187 52% 92%)",
+          200: "hsl(187 52% 82%)",
+          300: "hsl(187 52% 70%)",
+          400: "hsl(187 52% 55%)",
+          500: "hsl(187 52% 42%)",
+          600: "hsl(187 55% 36%)",
+          700: "hsl(187 58% 28%)",
+          800: "hsl(187 60% 22%)",
+          900: "hsl(187 62% 16%)",
+        },
         // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",
         foreground: "hsl(var(--foreground) / <alpha-value>)",
