@@ -89,3 +89,9 @@ id = "zfpaRKw0H2xsgl6X7Wfnm"
 uri = "file://attached_assets/cropped/oreo_results_clean.png"
 type = "image"
 title = "Oreo results — scrollbar removed"
+
+[[outputs]]
+id = "Pc5IM2ZDxnmi1Jqf6nvSr"
+uri = "file://attached_assets/generated/gutcare_qr.png"
+type = "image"
+title = "GutCare QR code — scan to open the app"
