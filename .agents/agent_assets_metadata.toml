@@ -95,3 +95,9 @@ id = "Pc5IM2ZDxnmi1Jqf6nvSr"
 uri = "file://attached_assets/generated/gutcare_qr.png"
 type = "image"
 title = "GutCare QR code — opens /profile on the live app"
+
+[[outputs]]
+id = "Uts8uTkiRVtB1lgw9aphm"
+uri = "file://screenshots/onboarding_conditions.jpg"
+type = "image"
+title = "Onboarding — Any conditions?"
