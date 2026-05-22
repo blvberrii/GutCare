@@ -187,6 +187,7 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
             <div className="space-y-2 sm:space-y-2.5 mb-3 sm:mb-5">
               <a
                 href="/api/auth/google"
+                target="_top"
                 data-testid="button-google-oauth"
                 className="flex items-center justify-center gap-3 w-full py-2.5 sm:py-3 rounded-xl border border-black/10 bg-white hover:bg-gray-50 transition-colors text-sm font-bold text-gray-800"
               >
