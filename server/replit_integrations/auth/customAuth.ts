@@ -3,6 +3,7 @@ import connectPg from "connect-pg-simple";
 import passport from "passport";
 import type { Express, RequestHandler } from "express";
 import { registerReplitAuth, refreshReplitTokens } from "./replitAuth";
+import { registerGoogleAuth } from "./googleAuth";
 
 declare module "express-session" {
   interface SessionData {
@@ -38,6 +39,7 @@ export async function setupAuth(app: Express) {
   app.use(passport.initialize());
   app.use(passport.session());
   await registerReplitAuth(app);
+  registerGoogleAuth(app);
 }
 
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
