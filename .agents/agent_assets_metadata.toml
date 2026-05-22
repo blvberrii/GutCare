@@ -101,3 +101,9 @@ id = "Uts8uTkiRVtB1lgw9aphm"
 uri = "file://screenshots/onboarding_conditions.jpg"
 type = "image"
 title = "Onboarding — Any conditions?"
+
+[[outputs]]
+id = "HsifvChZODrWRGWvCQUY2"
+uri = "file://screenshots/onboarding_conditions_mobile.jpg"
+type = "image"
+title = "Onboarding — Any conditions? (phone)"
