@@ -15,10 +15,7 @@ import { TotoAvatar } from "@/components/TotoAvatar";
 
 const conditionsList = [
   "IBS", "SIBO", "Crohn's Disease", "Celiac Disease",
-  "Lactose Intolerance", "GERD / Acid Reflux", "Ulcerative Colitis",
-  "Gastritis", "Leaky Gut Syndrome", "Diverticulitis",
-  "Gastroparesis", "H. Pylori Infection", "Food Intolerances",
-  "Chronic Constipation",
+  "Lactose Intolerance", "GERD / Acid Reflux",
 ];
 const symptomsList = [
   "Bloating", "Fatigue", "Brain Fog", "Skin Issues",
