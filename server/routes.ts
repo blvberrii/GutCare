@@ -374,6 +374,8 @@ IMPORTANT RULES:
 - productDetails.contraindications/sideEffects/deficiencyEffects: populate fully for supplements/vitamins/medications; for regular food use short factual lists only if genuinely relevant; otherwise empty array
 `;
 
+      const __t1 = Date.now();
+      console.log("[GEMINI] analyze-product (image) START");
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
@@ -390,6 +392,7 @@ IMPORTANT RULES:
           temperature: 0,
         },
       });
+      console.log(`[GEMINI] analyze-product (image) END ${Date.now() - __t1}ms`);
 
       const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!analysisText) throw new Error("Failed to get analysis from AI");
@@ -535,11 +538,14 @@ IMPORTANT RULES:
 - productDetails.contraindications/sideEffects/deficiencyEffects: populate fully for supplements/vitamins/medications; for regular food use short factual lists only if genuinely relevant; otherwise empty array
 `;
 
+      const __t2 = Date.now();
+      console.log("[GEMINI] analyze-product-text START");
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
         config: { responseMimeType: "application/json" },
       });
+      console.log(`[GEMINI] analyze-product-text END ${Date.now() - __t2}ms`);
 
       const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!analysisText) throw new Error("Failed to get analysis from AI");
@@ -600,11 +606,14 @@ Rules:
 - Ingredients must be realistic and accurate for that product
 - If unsure about a specific product's ingredients, skip it`;
 
+      const __t3 = Date.now();
+      console.log("[GEMINI] products/search-ai START");
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
+      console.log(`[GEMINI] products/search-ai END ${Date.now() - __t3}ms`);
 
       const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) return res.json([]);
@@ -669,11 +678,14 @@ Return ONLY a valid JSON object or the literal null:
   "category": "Product category",
   "ingredients": "Full ingredient list as readable comma-separated text"
 }`;
+      const __t4 = Date.now();
+      console.log("[GEMINI] barcode-guess START");
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
+      console.log(`[GEMINI] barcode-guess END ${Date.now() - __t4}ms`);
       const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text || text.trim() === "null") return null;
       const guess = JSON.parse(text);
@@ -827,11 +839,14 @@ Return ONLY a valid JSON array, no markdown:
   }
 ]`;
 
+      const __t5 = Date.now();
+      console.log("[GEMINI] recommendations (For You) START");
       const result = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
+      console.log(`[GEMINI] recommendations (For You) END ${Date.now() - __t5}ms`);
 
       let recs: any[] = [];
       try {
@@ -899,6 +914,8 @@ ${GUT_HEALTH_KNOWLEDGE_BASE}
 Respond to the user's message now:
 `;
 
+      const __t6 = Date.now();
+      console.log("[GEMINI] chat (Toto) START");
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [
@@ -914,6 +931,7 @@ Respond to the user's message now:
           responseModalities: [Modality.TEXT],
         },
       });
+      console.log(`[GEMINI] chat (Toto) END ${Date.now() - __t6}ms`);
 
       const reply = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!reply) throw new Error("No response from Toto");
