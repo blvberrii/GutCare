@@ -444,17 +444,59 @@ export default function Landing() {
             ))}
           </div>
 
-          <div className="max-w-3xl mx-auto text-center">
-            <Quote className="w-12 h-12 text-teal-600 mx-auto mb-8" />
-            <h3 className="text-2xl italic font-medium leading-relaxed mb-8 text-gray-700">
-              "For the first time in years, I can grocery shop without anxiety. Toto makes understanding complex labels so simple."
-            </h3>
-            <div className="flex items-center justify-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-teal-300 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">S</div>
-              <div className="text-left">
-                <p className="font-bold">Sarah J.</p>
-                <p className="text-sm text-gray-500">IBS Warrior</p>
-              </div>
+          <div className="max-w-6xl mx-auto">
+            <Quote className="w-12 h-12 text-teal-600 mx-auto mb-10" />
+            <h3 className="text-3xl md:text-4xl font-display font-bold text-center mb-12 text-gray-800">Loved by people taking back their gut</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                {
+                  name: "Vanessa",
+                  initial: "V",
+                  gradient: "from-teal-300 to-teal-500",
+                  quote: "Aesthetically pleasing and easy to use interface. Thanks to GutCare, I'm able to assess the foods that I eat!",
+                },
+                {
+                  name: "Louisa",
+                  initial: "L",
+                  gradient: "from-coral-300 to-coral-500",
+                  quote: "I've struggled a lot trying to find the right supplements for me. Luckily, I've found out about GutCare which allows me to find the best suited probiotic supplements for me!",
+                },
+                {
+                  name: "Ranon",
+                  initial: "R",
+                  gradient: "from-teal-400 to-emerald-500",
+                  quote: "Bloating has always been a main concern of mine, and I now know which foods induce bloating and what to avoid.",
+                },
+                {
+                  name: "Albert",
+                  initial: "A",
+                  gradient: "from-coral-400 to-coral-600",
+                  quote: "I've learned so much about food from Toto! Truly the best assistant ever; and now I feel much less sluggish, as I've learned what foods I should eat!",
+                },
+              ].map((t, i) => (
+                <motion.div
+                  key={t.name}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                  className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex flex-col"
+                  data-testid={`card-review-${t.name.toLowerCase()}`}
+                >
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 leading-relaxed italic mb-6 flex-1">"{t.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-11 h-11 bg-gradient-to-br ${t.gradient} rounded-full flex items-center justify-center text-white font-bold`}>
+                      {t.initial}
+                    </div>
+                    <p className="font-bold text-gray-800">{t.name}</p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
