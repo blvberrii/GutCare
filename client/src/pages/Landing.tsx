@@ -24,7 +24,7 @@ import {
 import { TotoAvatar } from "@/components/TotoAvatar";
 import { useAuth } from "@/hooks/use-auth";
 import founderImg from "@/assets/images/founder.png";
-import scanResultImg from "@assets/cropped/kefir_results_clean.png";
+import scanResultImg from "@assets/Scanning_page_1779437072268.png";
 import oreoResultsImg from "@assets/cropped/oreo_results_clean.png";
 
 
