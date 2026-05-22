@@ -96,7 +96,7 @@ export function registerGoogleAuth(app: Express): void {
         return res.redirect("/auth?error=google");
       }
       req.session.userId = user.id;
-      req.session.save(() => res.redirect("/home"));
+      req.session.save(() => res.redirect("/"));
     }
   );
 }
