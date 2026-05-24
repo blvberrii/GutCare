@@ -392,8 +392,8 @@ export default function Landing() {
         </div>
         <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_2fr] gap-16 items-center relative z-10">
           <div className="relative">
-            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
-              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_top] scale-150" />
+            <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl rotate-3">
+              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_top] scale-125" />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-coral-500 p-3.5 rounded-xl shadow-xl -rotate-3">
               <p className="font-display font-bold text-base">Fiona Surja</p>
