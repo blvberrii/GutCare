@@ -46,6 +46,8 @@ interface AiRecommendation {
   grade: string;
   reason?: string;
   ingredients: string;
+  portionSize?: string;
+  nutritionFacts?: { label: string; value: string; unit: string; type?: string; estimated?: boolean }[];
   positives: { title: string; description: string; type?: string }[];
   negatives: { title: string; description: string; type?: string }[];
   citations: { source: string; text: string; url?: string }[];
@@ -413,7 +415,10 @@ export default function Home() {
         productName: rec.productName, score: rec.score, grade: rec.grade,
         ingredients: rec.ingredients, positives: rec.positives,
         negatives: rec.negatives, citations: rec.citations,
-        alternatives: rec.alternatives, additivesDetails: [], isFavorite: false, imageUrl: null,
+        alternatives: rec.alternatives, additivesDetails: [],
+        portionSize: rec.portionSize || null,
+        nutritionFacts: rec.nutritionFacts || null,
+        isFavorite: false, imageUrl: null,
       });
       const scan = await res.json();
       queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });

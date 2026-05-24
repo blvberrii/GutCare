@@ -1028,6 +1028,16 @@ Return ONLY a valid JSON array, no markdown:
     "grade": "A",
     "reason": "ONE short sentence (max ~20 words) why this helps THIS user",
     "ingredients": "Top 6-10 main ingredients, comma-separated",
+    "portionSize": "Typical serving size, e.g. '170g (1 container)', '1 cup (240ml)'",
+    "nutritionFacts": [
+      { "label": "Calories", "value": "<number as string>", "unit": "kcal", "type": "calories", "estimated": true },
+      { "label": "Total Fat", "value": "<number>", "unit": "g", "type": "fat", "estimated": true },
+      { "label": "Carbohydrates", "value": "<number>", "unit": "g", "type": "default", "estimated": true },
+      { "label": "Added Sugar", "value": "<number>", "unit": "g", "type": "sugar", "estimated": true },
+      { "label": "Protein", "value": "<number>", "unit": "g", "type": "protein", "estimated": true },
+      { "label": "Sodium", "value": "<number>", "unit": "mg", "type": "sodium", "estimated": true },
+      { "label": "Fiber", "value": "<number>", "unit": "g", "type": "fiber", "estimated": true }
+    ],
     "positives": [{ "title": "Short title", "description": "ONE sentence (max ~15 words)", "type": "<fiber|protein|probiotics|vitamins|sugar|fat|sodium|calories|additives|default>" }],
     "negatives": [{ "title": "Concern if any", "description": "Short phrase", "type": "default" }],
     "citations": [{ "source": "Institution", "text": "Short finding (max ~15 words)", "url": "Real source URL or empty string if unknown" }],
