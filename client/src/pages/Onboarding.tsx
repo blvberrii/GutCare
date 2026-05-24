@@ -43,7 +43,15 @@ export default function Onboarding() {
   const form = useForm<FormData>({
     resolver: zodResolver(insertUserProfileSchema.extend({
       firstName: z.string().min(2, "Name is required"),
-      dob: z.any().refine((val) => val && val !== "", "DOB is required")
+      dob: z.any()
+        .refine((val) => val && val !== "", "DOB is required")
+        .refine((val) => {
+          if (!val) return false;
+          const dob = new Date(val);
+          const cutoff = new Date();
+          cutoff.setFullYear(cutoff.getFullYear() - 13);
+          return dob <= cutoff;
+        }, "You must be at least 13 years old to use GutCare")
     })),
     defaultValues: {
       userId: user?.id,
@@ -125,10 +133,19 @@ export default function Onboarding() {
             <Label>Date of Birth</Label>
             <Input 
               type="date" 
-              max={new Date().toISOString().split('T')[0]}
+              max={(() => {
+                const d = new Date();
+                d.setFullYear(d.getFullYear() - 13);
+                return d.toISOString().split('T')[0];
+              })()}
               {...form.register("dob")} 
               className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" 
             />
+            {form.formState.errors.dob && (
+              <p className="text-xs text-red-500 pl-1 font-medium">
+                {String(form.formState.errors.dob.message)}
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <Label>Gender</Label>
