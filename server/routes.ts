@@ -830,20 +830,53 @@ Only include products you have confident ingredient knowledge of. Skip uncertain
   // grows organically with use.
   async function fetchFromOpenFoodFacts(barcode: string) {
     try {
-      const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_en,brands,categories,ingredients_text,ingredients_text_en,image_front_url,image_url,countries`;
+      // Pull a wider field set including generic_name and multi-language ingredient
+      // variants so we can still resolve products with sparse OFF entries (common
+      // for supplements like Garden of Life where the name field is empty but
+      // ingredients are present).
+      const url = `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json?fields=product_name,product_name_en,generic_name,generic_name_en,abbreviated_product_name,brands,brand_owner,categories,pnns_groups_2,ingredients_text,ingredients_text_en,ingredients_text_de,ingredients_text_fr,image_front_url,image_url,countries`;
       const r = await fetch(url, { headers: { "User-Agent": "GutCare/1.0 (gutcare-app)" } });
       if (!r.ok) return null;
       const data: any = await r.json();
       if (data.status !== 1 || !data.product) return null;
       const p = data.product;
-      const name = p.product_name_en || p.product_name;
-      if (!name) return null;
-      const ingredients = p.ingredients_text_en || p.ingredients_text || "";
+
+      // Try every possible name field; fall back to brand or category. Only
+      // give up if we have neither a name nor any ingredient text — at that
+      // point there's nothing useful to analyze.
+      const rawName =
+        (p.product_name_en && String(p.product_name_en).trim()) ||
+        (p.product_name && String(p.product_name).trim()) ||
+        (p.generic_name_en && String(p.generic_name_en).trim()) ||
+        (p.generic_name && String(p.generic_name).trim()) ||
+        (p.abbreviated_product_name && String(p.abbreviated_product_name).trim()) ||
+        "";
+      const brand = String(p.brands || p.brand_owner || "").split(",")[0]?.trim() || "";
+      const ingredients = String(
+        p.ingredients_text_en || p.ingredients_text || p.ingredients_text_de || p.ingredients_text_fr || ""
+      ).trim();
+
+      // Ingredients are required downstream (analyze-product-text rejects
+      // records without them), so don't cache near-empty OFF entries. Require
+      // a non-trivial ingredient list (>20 chars) AND either a name or brand
+      // to derive a meaningful label from.
+      if (!ingredients || ingredients.length < 20) return null;
+      if (!rawName && !brand) return null;
+
+      // Synthesize a name if OFF doesn't have one. Prefer brand + category;
+      // otherwise just label by barcode so the analyzer still gets the real
+      // ingredients instead of falling through to image-guess.
+      const category = String(p.categories || p.pnns_groups_2 || "").split(",").pop()?.trim() || "";
+      const name =
+        rawName ||
+        [brand, category].filter(Boolean).join(" ") ||
+        `Product ${barcode}`;
+
       return {
-        productName: String(name).slice(0, 200),
-        brand: String(p.brands || "").split(",")[0].trim().slice(0, 100),
-        category: String(p.categories || "").split(",").pop()?.trim().slice(0, 100) || "Food",
-        ingredients: String(ingredients).slice(0, 2000),
+        productName: name.slice(0, 200),
+        brand: brand.slice(0, 100),
+        category: (category || "Food").slice(0, 100),
+        ingredients: ingredients.slice(0, 2000),
         imageUrl: p.image_front_url || p.image_url || null,
         country: String(p.countries || "").includes("Indonesia") ? "ID" : "INT",
       };
@@ -983,6 +1016,11 @@ Return ONLY a valid JSON object or the literal null:
     { barcode: "0790011030010", productName: "Culturelle Daily Probiotic 30 caps", brand: "Culturelle", category: "Probiotic Supplement", ingredients: "Lactobacillus rhamnosus GG (10 billion CFU), inulin (chicory root prebiotic), hypromellose capsule, silicon dioxide" },
     { barcode: "0631257156006", productName: "Garden of Life Raw Probiotics 50 Billion 30 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "Raw probiotic blend 50 billion CFU (L. acidophilus, L. plantarum, L. paracasei, B. lactis, B. longum + 29 strains), raw food prebiotic blend, vegetable cellulose capsule" },
     { barcode: "0033984007116", productName: "Florastor Saccharomyces boulardii 50 caps", brand: "Florastor", category: "Probiotic Supplement", ingredients: "Saccharomyces boulardii lyo CNCM I-745 (250mg, 5 billion CFU), lactose, magnesium stearate, gelatin capsule, titanium dioxide" },
+    { barcode: "0658010113359", productName: "Garden of Life Primal Defense ULTRA 180 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "HSO Probiotic Blend 15 billion CFU (Lactobacillus plantarum, Bacillus subtilis, Bifidobacterium lactis, Bifidobacterium bifidum, Lactobacillus rhamnosus, Bifidobacterium breve, Lactobacillus casei, Lactobacillus salivarius, Lactobacillus acidophilus, Lactobacillus brevis, Bifidobacterium longum, Lactobacillus paracasei, Saccharomyces boulardii), Homeostatic Soil Organisms, Ionic Plant Based Minerals, organic barley grass, organic oat grass, vegetable cellulose capsule, organic rice hull concentrate. Vegetarian, gluten-free, dairy-cultured" },
+    { barcode: "658010113359", productName: "Garden of Life Primal Defense ULTRA 180 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "HSO Probiotic Blend 15 billion CFU (Lactobacillus plantarum, Bacillus subtilis, Bifidobacterium lactis, Bifidobacterium bifidum, Lactobacillus rhamnosus, Bifidobacterium breve, Lactobacillus casei, Lactobacillus salivarius, Lactobacillus acidophilus, Lactobacillus brevis, Bifidobacterium longum, Lactobacillus paracasei, Saccharomyces boulardii), Homeostatic Soil Organisms, Ionic Plant Based Minerals, organic barley grass, organic oat grass, vegetable cellulose capsule, organic rice hull concentrate. Vegetarian, gluten-free, dairy-cultured" },
+    { barcode: "0658010113052", productName: "Garden of Life Primal Defense 90 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "HSO Probiotic Blend 3 billion CFU (Lactobacillus plantarum, Bacillus subtilis, Bifidobacterium lactis, Bifidobacterium bifidum, Lactobacillus rhamnosus, Lactobacillus casei, Lactobacillus acidophilus, Lactobacillus brevis, Bifidobacterium longum, Saccharomyces boulardii), Homeostatic Soil Organisms, vegetable cellulose capsule" },
+    { barcode: "0658010117258", productName: "Garden of Life Dr. Formulated Once Daily Women's Probiotics 30 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "Probiotic blend 50 billion CFU (Lactobacillus acidophilus La-14, Lactobacillus plantarum Lp-115, Lactobacillus paracasei Lpc-37, Lactobacillus rhamnosus GG, Bifidobacterium lactis Bl-04, Bifidobacterium longum Bl-05, Bifidobacterium bifidum Bb-06, Lactobacillus reuteri 1E1, Lactobacillus salivarius Ls-33, Bifidobacterium breve Bb-03, Lactobacillus casei Lc-11, Lactobacillus gasseri Lg-36, Lactobacillus brevis Lbr-35, Lactobacillus fermentum SBS-1, Lactobacillus crispatus SBC-1, Bifidobacterium infantis Bi-26), organic prebiotic fiber blend (acacia, organic potato), vegetable cellulose capsule" },
+    { barcode: "0658010117210", productName: "Garden of Life Dr. Formulated Once Daily Men's Probiotics 30 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "Probiotic blend 50 billion CFU (16 strains incl. L. acidophilus La-14, L. plantarum Lp-115, L. paracasei Lpc-37, L. rhamnosus GG, B. lactis Bl-04, B. longum Bl-05, B. bifidum Bb-06, L. reuteri 1E1, L. salivarius Ls-33, L. casei Lc-11, L. gasseri Lg-36, L. brevis Lbr-35, L. fermentum SBS-1, B. infantis Bi-26), organic prebiotic fiber blend (acacia, potato), vegetable cellulose capsule" },
     { barcode: "8995959100015", productName: "L-Bio Probiotic Sachet", brand: "L-Bio (Lapi)", category: "Probiotic Supplement", ingredients: "Lactobacillus acidophilus, Bifidobacterium longum, Lactobacillus rhamnosus, Saccharomyces boulardii (5 billion CFU total), maltodextrin, fructose" },
     { barcode: "8995959100022", productName: "Probiokid Sachet 1g (Children)", brand: "Lapi", category: "Probiotic Supplement", ingredients: "Lactobacillus rhamnosus GG, Bifidobacterium longum BB536 (3 billion CFU), fructooligosaccharides (FOS prebiotic), vitamin D3, natural orange flavor" },
     { barcode: "8995011500018", productName: "Bebelac Gold 3 Susu Pertumbuhan", brand: "Bebelac (Danone)", category: "Growing Up Milk", ingredients: "Skimmed milk, vegetable oils, lactose, whey protein, fructo-oligosaccharides (FOS), galacto-oligosaccharides (GOS) prebiotic, Bifidobacterium breve M-16V, vitamins, minerals, DHA, ARA" },
