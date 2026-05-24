@@ -7,7 +7,6 @@ import {
   GraduationCap, ChevronDown, ExternalLink, Heart, Leaf, Zap, Droplets,
   AlertTriangle, Flame, Bean, Apple, Shield, Clock, Package, Star, Info, Loader2, X,
   Baby, Users, User, ThermometerSun, BookOpen, ShieldX, BadgeCheck, Pill, FlaskConical,
-  ScanLine
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -698,23 +697,16 @@ export default function ResultsPage() {
             transition={{ type: "spring", stiffness: 200 }}
             className="relative z-10 w-44 h-44 rounded-[2.5rem] overflow-hidden shadow-2xl mb-6 bg-white ring-4 ring-white"
           >
-            {(!scan.imageUrl && productImgLoading) ? (
-              <div className="w-full h-full animate-pulse bg-gray-200" />
-            ) : (fetchedProductImage || scan.imageUrl) ? (
+            {(fetchedProductImage || scan.imageUrl) ? (
               <div className="w-full h-full bg-white p-3">
                 <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" onError={onProductImgError} />
               </div>
-            ) : scan.barcode ? (
-              // Barcode scan with no image found — generic package icon
-              <div className="w-full h-full bg-gradient-to-br from-teal-50 to-cream flex flex-col items-center justify-center text-teal-600">
-                <Package className="w-16 h-16 mb-2" strokeWidth={1.5} />
-                <span className="text-[10px] font-bold uppercase tracking-wider opacity-70">No image</span>
-              </div>
+            ) : (!scan.imageUrl && productImgLoading) ? (
+              <div className="w-full h-full animate-pulse bg-gradient-to-br from-teal-50 to-cream" />
             ) : (
-              // Label scan (no barcode) — show ingredient label vector
-              <div className="w-full h-full bg-gradient-to-br from-coral-50 to-cream flex flex-col items-center justify-center text-coral-500">
-                <ScanLine className="w-16 h-16 mb-2" strokeWidth={1.5} />
-                <span className="text-[10px] font-bold uppercase tracking-wider opacity-70">Label scan</span>
+              // True final fallback (rare — AI image gen also failed). Soft, neutral.
+              <div className="w-full h-full bg-gradient-to-br from-teal-50 to-cream flex items-center justify-center text-teal-600/50">
+                <Package className="w-16 h-16" strokeWidth={1.5} />
               </div>
             )}
           </motion.div>
