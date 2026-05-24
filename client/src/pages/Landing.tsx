@@ -450,8 +450,8 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  name: "Nessy",
-                  initial: "N",
+                  name: "Zara",
+                  initial: "Z",
                   gradient: "from-teal-300 to-teal-500",
                   quote: "Aesthetically pleasing and easy to use interface. Thanks to GutCare, I'm able to assess the foods that I eat!",
                 },
@@ -462,8 +462,8 @@ export default function Landing() {
                   quote: "I've struggled a lot trying to find the right supplements for me. Luckily, I've found out about GutCare which allows me to find the best suited probiotic supplements for me!",
                 },
                 {
-                  name: "Nathan",
-                  initial: "N",
+                  name: "Donald",
+                  initial: "D",
                   gradient: "from-teal-400 to-emerald-500",
                   quote: "Bloating has always been a main concern of mine, and I now know which foods induce bloating and what to avoid.",
                 },
