@@ -110,6 +110,16 @@ export default function Landing() {
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-3xl transform-gpu" />
 
+      {/* Extra scattered blobs */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[5%] right-[8%] w-[22rem] h-[22rem] bg-teal-300/45 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[14%] left-[18%] w-[24rem] h-[24rem] bg-coral-300/55 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[26%] right-[5%] w-[26rem] h-[26rem] bg-coral-200/65 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[38%] left-[8%] w-[22rem] h-[22rem] bg-teal-300/50 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[52%] right-[28%] w-[24rem] h-[24rem] bg-teal-200/45 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[66%] left-[48%] w-[26rem] h-[26rem] bg-coral-200/60 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] right-[18%] w-[24rem] h-[24rem] bg-teal-300/50 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[92%] left-[42%] w-[26rem] h-[26rem] bg-coral-300/55 rounded-full blur-3xl transform-gpu" />
+
       {/* Mobile-friendly center blobs */}
       <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[15%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
       <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[40%] left-[40%] w-[22rem] h-[22rem] bg-teal-300/45 rounded-full blur-3xl transform-gpu" />
