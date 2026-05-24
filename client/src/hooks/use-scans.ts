@@ -56,7 +56,18 @@ export function useAnalyzeProduct() {
         body: JSON.stringify({ image: base64Image }),
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Failed to analyze product");
+      if (!res.ok) {
+        let message = "Failed to analyze product";
+        let notAProduct = false;
+        try {
+          const body = await res.json();
+          if (body?.message) message = body.message;
+          if (body?.notAProduct) notAProduct = true;
+        } catch {}
+        const err = new Error(message) as Error & { notAProduct?: boolean };
+        err.notAProduct = notAProduct;
+        throw err;
+      }
       return api.analyze.product.responses[200].parse(await res.json());
     },
   });

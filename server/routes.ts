@@ -400,13 +400,21 @@ ${GUT_HEALTH_KNOWLEDGE_BASE}
 ## YOUR TASK
 Analyze the product image provided. Identify the product name and all visible ingredients. Then produce a personalized gut health assessment based on the user's specific profile.
 
-## CRITICAL TRANSCRIPTION RULES — READ FIRST
+## STEP 0 — IS THIS EVEN A FOOD / WELLNESS / GROCERY PRODUCT?
+Before anything else, decide whether the image shows a packaged food, beverage, supplement, vitamin, medication, or wellness/grocery product with readable packaging.
+
+If the image is NOT a packaged food/wellness/grocery product (e.g. it shows a tissue box, household item, electronics, a person, a pet, a random object, a blank surface, a hand, scenery, etc.) OR no packaging text is legible at all, return ONLY this exact JSON and stop:
+{ "notAProduct": true, "reason": "<one short sentence describing what you actually see>" }
+
+Do NOT invent a food product to fit the image. Do NOT guess. If unsure whether it's a food product, return notAProduct.
+
+## CRITICAL TRANSCRIPTION RULES — READ SECOND
 This is a TRANSCRIPTION task, NOT a recall task.
 - The "productName" field MUST come from text literally visible on the packaging in the image. Read the brand name and product name directly off the label.
-- Do NOT use any prior knowledge about what products exist. Do NOT match the image to a "similar-looking" product you know.
-- If the brand or product name is unreadable, blurry, cut off, or you are not 100% confident in what you see, set "productName" to "Unknown Product" and leave "ingredients" as whatever text IS legible (or "" if none).
+- Do NOT use any prior knowledge about what products exist. Do NOT match the image to a "similar-looking" product you know (e.g. never output "Gery Saluut Wafer Coconut" unless those exact words appear on the package).
+- If the brand or product name is unreadable, blurry, cut off, or you are not 100% confident in what you see, return notAProduct (see Step 0) instead of guessing.
 - The "ingredients" field MUST also be transcribed from text visible in the image. If no ingredient list is visible, set it to "".
-- A wrong product name is much worse than "Unknown Product". When in doubt, return "Unknown Product".
+- A wrong product name is much worse than notAProduct. When in doubt, return notAProduct.
 
 ## SCORING METHODOLOGY
 Use the evidence-based scoring framework in the knowledge base above. Score 0-100 based on:
@@ -536,6 +544,14 @@ IMPORTANT RULES:
       });
 
       const analysis = JSON.parse(analysisText);
+
+      if (analysis?.notAProduct) {
+        return res.status(422).json({
+          message: "That doesn't look like a food, supplement, or wellness product. Try scanning the front of the package or the ingredients label.",
+          reason: analysis.reason || null,
+          notAProduct: true,
+        });
+      }
 
       // Images are generated lazily by the frontend — skip heavy generation here
       res.json({

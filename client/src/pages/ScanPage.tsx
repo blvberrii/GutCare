@@ -274,8 +274,17 @@ export default function ScanPage() {
         isFavorite: false,
       });
       setLocation(`/scan/${savedScan.id}`);
-    } catch {
-      toast({ title: "Analysis Failed", description: "Couldn't analyze that photo. Try a clearer shot.", variant: "destructive" });
+    } catch (err: any) {
+      if (err?.notAProduct) {
+        toast({
+          title: "Not a food product",
+          description: err.message || "Try scanning the front of a food, supplement, or wellness package.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Analysis Failed", description: err?.message || "Couldn't analyze that photo. Try a clearer shot.", variant: "destructive" });
+      }
+      setImage(null);
       setIsAnalyzing(false);
     } finally {
       clearInterval(stepInterval);
