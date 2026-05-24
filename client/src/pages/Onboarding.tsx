@@ -354,25 +354,14 @@ export default function Onboarding() {
 
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] flex flex-col p-6 overflow-clip">
-      {/* Scattered ambient gradient blobs */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-
-      {/* Mobile center blobs */}
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[35%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[70%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
-
-      {/* Desktop center blobs */}
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[58%] left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
+      {/* Ambient gradient wash — oversized, heavily-blurred blobs, balanced
+          teal/coral, sized so they overlap and leave no white space. */}
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-[15%] -left-[10%] w-[45rem] h-[45rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-[25%] -right-[15%] w-[70rem] h-[70rem] bg-coral-300/65 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[20%] left-[40%] -translate-x-1/2 w-[60rem] h-[60rem] bg-coral-200/60 rounded-full blur-[180px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[55%] -left-[5%] w-[38rem] h-[38rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] -right-[10%] w-[55rem] h-[55rem] bg-coral-300/60 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-[20%] left-1/2 -translate-x-1/2 w-[45rem] h-[45rem] bg-teal-300/65 rounded-full blur-[180px] transform-gpu" />
 
       <div className="flex-1 max-w-md mx-auto w-full flex flex-col justify-center">
         <AnimatePresence mode="wait">
