@@ -949,52 +949,123 @@ Return ONLY a valid JSON object or the literal null:
     }
   });
 
-  // === Seed Indonesian Barcodes (run once) ===
+  // === Seed Indonesian Barcodes (auto-run on startup + manual endpoint) ===
+  const INDONESIAN_PRODUCTS = [
+    // ── Probiotic & Fermented Drinks ──────────────────────────────────────
+    { barcode: "8992751100018", productName: "Yakult Original 65ml", brand: "Yakult", category: "Probiotic Drink", ingredients: "Skimmed milk, water, sugar, glucose, Lactobacillus casei Shirota (>6.5 billion CFU per bottle), natural flavor" },
+    { barcode: "8992751100025", productName: "Yakult Light 65ml", brand: "Yakult", category: "Probiotic Drink", ingredients: "Skimmed milk, water, sucralose, acesulfame K, Lactobacillus casei Shirota (>6.5 billion CFU per bottle), natural flavor" },
+    { barcode: "8993175533010", productName: "Cimory Yogurt Drink Strawberry 250ml", brand: "Cimory", category: "Yogurt Drink", ingredients: "Fresh milk, sugar, strawberry puree, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus), natural strawberry flavor, pectin" },
+    { barcode: "8993175533027", productName: "Cimory Yogurt Drink Blueberry 250ml", brand: "Cimory", category: "Yogurt Drink", ingredients: "Fresh milk, sugar, blueberry puree, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus), natural blueberry flavor, pectin" },
+    { barcode: "8993175533034", productName: "Cimory Yogurt Drink Mango 250ml", brand: "Cimory", category: "Yogurt Drink", ingredients: "Fresh milk, sugar, mango puree, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus), natural mango flavor, pectin" },
+    { barcode: "8993175533041", productName: "Cimory Yogurt Squeeze Plain 120g", brand: "Cimory", category: "Yogurt", ingredients: "Fresh milk, sugar, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus, Lactobacillus acidophilus, Bifidobacterium)" },
+    { barcode: "8993175200015", productName: "Heavenly Blush Yogurt Drink Strawberry 200ml", brand: "Heavenly Blush", category: "Greek Yogurt Drink", ingredients: "Skim milk, fresh milk, sugar, strawberry juice, live yogurt cultures (L. bulgaricus, S. thermophilus, L. acidophilus, Bifidobacterium), inulin (prebiotic fiber), pectin" },
+    { barcode: "8993175200022", productName: "Heavenly Blush Yogurt Drink Greek Plain 200ml", brand: "Heavenly Blush", category: "Greek Yogurt Drink", ingredients: "Skim milk, fresh milk, live yogurt cultures (L. bulgaricus, S. thermophilus, L. acidophilus, Bifidobacterium), inulin" },
+    { barcode: "8993175200039", productName: "Heavenly Blush Turmeric Fiber 200ml", brand: "Heavenly Blush", category: "Probiotic Drink", ingredients: "Skim milk, water, sugar, turmeric extract, inulin (prebiotic), live cultures (L. acidophilus, Bifidobacterium), natural flavor" },
+    { barcode: "8997009810014", productName: "Greenfields Yogurt Original 200ml", brand: "Greenfields", category: "Yogurt Drink", ingredients: "Fresh cow's milk, sugar, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus)" },
+    { barcode: "8997009810021", productName: "Greenfields Yogurt Strawberry 200ml", brand: "Greenfields", category: "Yogurt Drink", ingredients: "Fresh cow's milk, sugar, strawberry puree, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus), pectin, natural flavor" },
+    { barcode: "8997009811011", productName: "Greenfields Plain Yogurt 125g", brand: "Greenfields", category: "Yogurt", ingredients: "Fresh cow's milk, skim milk powder, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus)" },
+    { barcode: "8997215600013", productName: "Biokul Stirred Yogurt Plain 80g", brand: "Biokul (Diamond)", category: "Yogurt", ingredients: "Fresh milk, sugar, live cultures (L. acidophilus, Bifidobacterium, L. bulgaricus, S. thermophilus), inulin" },
+    { barcode: "8997215600020", productName: "Biokul Yogurt Drink Mixed Berry 200ml", brand: "Biokul (Diamond)", category: "Yogurt Drink", ingredients: "Fresh milk, sugar, mixed berry puree, live cultures (L. acidophilus, Bifidobacterium, L. bulgaricus, S. thermophilus), inulin, pectin, natural flavor" },
+    { barcode: "5410146451018", productName: "Activia Yogurt Plain 125g", brand: "Activia (Danone)", category: "Probiotic Yogurt", ingredients: "Pasteurized skimmed milk, milk proteins, Bifidobacterium animalis lactis DN-173 010, yogurt cultures (S. thermophilus, L. bulgaricus)" },
+    { barcode: "5410146451025", productName: "Activia Yogurt Strawberry 125g", brand: "Activia (Danone)", category: "Probiotic Yogurt", ingredients: "Pasteurized skimmed milk, sugar, strawberry, milk proteins, Bifidobacterium animalis lactis DN-173 010, yogurt cultures, pectin, natural flavor" },
+    { barcode: "8992775200010", productName: "Probi Sehat Probiotic Drink 100ml", brand: "Probi", category: "Probiotic Drink", ingredients: "Skim milk, sugar, Lactobacillus plantarum, Lactobacillus paracasei (>10 billion CFU), water, natural flavor" },
+    { barcode: "8997215100019", productName: "Diamond Plain Yogurt 1L", brand: "Diamond", category: "Yogurt", ingredients: "Fresh cow's milk, skim milk, live yogurt cultures (Lactobacillus bulgaricus, Streptococcus thermophilus)" },
+    { barcode: "8888002104108", productName: "Vitagen Original 125ml", brand: "Vitagen", category: "Probiotic Drink", ingredients: "Reconstituted skim milk, sugar, glucose, Lactobacillus acidophilus, Lactobacillus paracasei (>1 billion CFU), natural flavor" },
+    { barcode: "8888002104115", productName: "Vitagen Less Sugar Grape 125ml", brand: "Vitagen", category: "Probiotic Drink", ingredients: "Reconstituted skim milk, isomaltulose, grape juice, Lactobacillus acidophilus, Lactobacillus paracasei, natural grape flavor, stevia" },
+    { barcode: "8993207100018", productName: "Calpis Soda Original 250ml", brand: "Calpis (Asahi)", category: "Fermented Milk Soda", ingredients: "Water, sugar, fermented skim milk (Lactobacillus helveticus, Lactococcus lactis), carbonated water, citric acid, natural flavor" },
+    { barcode: "0030000067109", productName: "Kombucha Wonder Drink Niagara Grape 240ml", brand: "Wonder Drink", category: "Kombucha", ingredients: "Filtered water, kombucha culture (live S. boulardii, acetic acid bacteria), cane sugar, white tea, niagara grape juice" },
+    { barcode: "0853019002016", productName: "GT's Kombucha Gingerade 480ml", brand: "GT's Living Foods", category: "Kombucha", ingredients: "Raw kombucha (filtered water, kombucha culture, black tea, cane sugar), ginger juice, lactic acid bacteria, S. boulardii (1 billion CFU)" },
+
+    // ── Probiotic Supplements & Sachets ────────────────────────────────────
+    { barcode: "8993147100013", productName: "Interlac Probiotic Drops 5ml", brand: "Interlac", category: "Probiotic Supplement", ingredients: "Sunflower oil, medium chain triglycerides, Lactobacillus reuteri DSM 17938 (100 million CFU per 5 drops), silicon dioxide" },
+    { barcode: "8993147100020", productName: "Lacto-B Probiotic Sachet 1g", brand: "Lacto-B (Novell)", category: "Probiotic Supplement", ingredients: "Lactobacillus acidophilus, Bifidobacterium longum, Streptococcus thermophilus (1 billion CFU total), vitamin C, vitamin B1, B2, B6, niacinamide, protein, lactose, sucrose" },
+    { barcode: "8993147100037", productName: "Lacbon Probiotic Tablets", brand: "Lacbon", category: "Probiotic Supplement", ingredients: "Lactobacillus sporogenes (Bacillus coagulans) 50 million spores, microcrystalline cellulose, magnesium stearate" },
+    { barcode: "0790011030010", productName: "Culturelle Daily Probiotic 30 caps", brand: "Culturelle", category: "Probiotic Supplement", ingredients: "Lactobacillus rhamnosus GG (10 billion CFU), inulin (chicory root prebiotic), hypromellose capsule, silicon dioxide" },
+    { barcode: "0631257156006", productName: "Garden of Life Raw Probiotics 50 Billion 30 caps", brand: "Garden of Life", category: "Probiotic Supplement", ingredients: "Raw probiotic blend 50 billion CFU (L. acidophilus, L. plantarum, L. paracasei, B. lactis, B. longum + 29 strains), raw food prebiotic blend, vegetable cellulose capsule" },
+    { barcode: "0033984007116", productName: "Florastor Saccharomyces boulardii 50 caps", brand: "Florastor", category: "Probiotic Supplement", ingredients: "Saccharomyces boulardii lyo CNCM I-745 (250mg, 5 billion CFU), lactose, magnesium stearate, gelatin capsule, titanium dioxide" },
+    { barcode: "8995959100015", productName: "L-Bio Probiotic Sachet", brand: "L-Bio (Lapi)", category: "Probiotic Supplement", ingredients: "Lactobacillus acidophilus, Bifidobacterium longum, Lactobacillus rhamnosus, Saccharomyces boulardii (5 billion CFU total), maltodextrin, fructose" },
+    { barcode: "8995959100022", productName: "Probiokid Sachet 1g (Children)", brand: "Lapi", category: "Probiotic Supplement", ingredients: "Lactobacillus rhamnosus GG, Bifidobacterium longum BB536 (3 billion CFU), fructooligosaccharides (FOS prebiotic), vitamin D3, natural orange flavor" },
+    { barcode: "8995011500018", productName: "Bebelac Gold 3 Susu Pertumbuhan", brand: "Bebelac (Danone)", category: "Growing Up Milk", ingredients: "Skimmed milk, vegetable oils, lactose, whey protein, fructo-oligosaccharides (FOS), galacto-oligosaccharides (GOS) prebiotic, Bifidobacterium breve M-16V, vitamins, minerals, DHA, ARA" },
+    { barcode: "8995011500025", productName: "Morinaga Chil Kid Platinum", brand: "Morinaga", category: "Growing Up Milk", ingredients: "Skim milk powder, lactose, vegetable oils, whey protein, Bifidobacterium longum BB536, Bifidobacterium breve M-16V (probiotic), lactulose (prebiotic), DHA, ARA, vitamins, minerals" },
+
+    // ── Fermented Foods ────────────────────────────────────────────────────
+    { barcode: "8809002390014", productName: "Bibigo Kimchi Mat 500g", brand: "Bibigo (CJ)", category: "Kimchi", ingredients: "Napa cabbage, radish, red pepper powder, garlic, ginger, fish sauce, salted shrimp, green onion, sugar, salt, live lactic acid bacteria from fermentation" },
+    { barcode: "0042563003012", productName: "Bubbies Sauerkraut 25oz", brand: "Bubbies", category: "Sauerkraut", ingredients: "Cabbage, water, salt (raw, unpasteurized — contains live lactic acid bacteria)" },
+    { barcode: "8997009815019", productName: "Greenfields Kefir Plain 200ml", brand: "Greenfields", category: "Kefir", ingredients: "Fresh cow's milk, live kefir cultures (Lactobacillus kefiranofaciens, Lactobacillus acidophilus, Bifidobacterium, Saccharomyces kefir, Lactococcus lactis — 12 strains)" },
+    { barcode: "8997009815026", productName: "Greenfields Kefir Strawberry 200ml", brand: "Greenfields", category: "Kefir", ingredients: "Fresh cow's milk, sugar, strawberry puree, live kefir cultures (12 strains), pectin, natural flavor" },
+    { barcode: "8993109100013", productName: "Tempe ABC 400g", brand: "ABC", category: "Tempeh", ingredients: "Soybeans, Rhizopus oligosporus culture (live), water — fermented, naturally rich in B vitamins and probiotics" },
+    { barcode: "8993109100020", productName: "Oncom Bandung 250g", brand: "Local", category: "Fermented Bean Cake", ingredients: "Peanut press cake, soybean residue, Neurospora intermedia culture (live fermentation), water" },
+
+    // ── Original Indonesian SKUs ───────────────────────────────────────────
+    { barcode: "8991101044049", productName: "Indomie Mi Goreng", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, soy sauce powder, seasoning (MSG, disodium inosinate E631, disodium guanylate E627), artificial flavor, garlic powder, onion powder, spices, kecap manis (sweet soy sauce)" },
+    { barcode: "8991101188002", productName: "Indomie Rasa Ayam Bawang", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken flavor powder, MSG, garlic, onion, pepper" },
+    { barcode: "8998866100052", productName: "Mie Sedaap Goreng Original", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, vegetable oil, salt, sugar, MSG, chicken extract, garlic, pepper, artificial flavor" },
+    { barcode: "8992696250042", productName: "Pocari Sweat 500ml", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
+    { barcode: "8992761010016", productName: "Teh Botol Sosro 450ml", brand: "Sosro", category: "Bottled Tea", ingredients: "Water, sugar, jasmine tea extract, citric acid" },
+    { barcode: "8998051100012", productName: "Aqua Mineral Water 600ml", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural spring mineral water" },
+    { barcode: "8999999034697", productName: "Milo Susu Coklat 200ml", brand: "Nestlé Milo", category: "Chocolate Malt Drink", ingredients: "Skimmed milk, sugar, cocoa powder, malt extract, vegetable oil, vitamins (B1, B2, B6, B12, C, D), minerals (calcium, iron, phosphorus)" },
+    { barcode: "8852018111019", productName: "Ovaltine Coklat 300ml", brand: "Ovaltine", category: "Malt Drink", ingredients: "Water, sugar, malt extract, skimmed milk powder, cocoa powder, vitamins, minerals" },
+    { barcode: "8992716100013", productName: "Ultra Milk Full Cream 250ml", brand: "Ultra Milk", category: "UHT Milk", ingredients: "Fresh full cream milk, vitamin A, vitamin D" },
+    { barcode: "8992761020015", productName: "Frestea Apple 500ml", brand: "Coca-Cola (Frestea)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, apple juice, citric acid, ascorbic acid, natural flavor" },
+    { barcode: "8992561100016", productName: "Coca-Cola 390ml", brand: "Coca-Cola", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, caramel color (E150d), phosphoric acid, natural flavors, caffeine" },
+    { barcode: "8992561113528", productName: "Sprite 390ml", brand: "Coca-Cola (Sprite)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, sodium citrate, natural lemon and lime flavors" },
+    { barcode: "8935001725148", productName: "Mama Suka Biscuit Susu", brand: "Mama Suka", category: "Biscuits", ingredients: "Wheat flour, sugar, palm oil, whole milk powder, butter, salt, baking powder, vanilla flavor" },
+    { barcode: "8992577000015", productName: "Roti Tawar Sari Roti", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, salt, yeast, margarine (palm oil), emulsifier (E471, E481), improver, ascorbic acid" },
+    { barcode: "8999010000031", productName: "Chitato Sapi Panggang 68g", brand: "Chitato (Indofood)", category: "Potato Chips", ingredients: "Potato, vegetable oil, seasoning (salt, MSG, sugar, beef flavor, maltodextrin, citric acid)" },
+    { barcode: "8992696220014", productName: "Gatorade Lemon Lime 500ml", brand: "Gatorade (PepsiCo)", category: "Sports Drink", ingredients: "Water, sugar, dextrose, citric acid, salt, sodium citrate, monopotassium phosphate, natural flavor, vitamin B6" },
+    { barcode: "8991101048047", productName: "Indomie Soto Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken broth powder, turmeric, lemongrass, galangal, MSG, soy sauce" },
+    { barcode: "8998866005100", productName: "Mie Sedaap Kuah Soto", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken extract, turmeric extract, MSG, spices" },
+    { barcode: "8851932210413", productName: "Sunquick Orange 840ml", brand: "Sunquick (Royal Unibrew)", category: "Fruit Concentrate", ingredients: "Orange juice concentrate (45%), sugar, water, citric acid, natural color, vitamin C, xanthan gum" },
+    { barcode: "8998866002260", productName: "Mie Sedaap Goreng Sambal Goreng", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, chili, salt, sugar, MSG, soy sauce, garlic, onion, spices" },
+    { barcode: "8992696270019", productName: "Nu Green Tea 450ml", brand: "Nu (ABC President)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, citric acid, ascorbic acid, natural flavor" },
+    { barcode: "8992561000019", productName: "Fanta Strawberry 390ml", brand: "Coca-Cola (Fanta)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, trisodium citrate, natural strawberry flavor, red 40, EDTA" },
+    { barcode: "8992777120017", productName: "ABC Sari Kacang Hijau 250ml", brand: "ABC (Heinz ABC)", category: "Mung Bean Drink", ingredients: "Water, mung beans, sugar, salt, vanilla flavor" },
+    { barcode: "8992561010018", productName: "Minute Maid Pulpy Orange 350ml", brand: "Coca-Cola (Minute Maid)", category: "Juice Drink", ingredients: "Water, orange juice 10%, sugar, citric acid, orange pulp 2%, vitamin C, natural flavor" },
+    { barcode: "8992777140015", productName: "ABC Juice Guava 250ml", brand: "ABC (Heinz ABC)", category: "Juice Drink", ingredients: "Water, guava juice concentrate (20%), sugar, citric acid, ascorbic acid, natural color" },
+    { barcode: "8991101012018", productName: "Indomie Kari Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, curry powder, chicken extract, turmeric, coriander, MSG" },
+    { barcode: "8888051100016", productName: "Aqua 1.5L Mineral Water", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural mountain spring water" },
+    { barcode: "8999010002035", productName: "Cheetos Cheese 60g", brand: "Indofood (Cheetos)", category: "Corn Snack", ingredients: "Cornmeal, vegetable oil, cheese seasoning (whey, salt, MSG, cheese powder, citric acid, annatto color)" },
+    { barcode: "8992577100012", productName: "Sari Roti Sandwich Coklat", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, chocolate paste, salt, yeast, margarine, emulsifier (E471), vanilla flavor" },
+    { barcode: "8998225200013", productName: "Tropicana Slim Stevia 250ml", brand: "Tropicana Slim (Nutrifood)", category: "Sweetened Drink", ingredients: "Water, stevia extract, natural flavor, citric acid, vitamin C" },
+    { barcode: "8992696260011", productName: "Pocari Sweat 330ml Can", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
+    { barcode: "8995011300014", productName: "SGM Eksplor 1+ Susu Pertumbuhan", brand: "SGM Eksplor (Sari Husada)", category: "Growing Up Milk", ingredients: "Skimmed milk powder, sugar, vegetable oils, lactose, whey protein, vitamins, minerals, DHA, probiotics (L. reuteri)" },
+    { barcode: "8992561003010", productName: "Coca-Cola Zero 390ml", brand: "Coca-Cola", category: "Sugar-free Carbonated Beverage", ingredients: "Carbonated water, caramel color (E150d), phosphoric acid, aspartame (E951), acesulfame K (E950), natural flavors, caffeine" },
+  ];
+
+  // Idempotent seeder: upserts so updated names/ingredients overwrite stale rows.
+  // Throws on failure so callers can surface the error; the startup invocation
+  // wraps it in its own try/catch to remain non-blocking.
+  async function seedBarcodeProducts() {
+    const { db } = await import("./db");
+    const { barcodeProducts } = await import("@shared/schema");
+    for (const product of INDONESIAN_PRODUCTS) {
+      await db
+        .insert(barcodeProducts)
+        .values(product)
+        .onConflictDoUpdate({
+          target: barcodeProducts.barcode,
+          set: {
+            productName: product.productName,
+            brand: product.brand,
+            category: product.category,
+            ingredients: product.ingredients,
+          },
+        });
+    }
+    return INDONESIAN_PRODUCTS.length;
+  }
+
+  // Auto-seed on startup (non-blocking, swallows DB errors so the server still starts)
+  seedBarcodeProducts()
+    .then((count) => console.log(`[seed] Barcode DB: ${count} products upserted`))
+    .catch((err) => console.error("[seed] Barcode DB seed failed:", err));
+
   app.post("/api/admin/seed-barcodes", async (_req, res) => {
     try {
-      const { db } = await import("./db");
-      const { barcodeProducts } = await import("@shared/schema");
-      const INDONESIAN_PRODUCTS = [
-        { barcode: "8991101044049", productName: "Indomie Mi Goreng", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, soy sauce powder, seasoning (MSG, disodium inosinate E631, disodium guanylate E627), artificial flavor, garlic powder, onion powder, spices, kecap manis (sweet soy sauce)" },
-        { barcode: "8991101188002", productName: "Indomie Rasa Ayam Bawang", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken flavor powder, MSG, garlic, onion, pepper" },
-        { barcode: "8998866100052", productName: "Mie Sedaap Goreng Original", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, vegetable oil, salt, sugar, MSG, chicken extract, garlic, pepper, artificial flavor" },
-        { barcode: "8992696250042", productName: "Pocari Sweat 500ml", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
-        { barcode: "8992761010016", productName: "Teh Botol Sosro 450ml", brand: "Sosro", category: "Bottled Tea", ingredients: "Water, sugar, jasmine tea extract, citric acid" },
-        { barcode: "8998051100012", productName: "Aqua Mineral Water 600ml", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural spring mineral water" },
-        { barcode: "8999999034697", productName: "Milo Susu Coklat 200ml", brand: "Nestlé Milo", category: "Chocolate Malt Drink", ingredients: "Skimmed milk, sugar, cocoa powder, malt extract, vegetable oil, vitamins (B1, B2, B6, B12, C, D), minerals (calcium, iron, phosphorus)" },
-        { barcode: "8852018111019", productName: "Ovaltine Coklat 300ml", brand: "Ovaltine", category: "Malt Drink", ingredients: "Water, sugar, malt extract, skimmed milk powder, cocoa powder, vitamins, minerals" },
-        { barcode: "8992716100013", productName: "Ultra Milk Full Cream 250ml", brand: "Ultra Milk", category: "UHT Milk", ingredients: "Fresh full cream milk, vitamin A, vitamin D" },
-        { barcode: "8992761020015", productName: "Frestea Apple 500ml", brand: "Coca-Cola (Frestea)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, apple juice, citric acid, ascorbic acid, natural flavor" },
-        { barcode: "8992561100016", productName: "Coca-Cola 390ml", brand: "Coca-Cola", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, caramel color (E150d), phosphoric acid, natural flavors, caffeine" },
-        { barcode: "8992561113528", productName: "Sprite 390ml", brand: "Coca-Cola (Sprite)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, sodium citrate, natural lemon and lime flavors" },
-        { barcode: "8935001725148", productName: "Mama Suka Biscuit Susu", brand: "Mama Suka", category: "Biscuits", ingredients: "Wheat flour, sugar, palm oil, whole milk powder, butter, salt, baking powder, vanilla flavor" },
-        { barcode: "8992577000015", productName: "Roti Tawar Sari Roti", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, salt, yeast, margarine (palm oil), emulsifier (E471, E481), improver, ascorbic acid" },
-        { barcode: "8999010000031", productName: "Chitato Sapi Panggang 68g", brand: "Chitato (Indofood)", category: "Potato Chips", ingredients: "Potato, vegetable oil, seasoning (salt, MSG, sugar, beef flavor, maltodextrin, citric acid)" },
-        { barcode: "8992696220014", productName: "Gatorade Lemon Lime 500ml", brand: "Gatorade (PepsiCo)", category: "Sports Drink", ingredients: "Water, sugar, dextrose, citric acid, salt, sodium citrate, monopotassium phosphate, natural flavor, vitamin B6" },
-        { barcode: "8991101048047", productName: "Indomie Soto Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken broth powder, turmeric, lemongrass, galangal, MSG, soy sauce" },
-        { barcode: "8998866005100", productName: "Mie Sedaap Kuah Soto", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, chicken extract, turmeric extract, MSG, spices" },
-        { barcode: "8851932210413", productName: "Sunquick Orange 840ml", brand: "Sunquick (Royal Unibrew)", category: "Fruit Concentrate", ingredients: "Orange juice concentrate (45%), sugar, water, citric acid, natural color, vitamin C, xanthan gum" },
-        { barcode: "8998866002260", productName: "Mie Sedaap Goreng Sambal Goreng", brand: "Mie Sedaap", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, chili, salt, sugar, MSG, soy sauce, garlic, onion, spices" },
-        { barcode: "8992696270019", productName: "Nu Green Tea 450ml", brand: "Nu (ABC President)", category: "Bottled Tea", ingredients: "Water, sugar, green tea extract, citric acid, ascorbic acid, natural flavor" },
-        { barcode: "8992561000019", productName: "Fanta Strawberry 390ml", brand: "Coca-Cola (Fanta)", category: "Carbonated Beverage", ingredients: "Carbonated water, sugar, citric acid, trisodium citrate, natural strawberry flavor, red 40, EDTA" },
-        { barcode: "8992777120017", productName: "ABC Sari Kacang Hijau 250ml", brand: "ABC (Heinz ABC)", category: "Mung Bean Drink", ingredients: "Water, mung beans, sugar, salt, vanilla flavor" },
-        { barcode: "8992751100018", productName: "Yakult 65ml", brand: "Yakult", category: "Probiotic Drink", ingredients: "Skimmed milk, water, sugar, glucose, Lactobacillus casei Shirota (>6.5 billion CFU per bottle)" },
-        { barcode: "8992561010018", productName: "Minute Maid Pulpy Orange 350ml", brand: "Coca-Cola (Minute Maid)", category: "Juice Drink", ingredients: "Water, orange juice 10%, sugar, citric acid, orange pulp 2%, vitamin C, natural flavor" },
-        { barcode: "8992777140015", productName: "ABC Juice Guava 250ml", brand: "ABC (Heinz ABC)", category: "Juice Drink", ingredients: "Water, guava juice concentrate (20%), sugar, citric acid, ascorbic acid, natural color" },
-        { barcode: "8991101012018", productName: "Indomie Kari Ayam", brand: "Indomie", category: "Instant Noodles", ingredients: "Wheat flour, palm oil, salt, sugar, curry powder, chicken extract, turmeric, coriander, MSG" },
-        { barcode: "8888051100016", productName: "Aqua 1.5L Mineral Water", brand: "Aqua (Danone)", category: "Mineral Water", ingredients: "Natural mountain spring water" },
-        { barcode: "8999010002035", productName: "Cheetos Cheese 60g", brand: "Indofood (Cheetos)", category: "Corn Snack", ingredients: "Cornmeal, vegetable oil, cheese seasoning (whey, salt, MSG, cheese powder, citric acid, annatto color)" },
-        { barcode: "8992577100012", productName: "Sari Roti Sandwich Coklat", brand: "Sari Roti", category: "Bread", ingredients: "Wheat flour, water, sugar, chocolate paste, salt, yeast, margarine, emulsifier (E471), vanilla flavor" },
-        { barcode: "8998225200013", productName: "Tropicana Slim Stevia 250ml", brand: "Tropicana Slim (Nutrifood)", category: "Sweetened Drink", ingredients: "Water, stevia extract, natural flavor, citric acid, vitamin C" },
-        { barcode: "8992696260011", productName: "Pocari Sweat 330ml Can", brand: "Pocari", category: "Sports Drink", ingredients: "Water, sugar, sodium chloride, sodium citrate, potassium chloride, magnesium carbonate, calcium lactate, citric acid" },
-        { barcode: "8995011300014", productName: "SGM Eksplor 1+ Susu Pertumbuhan", brand: "SGM Eksplor (Sari Husada)", category: "Growing Up Milk", ingredients: "Skimmed milk powder, sugar, vegetable oils, lactose, whey protein, vitamins, minerals, DHA, probiotics (L. reuteri)" },
-        { barcode: "8992561003010", productName: "Coca-Cola Zero 390ml", brand: "Coca-Cola", category: "Sugar-free Carbonated Beverage", ingredients: "Carbonated water, caramel color (E150d), phosphoric acid, aspartame (E951), acesulfame K (E950), natural flavors, caffeine" },
-      ];
-
-      await db.insert(barcodeProducts).values(INDONESIAN_PRODUCTS).onConflictDoNothing();
-      res.json({ message: `Seeded ${INDONESIAN_PRODUCTS.length} Indonesian products` });
+      const count = await seedBarcodeProducts();
+      res.json({ message: `Seeded ${count} Indonesian products` });
     } catch (err) {
-      console.error("Seed error:", err);
+      console.error("[seed] Manual seed failed:", err);
       res.status(500).json({ message: "Seed failed", error: String(err) });
     }
   });
