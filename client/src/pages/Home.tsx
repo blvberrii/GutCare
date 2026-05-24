@@ -376,11 +376,35 @@ export default function Home() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const { data: recommendations, isLoading: isRecsLoading } = useQuery<AiRecommendation[]>({
+  const { data: allRecs = [], isLoading: isRecsLoading } = useQuery<AiRecommendation[]>({
     queryKey: ["/api/recommendations"],
     enabled: !!profile && !!profile.conditions?.length,
     staleTime: 1000 * 60 * 30,
   });
+  const recommendations = allRecs.slice(0, 3);
+  const refillingRef = useRef(false);
+
+  const maybeRefill = async () => {
+    if (refillingRef.current) return;
+    const current = queryClient.getQueryData<AiRecommendation[]>(["/api/recommendations"]) || [];
+    if (current.length >= 5) return;
+    refillingRef.current = true;
+    try {
+      const seen = new Set(current.map(r => r.productName));
+      (scans || []).forEach(s => seen.add(s.productName));
+      const res = await apiRequest("POST", "/api/recommendations/refill", {
+        excludeNames: Array.from(seen),
+        count: 3,
+      });
+      const fresh: AiRecommendation[] = await res.json();
+      if (Array.isArray(fresh) && fresh.length > 0) {
+        queryClient.setQueryData<AiRecommendation[]>(["/api/recommendations"], (prev = []) => {
+          const have = new Set(prev.map(r => r.productName));
+          return [...prev, ...fresh.filter(r => !have.has(r.productName))];
+        });
+      }
+    } catch {} finally { refillingRef.current = false; }
+  };
 
   if (isProfileLoading) return (
     <div className="flex items-center justify-center min-h-screen">
@@ -422,6 +446,11 @@ export default function Home() {
       });
       const scan = await res.json();
       queryClient.invalidateQueries({ queryKey: [api.scans.list.path] });
+      // Drop the clicked rec so the next reserve shifts in when user returns
+      queryClient.setQueryData<AiRecommendation[]>(["/api/recommendations"], (prev = []) =>
+        prev.filter(r => r.productName !== rec.productName)
+      );
+      maybeRefill();
       navigate(`/scan/${scan.id}`);
     } catch {
       setLoadingRec(null);

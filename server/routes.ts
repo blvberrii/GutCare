@@ -982,35 +982,24 @@ Return ONLY a valid JSON object or the literal null:
   });
 
   // === Personalized Recommendations (Gemini-powered) ===
-  app.get("/api/recommendations", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const profile = await storage.getProfile(userId);
-
-      // Cache lookup — key includes user + signature so profile edits bust it
-      const sig = profileSignature(profile);
-      const cacheKey = `${userId}::${sig}`;
-      const cached = recommendationsCache.get(cacheKey);
-      if (cached) {
-        console.log(`[CACHE HIT] recommendations user=${userId.slice(0,8)} (${cached.length} recs)`);
-        return res.json(cached);
-      }
-
+  const buildRecsPrompt = (profile: any, count: number, excludeNames: string[] = []) => {
       const conditions = profile?.conditions?.join(", ") || "general gut health";
       const symptoms = profile?.symptoms?.join(", ") || "none";
       const allergies = (profile?.allergies || []).filter((a: string) => a !== "None").join(", ") || "none";
-
-      const prompt = `You are an expert clinical nutritionist specialising in gut health, trained on evidence from Harvard School of Public Health, Johns Hopkins Medicine, Cleveland Clinic, Mayo Clinic, NIH, Monash University, UK NHS, and FDA.
+      const excludeBlock = excludeNames.length
+        ? `\n\n## EXCLUSIONS\nDo NOT recommend any of these products (the user has already seen them):\n${excludeNames.map(n => `- ${n}`).join("\n")}\nSuggest DIFFERENT brands/products than the ones above.`
+        : "";
+      return `You are an expert clinical nutritionist specialising in gut health, trained on evidence from Harvard School of Public Health, Johns Hopkins Medicine, Cleveland Clinic, Mayo Clinic, NIH, Monash University, UK NHS, and FDA.
 
 ${GUT_HEALTH_KNOWLEDGE_BASE}
 
 ## USER PROFILE
 - Gut Conditions: ${conditions}
 - Current Symptoms: ${symptoms}
-- Allergies / Intolerances: ${allergies}
+- Allergies / Intolerances: ${allergies}${excludeBlock}
 
 ## TASK
-Recommend exactly 3 specific, real, commercially available food products that would measurably benefit this user based on their exact profile above.
+Recommend exactly ${count} specific, real, commercially available food products that would measurably benefit this user based on their exact profile above.
 
 RULES:
 - Use real brand + product names (e.g. "Siggi's 0% Plain Icelandic Skyr", "Fage Total 0% Plain Greek Yogurt") — never generic categories
@@ -1018,9 +1007,8 @@ RULES:
 - Score 80-100 only
 - Exactly 2 positives, 0-1 negatives, exactly 1 citation per product
 
-Return ONLY a valid JSON array, no markdown:
-[
-  {
+Return ONLY a valid JSON array of ${count} products, no markdown. Each product follows this shape:
+{
     "productName": "Exact Brand + Product Name",
     "brand": "Brand only",
     "category": "Short category",
@@ -1042,41 +1030,74 @@ Return ONLY a valid JSON array, no markdown:
     "negatives": [{ "title": "Concern if any", "description": "Short phrase", "type": "default" }],
     "citations": [{ "source": "Institution", "text": "Short finding (max ~15 words)", "url": "Real source URL or empty string if unknown" }],
     "alternatives": []
-  }
-]`;
+}`;
+  };
 
-      const __t5 = Date.now();
-      console.log("[GEMINI] recommendations (For You) START");
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
-      });
-      const __apiMs5 = Date.now() - __t5;
-      console.log(`[GEMINI] recommendations (For You) END ${__apiMs5}ms`);
+  const generateRecs = async (profile: any, count: number, excludeNames: string[] = []) => {
+    const prompt = buildRecsPrompt(profile, count, excludeNames);
+    const __t = Date.now();
+    console.log(`[GEMINI] recommendations START count=${count} excl=${excludeNames.length}`);
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
+    });
+    const __apiMs = Date.now() - __t;
+    console.log(`[GEMINI] recommendations END ${__apiMs}ms`);
 
-      const __p5 = Date.now();
-      let recs: any[] = [];
-      try {
-        recs = JSON.parse(result.text || "[]");
-        if (!Array.isArray(recs)) recs = [];
-      } catch { recs = []; }
-      logGeminiPerf("recommendations", {
-        apiMs: __apiMs5,
-        parseMs: Date.now() - __p5,
-        promptChars: prompt.length,
-        responseText: result.text || "",
-        usage: (result as any).usageMetadata,
-      });
+    const __p = Date.now();
+    let recs: any[] = [];
+    try {
+      recs = JSON.parse(result.text || "[]");
+      if (!Array.isArray(recs)) recs = [];
+    } catch { recs = []; }
+    logGeminiPerf("recommendations", {
+      apiMs: __apiMs,
+      parseMs: Date.now() - __p,
+      promptChars: prompt.length,
+      responseText: result.text || "",
+      usage: (result as any).usageMetadata,
+    });
+    // Defensive client-side dedupe in case Gemini ignores exclusions
+    const exclSet = new Set(excludeNames.map(n => n.toLowerCase().trim()));
+    return recs.filter(r => r && r.productName && !exclSet.has(String(r.productName).toLowerCase().trim()));
+  };
 
-      // Cache fresh recs for 12h (only if we got useful results)
-      if (recs.length > 0) {
-        recommendationsCache.set(cacheKey, recs, RECOMMENDATIONS_TTL_MS);
+  app.get("/api/recommendations", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+
+      const sig = profileSignature(profile);
+      const cacheKey = `${userId}::${sig}`;
+      const cached = recommendationsCache.get(cacheKey);
+      if (cached) {
+        console.log(`[CACHE HIT] recommendations user=${userId.slice(0,8)} (${cached.length} recs)`);
+        return res.json(cached);
       }
+
+      const recs = await generateRecs(profile, 6);
+      if (recs.length > 0) recommendationsCache.set(cacheKey, recs, RECOMMENDATIONS_TTL_MS);
       res.json(recs);
     } catch (err) {
       console.error("Recommendations error:", err);
       res.status(500).json({ message: "Failed to generate recommendations" });
+    }
+  });
+
+  // Refill: returns fresh recs excluding ones the user has already seen. Not cached.
+  app.post("/api/recommendations/refill", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const profile = await storage.getProfile(userId);
+      const { excludeNames = [], count = 3 } = req.body || {};
+      const safeCount = Math.max(1, Math.min(6, Number(count) || 3));
+      const safeExcl = Array.isArray(excludeNames) ? excludeNames.filter((n: any) => typeof n === "string").slice(0, 50) : [];
+      const recs = await generateRecs(profile, safeCount, safeExcl);
+      res.json(recs);
+    } catch (err) {
+      console.error("Recommendations refill error:", err);
+      res.status(500).json({ message: "Failed to refill recommendations" });
     }
   });
 
