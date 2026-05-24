@@ -58,6 +58,18 @@ const RECOMMENDATIONS_TTL_MS = 12 * 60 * 60 * 1000;
 const searchAiCache = new TTLCache<any[]>(2000);
 const SEARCH_AI_TTL_MS = 24 * 60 * 60 * 1000;
 
+// Cache for /api/analyze/product-text — per (product + ingredients + profile).
+// 7 days: analysis is deterministic given the same product and same profile.
+// Cleared on profile patch so condition/allergy edits trigger fresh analysis.
+const analyzeTextCache = new TTLCache<any>(3000);
+const ANALYZE_TEXT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function analyzeCacheKey(productName: string, ingredients: string, profile: any): string {
+  const p = (productName || "").trim().toLowerCase();
+  const i = (ingredients || "").trim().toLowerCase().replace(/\s+/g, " ");
+  return `${profileSignature(profile)}::${p}::${i}`;
+}
+
 function profileSignature(profile: any): string {
   const conds = (profile?.conditions || []).slice().sort().join("|");
   const symps = (profile?.symptoms || []).slice().sort().join("|");
@@ -196,9 +208,11 @@ export async function registerRoutes(
       } else {
         profile = await storage.createProfile({ ...input, userId } as any);
       }
-      // Profile changed — invalidate this user's recommendations cache so
-      // the next /api/recommendations call reflects new conditions/allergies
+      // Profile changed — invalidate caches that depend on profile signature
+      // so condition/allergy edits actually take effect on the next call.
       recommendationsCache.deleteByPrefix(`${userId}::`);
+      // analyzeTextCache is keyed by profile signature first, so old keys
+      // simply won't match the new signature — natural invalidation.
       res.json(profile);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -407,8 +421,8 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "label": "E-number or code if applicable (e.g., E407, E433)",
       "risk": "<Low|Medium|High>",
       "category": "e.g., Emulsifier, Preservative, Artificial Color",
-      "description": "What it is, what it does in this product, evidence of gut impact",
-      "gutEffect": "Specific impact on gut health from evidence-based research"
+      "description": "ONE sentence: what it is and its role here (max ~20 words)",
+      "gutEffect": "ONE sentence: specific gut impact (max ~20 words)"
     }
   ],
   "citations": [
@@ -508,6 +522,15 @@ IMPORTANT RULES:
       if (!productName || !ingredients) return res.status(400).json({ message: "productName and ingredients are required" });
 
       const profile = await storage.getProfile(userId);
+
+      // Cache lookup — analysis is deterministic given same product + profile
+      const cacheKey = analyzeCacheKey(productName, ingredients, profile);
+      const cached = analyzeTextCache.get(cacheKey);
+      if (cached) {
+        console.log(`[CACHE HIT] analyze-product-text "${productName.slice(0, 40)}"`);
+        return res.json(cached);
+      }
+
       const userConditions = profile?.conditions?.join(", ") || "None specified";
       const userAllergies = profile?.allergies?.join(", ") || "None specified";
       const userSymptoms = profile?.symptoms?.join(", ") || "None specified";
@@ -559,7 +582,7 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
     {
       "title": "Short benefit title (e.g., 'High Protein')",
       "description": "3-6 word supporting subtitle (e.g., 'Excellent muscle recovery source', 'Boosts gut microbiome')",
-      "detail": "Expanded explanation with specific research context (2-3 sentences)",
+      "detail": "ONE concise sentence with research context (max ~25 words)",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
       "amount": "Estimated numerical value with unit per typical serving, e.g. '4g', '190Cal', '760mg'. NEVER leave empty."
     }
@@ -568,7 +591,7 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
     {
       "title": "Short concern title (e.g., 'High Sodium')",
       "description": "3-6 word supporting subtitle (e.g., 'Too salty', 'Contains risky additives', 'A bit too caloric')",
-      "detail": "Expanded explanation with the specific research citation context",
+      "detail": "ONE concise sentence with research citation context (max ~25 words)",
       "type": "<calories|protein|fiber|sugar|sodium|additives|vitamins|probiotics|fat|default>",
       "amount": "Estimated numerical value with unit per typical serving, e.g. '760mg', '3.5g', '9'. For additives use total count. NEVER leave empty."
     }
@@ -579,8 +602,8 @@ Return ONLY a valid JSON object (no markdown, no explanation outside JSON):
       "label": "E-number or code if applicable",
       "risk": "<Low|Medium|High>",
       "category": "e.g., Emulsifier, Preservative, Artificial Color",
-      "description": "What it is, what it does in this product, evidence of gut impact",
-      "gutEffect": "Specific impact on gut health from evidence-based research"
+      "description": "ONE sentence: what it is and its role here (max ~20 words)",
+      "gutEffect": "ONE sentence: specific gut impact (max ~20 words)"
     }
   ],
   "citations": [
@@ -648,11 +671,15 @@ IMPORTANT RULES:
         responseText: analysisText,
         usage: (response as any).usageMetadata,
       });
-      res.json({
+
+      const payload = {
         ...analysis,
         imageUrl: null,
         alternatives: (analysis.alternatives || []).map((alt: any) => ({ ...alt, image: null })),
-      });
+      };
+      // Cache for 7 days (cleared on profile patch)
+      analyzeTextCache.set(cacheKey, payload, ANALYZE_TEXT_TTL_MS);
+      res.json(payload);
     } catch (error) {
       console.error("Text analysis failed:", error);
       res.status(500).json({ message: "Analysis failed. Please try again." });
