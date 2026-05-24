@@ -713,30 +713,19 @@ IMPORTANT RULES:
         return res.json(cached);
       }
 
-      const prompt = `The user is searching for food products matching: "${q}"
+      const prompt = `User search: "${q}". List 4 real food/grocery products matching this term. Focus on Indonesian brands (Indomie, Aqua, Teh Botol, Khong Guan) and international products sold in Indonesia.
 
-List 5 real food/grocery products that best match this search term. Focus on:
-- Indonesian packaged food brands (Indomie, Aqua, Teh Botol, Pocari Sweat, Khong Guan, etc.)
-- International products widely available in Indonesia
-- Wellness/health products relevant to gut health
-
-For each product, provide accurate real ingredient information from your knowledge.
-
-Return ONLY a valid JSON array (no markdown, no explanation):
+Return ONLY a valid JSON array (no markdown):
 [
   {
-    "productName": "Exact brand and product name",
-    "brand": "Brand name",
-    "category": "Category e.g. Instant Noodles, Crackers, Beverage, Dairy, Snack",
-    "ingredients": "Full ingredient list as comma-separated readable text"
+    "productName": "Exact brand + product name",
+    "brand": "Brand only",
+    "category": "Short category (e.g. Instant Noodles, Snack, Beverage)",
+    "ingredients": "Top 8-12 main ingredients, comma-separated (concise, not full label)"
   }
 ]
 
-Rules:
-- Only include products you have confident ingredient knowledge about
-- Return 3-5 products maximum
-- Ingredients must be realistic and accurate for that product
-- If unsure about a specific product's ingredients, skip it`;
+Only include products you have confident ingredient knowledge of. Skip uncertain ones.`;
 
       const __t3 = Date.now();
       console.log("[GEMINI] products/search-ai START");
