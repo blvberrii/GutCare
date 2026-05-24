@@ -111,12 +111,12 @@ export default function AuthPage({ initialTab = "register" }: { initialTab?: "lo
     <div className="relative isolate min-h-[100dvh] sm:min-h-screen bg-[#FFFDF9] flex flex-col overflow-x-clip overflow-y-clip">
       {/* Ambient gradient wash — a few oversized, heavily-blurred blobs that
           overlap to leave no visible white space, alternating teal/coral. */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-[20%] -left-[15%] w-[70rem] h-[70rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-[15%] -left-[10%] w-[45rem] h-[45rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
       <div aria-hidden className="pointer-events-none absolute -z-10 -top-[25%] -right-[15%] w-[70rem] h-[70rem] bg-coral-300/65 rounded-full blur-[160px] transform-gpu" />
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[20%] left-[40%] -translate-x-1/2 w-[60rem] h-[60rem] bg-coral-200/60 rounded-full blur-[180px] transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[55%] -left-[10%] w-[55rem] h-[55rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[55%] -left-[5%] w-[38rem] h-[38rem] bg-teal-300/65 rounded-full blur-[160px] transform-gpu" />
       <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] -right-[10%] w-[55rem] h-[55rem] bg-coral-300/60 rounded-full blur-[160px] transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-[25%] left-1/2 -translate-x-1/2 w-[70rem] h-[70rem] bg-teal-300/65 rounded-full blur-[180px] transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-[20%] left-1/2 -translate-x-1/2 w-[45rem] h-[45rem] bg-teal-300/65 rounded-full blur-[180px] transform-gpu" />
       {/* Back to home */}
       <div className="px-3 pt-2 pb-0 sm:p-4">
         <Link href="/">
