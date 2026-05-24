@@ -60,8 +60,13 @@ export default function Onboarding() {
   const [otherAllergy, setOtherAllergy] = useState("");
   const [otherCondition, setOtherCondition] = useState("");
   const [otherSymptom, setOtherSymptom] = useState("");
-  const [username, setUsername] = useState("");
+  // Username from registration is reused — only show the "pick a username" step
+  // for users who signed up via a flow that didn't capture one (e.g. Google
+  // OAuth). For username/password signups this step is skipped entirely.
+  const existingUsername = (user?.username || "").toLowerCase();
+  const [username, setUsername] = useState(existingUsername);
   const [usernameError, setUsernameError] = useState("");
+  const needsUsernameStep = !existingUsername;
 
   if (profile && profile.conditions && profile.conditions.length > 0) {
     return <Redirect to="/" />;
@@ -84,7 +89,7 @@ export default function Onboarding() {
         </div>
       )
     },
-    {
+    ...(needsUsernameStep ? [{
       title: "Pick a username",
       subtitle: "This is how friends will find you.",
       content: (
@@ -110,7 +115,7 @@ export default function Onboarding() {
           </div>
         </div>
       )
-    },
+    }] : []),
     {
       title: "Tell us about you",
       subtitle: "Help us personalize your experience!",
@@ -284,7 +289,7 @@ export default function Onboarding() {
   ];
 
   const handleNext = async () => {
-    if (step === 1) {
+    if (step === usernameStepIdx) {
       if (username.length < 3 || username.length > 24) {
         setUsernameError("Username must be 3-24 characters.");
         return;
@@ -335,12 +340,17 @@ export default function Onboarding() {
 
   const stepMeta = [
     { emoji: null, bg: "", label: "" },
-    { emoji: "✨", bg: "bg-gradient-to-br from-teal-100 to-cyan-100", label: "Username" },
+    ...(needsUsernameStep ? [{ emoji: "✨", bg: "bg-gradient-to-br from-teal-100 to-cyan-100", label: "Username" }] : []),
     { emoji: "🎂", bg: "bg-gradient-to-br from-pink-100 to-purple-100", label: "Your profile" },
     { emoji: "🫀", bg: "bg-gradient-to-br from-teal-100 to-emerald-100", label: "Gut conditions" },
     { emoji: "💨", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", label: "Symptoms" },
     { emoji: "⚠️", bg: "bg-gradient-to-br from-amber-100 to-orange-100", label: "Allergies" },
   ];
+
+  // Dynamic step indices: shift when the username step is skipped so all
+  // validation/UI logic stays correct.
+  const usernameStepIdx = needsUsernameStep ? 1 : -1;
+  const profileStepIdx = needsUsernameStep ? 2 : 1;
 
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] flex flex-col p-6 overflow-clip">
@@ -433,7 +443,7 @@ export default function Onboarding() {
           
           <Button 
             onClick={handleNext} 
-            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && username.length < 3) || (step === 2 && (!form.watch("dob") || !form.watch("gender")))}
+            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === usernameStepIdx && username.length < 3) || (step === profileStepIdx && (!form.watch("dob") || !form.watch("gender")))}
             className={`${step === 0 ? "w-full" : "flex-1"} bg-primary text-white rounded-full h-16 font-black text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all active:scale-95`}
           >
             {step === steps.length - 1 ? (updateProfile.isPending ? "Saving..." : "Finish") : "Next"}
