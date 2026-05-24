@@ -325,7 +325,7 @@ function ProductRow({
   index: number;
   accent?: "teal" | "violet";
 }) {
-  const { url: imgUrl, loading: imgLoading } = useProductImage(productName, barcode);
+  const { url: imgUrl, loading: imgLoading, onError } = useProductImage(productName, barcode);
   const isAnalyzing = analyzingKey === trackKey;
   const isDisabled = analyzingKey !== null;
   const btnBg = accent === "violet"
@@ -348,7 +348,7 @@ function ProductRow({
           {imgLoading ? (
             <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
           ) : imgUrl ? (
-            <img src={imgUrl} alt={productName} className="w-full h-full object-contain" />
+            <img src={imgUrl} alt={productName} className="w-full h-full object-contain" onError={onError} />
           ) : (
             <div className="w-full h-full rounded-lg bg-gray-100" />
           )}

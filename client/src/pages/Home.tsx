@@ -97,13 +97,13 @@ function SectionLabel({ icon, label, labelClass = "text-muted-foreground" }: {
 }
 
 function ProductImage({ name, barcode }: { name: string; barcode?: string | null; accent?: "violet" | "teal" }) {
-  const { url: imgUrl, loading } = useProductImage(name, barcode);
+  const { url: imgUrl, loading, onError } = useProductImage(name, barcode);
   return (
     <div className={`w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 ${imgUrl ? "bg-white p-1" : "bg-gray-100"}`}>
       {loading ? (
         <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
       ) : imgUrl ? (
-        <img src={imgUrl} alt={name} className="w-full h-full object-contain" />
+        <img src={imgUrl} alt={name} className="w-full h-full object-contain" onError={onError} />
       ) : (
         <div className="w-full h-full rounded-lg bg-gray-100" />
       )}
@@ -150,7 +150,7 @@ function ProductRow({
 }
 
 function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: boolean }) {
-  const { url: imgUrl, loading: imgLoading } = useProductImage(scan.productName || "", null);
+  const { url: imgUrl, loading: imgLoading, onError } = useProductImage(scan.productName || "", null);
   const displayImg = scan.imageUrl || imgUrl;
   const isLoading = !scan.imageUrl && imgLoading;
   return (
@@ -163,7 +163,7 @@ function ScanRow({ scan, showDivider = false }: { scan: ScanType; showDivider?: 
           {isLoading ? (
             <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
           ) : displayImg ? (
-            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
+            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" onError={onError} />
           ) : (
             <div className="w-full h-full rounded-lg bg-gray-100" />
           )}
@@ -323,7 +323,7 @@ function SearchResults({
 function RecommendationCard({ item, index, isLoadingRec, onClick }: {
   item: AiRecommendation; index: number; isLoadingRec: boolean; onClick: () => void;
 }) {
-  const { url: imgUrl, loading: imgLoading } = useProductImage(item.productName, null);
+  const { url: imgUrl, loading: imgLoading, onError } = useProductImage(item.productName, null);
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
@@ -335,7 +335,7 @@ function RecommendationCard({ item, index, isLoadingRec, onClick }: {
         {imgLoading ? (
           <div className="w-full h-full animate-pulse bg-gray-200 rounded-xl" />
         ) : imgUrl ? (
-          <img src={imgUrl} alt={item.productName} className="w-full h-full object-contain" />
+          <img src={imgUrl} alt={item.productName} className="w-full h-full object-contain" onError={onError} />
         ) : (
           <div className="w-full h-full rounded-xl bg-gray-100" />
         )}
@@ -621,7 +621,7 @@ export default function Home() {
 // ─── Recent Scan Card ──────────────────────────────────────────────────────────
 
 function RecentScanCard({ scan }: { scan: ScanType }) {
-  const { url: imgUrl, loading: imgLoading } = useProductImage(scan.productName || "", null);
+  const { url: imgUrl, loading: imgLoading, onError } = useProductImage(scan.productName || "", null);
   const displayImg = scan.imageUrl || imgUrl;
   const isLoading = !scan.imageUrl && imgLoading;
   return (
@@ -634,7 +634,7 @@ function RecentScanCard({ scan }: { scan: ScanType }) {
           {isLoading ? (
             <div className="w-full h-full animate-pulse bg-gray-200 rounded-lg" />
           ) : displayImg ? (
-            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" />
+            <img src={displayImg} alt={scan.productName || ""} className="w-full h-full object-contain" onError={onError} />
           ) : (
             <div className="w-full h-full rounded-lg bg-gray-100" />
           )}

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { TotoAvatar } from "@/components/TotoAvatar";
 
 function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string | null; savedUrl?: string | null }) {
-  const { url: fetchedUrl, loading } = useProductImage(name, barcode);
+  const { url: fetchedUrl, loading, onError } = useProductImage(name, barcode);
   const src = savedUrl || fetchedUrl;
   const isLoading = !savedUrl && loading;
   if (isLoading) {
@@ -16,7 +16,7 @@ function ScanImage({ name, barcode, savedUrl }: { name: string; barcode?: string
   if (src) {
     return (
       <div className="w-full h-full bg-white p-1.5">
-        <img src={src} alt={name} className="w-full h-full object-contain" />
+        <img src={src} alt={name} className="w-full h-full object-contain" onError={onError} />
       </div>
     );
   }

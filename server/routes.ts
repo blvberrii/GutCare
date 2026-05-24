@@ -8,6 +8,7 @@ import { registerChatRoutes } from "./replit_integrations/chat";
 import { registerImageRoutes, generateImage } from "./replit_integrations/image";
 import { ai } from "./replit_integrations/image/client";
 import { Modality } from "@google/genai";
+import { createHash } from "crypto";
 
 // ============================================================
 // GEMINI PERF INSTRUMENTATION
@@ -63,6 +64,40 @@ const SEARCH_AI_TTL_MS = 24 * 60 * 60 * 1000;
 // Cleared on profile patch so condition/allergy edits trigger fresh analysis.
 const analyzeTextCache = new TTLCache<any>(3000);
 const ANALYZE_TEXT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+// Cache for /api/product-image — shared across users, keyed by barcode|cleanedName.
+// 30 days for hits, 1 day for misses (so we periodically retry uncovered products).
+// Critical for AI-generated data URLs which are expensive and can't be client-cached.
+const productImageCache = new TTLCache<string | null>(5000);
+const PRODUCT_IMAGE_HIT_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const PRODUCT_IMAGE_MISS_TTL_MS = 24 * 60 * 60 * 1000;
+
+// In-memory store for AI-generated PNG bytes. Served via /api/ai-image/:hash.png
+// so the browser caches them with long Cache-Control headers instead of
+// re-transferring multi-MB base64 JSON on every page load.
+// Memory-bounded by total bytes (LRU eviction).
+const aiImageStore = new Map<string, { mime: string; buf: Buffer }>();
+let aiImageBytes = 0;
+const AI_IMAGE_MAX_BYTES = 100 * 1024 * 1024; // 100 MB cap
+function storeAiImage(dataUrl: string): string {
+  const m = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!m) return dataUrl;
+  const buf = Buffer.from(m[2], "base64");
+  const hash = createHash("sha1").update(buf).digest("hex").slice(0, 16);
+  if (!aiImageStore.has(hash)) {
+    aiImageStore.set(hash, { mime: m[1], buf });
+    aiImageBytes += buf.length;
+    // Evict oldest until under cap
+    while (aiImageBytes > AI_IMAGE_MAX_BYTES && aiImageStore.size > 1) {
+      const firstKey = aiImageStore.keys().next().value;
+      if (!firstKey) break;
+      const evicted = aiImageStore.get(firstKey);
+      aiImageStore.delete(firstKey);
+      if (evicted) aiImageBytes -= evicted.buf.length;
+    }
+  }
+  return `/api/ai-image/${hash}.png`;
+}
 
 function analyzeCacheKey(productName: string, ingredients: string, profile: any): string {
   const p = (productName || "").trim().toLowerCase();
@@ -1131,6 +1166,15 @@ Respond to the user's message now:
     const name = String(req.query.name || "").trim();
     const barcode = String(req.query.barcode || "").trim();
 
+    // Cache lookup — keyed by barcode-or-name, shared across all users
+    const cacheKey = (barcode || name).toLowerCase().replace(/\s+/g, " ").trim();
+    if (cacheKey) {
+      const cached = productImageCache.get(cacheKey);
+      if (cached !== undefined) {
+        return res.json({ url: cached });
+      }
+    }
+
     const OFF_FIELDS = "image_front_url,image_url,image_front_small_url,image_small_url";
 
     function pickImage(product: any): string | null {
@@ -1161,48 +1205,69 @@ Respond to the user's message now:
         .trim();
     }
 
+    const finish = (url: string | null) => {
+      if (cacheKey) {
+        productImageCache.set(
+          cacheKey,
+          url,
+          url ? PRODUCT_IMAGE_HIT_TTL_MS : PRODUCT_IMAGE_MISS_TTL_MS
+        );
+      }
+      res.json({ url });
+    };
+
     try {
       // 1. Barcode lookup (most accurate)
       if (barcode) {
         const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json?fields=${OFF_FIELDS}`);
         const data: any = await r.json();
         const img = pickImage(data?.product);
-        if (img) return res.json({ url: img });
+        if (img) return finish(img);
       }
 
-      if (!name) return res.json({ url: null });
+      if (!name) return finish(null);
 
       const cleaned = cleanName(name);
 
       // 2. Full cleaned name
       let img = await searchByName(cleaned);
-      if (img) return res.json({ url: img });
+      if (img) return finish(img);
 
       // 3. First 4 words of cleaned name
       const short = cleaned.split(" ").slice(0, 4).join(" ");
       if (short !== cleaned) {
         img = await searchByName(short);
-        if (img) return res.json({ url: img });
+        if (img) return finish(img);
       }
 
       // 4. First 2 words (brand + product type)
       const brand = cleaned.split(" ").slice(0, 2).join(" ");
       if (brand !== short) {
         img = await searchByName(brand);
-        if (img) return res.json({ url: img });
+        if (img) return finish(img);
       }
 
       // Final fallback: generate a photorealistic image with Gemini
       if (name) {
         const prompt = `Photorealistic commercial product photography of "${cleaned || name}": retail packaging with label clearly visible on white studio background, soft lighting, professional food photography, no text overlays`;
         const dataUrl = await generateImage(prompt).catch(() => null);
-        if (dataUrl) return res.json({ url: dataUrl });
+        if (dataUrl) return finish(storeAiImage(dataUrl));
       }
 
-      res.json({ url: null });
+      finish(null);
     } catch {
-      res.json({ url: null });
+      finish(null);
     }
+  });
+
+  // Serve AI-generated PNGs as real image responses (browser-cacheable)
+  app.get("/api/ai-image/:hash.png", (req, res) => {
+    const hash = req.params.hash;
+    const entry = aiImageStore.get(hash);
+    if (!entry) return res.status(404).end();
+    res.setHeader("Content-Type", entry.mime);
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable"); // 30 days
+    res.send(entry.buf);
   });
 
   return httpServer;

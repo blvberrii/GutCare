@@ -595,7 +595,7 @@ export default function ResultsPage() {
   const [comment, setComment] = useState("");
   const [showAdditivesSheet, setShowAdditivesSheet] = useState(false);
   const [showCitationsSection, setShowCitationsSection] = useState(false);
-  const { url: fetchedProductImage, loading: productImgLoading } = useProductImage(scan?.productName || "", scan?.barcode);
+  const { url: fetchedProductImage, loading: productImgLoading, onError: onProductImgError } = useProductImage(scan?.productName || "", scan?.barcode);
 
   if (isLoading) {
     return (
@@ -702,7 +702,7 @@ export default function ResultsPage() {
               <div className="w-full h-full animate-pulse bg-gray-200" />
             ) : (fetchedProductImage || scan.imageUrl) ? (
               <div className="w-full h-full bg-white p-3">
-                <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" />
+                <img src={fetchedProductImage || scan.imageUrl || ""} alt={scan.productName || ""} className="w-full h-full object-contain" onError={onProductImgError} />
               </div>
             ) : scan.barcode ? (
               // Barcode scan with no image found — generic package icon
