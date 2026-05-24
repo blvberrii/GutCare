@@ -159,7 +159,8 @@ const NUTRITION_ORDER = ["calories", "fat", "default", "sugar", "protein", "sodi
 function NutritionTile({ fact }: { fact: NutritionFact }) {
   const style = NUTRITION_STYLE[fact.type] || NUTRITION_STYLE.default;
   const IconComp = style.icon;
-  const hasValue = fact.value && fact.value.trim() !== "" && fact.value !== "0";
+  const valueStr = fact.value == null ? "" : String(fact.value).trim();
+  const hasValue = valueStr !== "" && valueStr !== "0";
 
   return (
     <div className={`${style.bg} rounded-2xl p-3.5 flex flex-col gap-1.5`}>
