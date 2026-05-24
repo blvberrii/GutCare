@@ -765,19 +765,27 @@ IMPORTANT RULES:
         return res.json(cached);
       }
 
-      const prompt = `User search: "${q}". List 4 real food/grocery products matching this term. Focus on Indonesian brands (Indomie, Aqua, Teh Botol, Khong Guan) and international products sold in Indonesia.
+      const prompt = `User search: "${q}".
+
+GutCare only analyzes ingestible items: packaged food, beverages, supplements, vitamins, or medications.
+
+STEP 1 — Decide if the query refers to a non-ingestible product.
+If the query refers to tissues, paper goods, cleaning supplies, cosmetics, personal-care items (shampoo, soap, toothpaste, deodorant, sanitary pads, diapers), pet food, household items, electronics, clothing, or any brand that is primarily known for non-food products (e.g. "Paseo" = tissues, "Nice" = tissues, "Sensodyne" = toothpaste, "Pantene" = shampoo, "Pampers" = diapers, "Whiskas" = pet food), return ONLY this empty JSON array:
+[]
+
+STEP 2 — Otherwise, list up to 4 real food/grocery/supplement products matching the term. Focus on Indonesian brands (Indomie, Aqua, Teh Botol, Khong Guan) and international products sold in Indonesia.
 
 Return ONLY a valid JSON array (no markdown):
 [
   {
     "productName": "Exact brand + product name",
     "brand": "Brand only",
-    "category": "Short category (e.g. Instant Noodles, Snack, Beverage)",
+    "category": "Short category (e.g. Instant Noodles, Snack, Beverage, Probiotic Supplement)",
     "ingredients": "Top 8-12 main ingredients, comma-separated (concise, not full label)"
   }
 ]
 
-Only include products you have confident ingredient knowledge of. Skip uncertain ones.`;
+Only include products you have confident ingredient knowledge of. Skip uncertain ones. Never invent a food product just to fill the list — return [] instead.`;
 
       const __t3 = Date.now();
       console.log("[GEMINI] products/search-ai START");
