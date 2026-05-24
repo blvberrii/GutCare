@@ -21,6 +21,7 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/use-auth";
+import { Redirect } from "wouter";
 
 function Router() {
   const { user, isLoading } = useAuth();
@@ -46,7 +47,10 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Landing} />
+      <Route path="/home" component={Home} />
+      <Route path="/auth">{() => <Redirect to="/home" />}</Route>
+      <Route path="/login">{() => <Redirect to="/home" />}</Route>
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/scan" component={ScanPage} />
       <Route path="/scan/:id" component={ResultsPage} />

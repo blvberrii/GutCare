@@ -90,7 +90,6 @@ export default function Landing() {
   };
 
   if (isLoading) return null;
-  if (user) return <Redirect to="/home" />;
 
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] text-[#2D2D2D] selection:bg-teal-100 overflow-x-clip">
