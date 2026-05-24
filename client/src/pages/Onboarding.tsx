@@ -40,10 +40,6 @@ export default function Onboarding() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState(0);
 
-  if (profile && profile.conditions && profile.conditions.length > 0) {
-    return <Redirect to="/" />;
-  }
-
   const form = useForm<FormData>({
     resolver: zodResolver(insertUserProfileSchema.extend({
       firstName: z.string().min(2, "Name is required"),
@@ -64,6 +60,10 @@ export default function Onboarding() {
   const [otherAllergy, setOtherAllergy] = useState("");
   const [otherCondition, setOtherCondition] = useState("");
   const [otherSymptom, setOtherSymptom] = useState("");
+
+  if (profile && profile.conditions && profile.conditions.length > 0) {
+    return <Redirect to="/" />;
+  }
 
   const steps = [
     {
