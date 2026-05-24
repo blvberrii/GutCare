@@ -473,6 +473,12 @@ export default function Landing() {
                   gradient: "from-coral-400 to-coral-600",
                   quote: "I've learned so much about food from Toto! Truly the best assistant ever; and now I feel much less sluggish, as I've learned what foods I should eat!",
                 },
+                {
+                  name: "Lily",
+                  initial: "L",
+                  gradient: "from-teal-300 to-emerald-400",
+                  quote: "As someone with IBS, grocery shopping used to be so stressful. With GutCare, I can scan a product and instantly know if it's safe for me. It's been a total game changer!",
+                },
               ].map((t, i) => (
                 <motion.div
                   key={t.name}
