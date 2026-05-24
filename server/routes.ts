@@ -1055,10 +1055,106 @@ Return ONLY a valid JSON object or the literal null:
     return INDONESIAN_PRODUCTS.length;
   }
 
+  // Bulk-import from Open Food Facts (~3M real products, free, CC-licensed).
+  // Pulls from multiple high-value queries so the starter catalog covers
+  // Indonesian SKUs plus gut-health-relevant categories worldwide. Runs once
+  // on startup if the DB is still small. Skips records without an ingredient
+  // list (those are useless for AI grading).
+  async function bulkImportFromOpenFoodFacts() {
+    const { db } = await import("./db");
+    const { barcodeProducts } = await import("@shared/schema");
+    const { sql } = await import("drizzle-orm");
+
+    const existing = await db.execute(sql`SELECT COUNT(*)::int AS n FROM barcode_products`);
+    const count = Number((existing as any).rows?.[0]?.n ?? 0);
+    if (count >= 2000) {
+      console.log(`[bulk-import] Skipping — DB already has ${count} products`);
+      return 0;
+    }
+
+    const FIELDS = "code,product_name,product_name_en,brands,categories,ingredients_text,ingredients_text_en,image_front_url,image_url,countries";
+
+    // Each query = (label, URL-encoded tag query, country code, page count).
+    // OFF supports country and category tag filters; we hit both.
+    const QUERIES: Array<{ label: string; url: (page: number) => string; country: string; pages: number }> = [
+      { label: "Indonesia",        country: "ID",  pages: 15,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=countries&tag_contains_0=contains&tag_0=indonesia&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Yogurts",          country: "INT", pages: 6,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=yogurts&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Fermented foods",  country: "INT", pages: 5,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=fermented-foods&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Plant-based milks",country: "INT", pages: 4,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=plant-based-milks&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Breakfast cereals",country: "INT", pages: 5,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=breakfast-cereals&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Snacks",           country: "INT", pages: 6,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=snacks&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Beverages",        country: "INT", pages: 6,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=beverages&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Singapore",        country: "SG",  pages: 5,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=countries&tag_contains_0=contains&tag_0=singapore&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+      { label: "Malaysia",         country: "MY",  pages: 5,
+        url: (p) => `https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=countries&tag_contains_0=contains&tag_0=malaysia&page_size=100&page=${p}&json=1&fields=${FIELDS}` },
+    ];
+
+    let imported = 0;
+
+    for (const query of QUERIES) {
+      let queryImported = 0;
+      for (let page = 1; page <= query.pages; page++) {
+        try {
+          const r = await fetch(query.url(page), { headers: { "User-Agent": "GutCare/1.0 (bulk-import)" } });
+          if (!r.ok) break;
+          const data: any = await r.json();
+          const products: any[] = data.products || [];
+          if (!products.length) break;
+
+          for (const p of products) {
+            const barcode = String(p.code || "").trim();
+            const name = p.product_name_en || p.product_name;
+            const ingredients = p.ingredients_text_en || p.ingredients_text || "";
+            if (!barcode || !name || !ingredients) continue;
+
+            try {
+              const result = await db
+                .insert(barcodeProducts)
+                .values({
+                  barcode,
+                  productName: String(name).slice(0, 200),
+                  brand: String(p.brands || "").split(",")[0]?.trim().slice(0, 100) || null,
+                  category: String(p.categories || "").split(",").pop()?.trim().slice(0, 100) || "Food",
+                  ingredients: String(ingredients).slice(0, 2000),
+                  imageUrl: p.image_front_url || p.image_url || null,
+                  country: query.country,
+                })
+                .onConflictDoNothing()
+                .returning({ id: barcodeProducts.id });
+              if (result.length) queryImported++;
+            } catch {
+              // skip individual row errors so one bad record doesn't kill the batch
+            }
+          }
+        } catch (err) {
+          console.error(`[bulk-import] ${query.label} page ${page} failed:`, err);
+          break;
+        }
+      }
+      if (queryImported > 0) console.log(`[bulk-import] ${query.label}: +${queryImported}`);
+      imported += queryImported;
+    }
+
+    return imported;
+  }
+
   // Auto-seed on startup (non-blocking, swallows DB errors so the server still starts)
   seedBarcodeProducts()
-    .then((count) => console.log(`[seed] Barcode DB: ${count} products upserted`))
+    .then((count) => console.log(`[seed] Barcode DB: ${count} curated products upserted`))
     .catch((err) => console.error("[seed] Barcode DB seed failed:", err));
+
+  // Background bulk-import from Open Food Facts (real-world data, ~3M products)
+  bulkImportFromOpenFoodFacts()
+    .then((n) => n > 0 && console.log(`[bulk-import] Imported ${n} Indonesian products from Open Food Facts`))
+    .catch((err) => console.error("[bulk-import] Failed:", err));
 
   app.post("/api/admin/seed-barcodes", async (_req, res) => {
     try {
@@ -1067,6 +1163,22 @@ Return ONLY a valid JSON object or the literal null:
     } catch (err) {
       console.error("[seed] Manual seed failed:", err);
       res.status(500).json({ message: "Seed failed", error: String(err) });
+    }
+  });
+
+  // Manual trigger for the OFF bulk import. Useful after deploys or to refill
+  // the catalog. Runs synchronously and reports the count actually inserted.
+  app.post("/api/admin/bulk-import-off", async (_req, res) => {
+    try {
+      const imported = await bulkImportFromOpenFoodFacts();
+      const { db } = await import("./db");
+      const { sql } = await import("drizzle-orm");
+      const total = await db.execute(sql`SELECT COUNT(*)::int AS n FROM barcode_products`);
+      const totalCount = Number((total as any).rows?.[0]?.n ?? 0);
+      res.json({ imported, totalProducts: totalCount });
+    } catch (err) {
+      console.error("[bulk-import] Manual import failed:", err);
+      res.status(500).json({ message: "Bulk import failed", error: String(err) });
     }
   });
 
