@@ -485,6 +485,7 @@ IMPORTANT RULES:
         config: {
           responseMimeType: "application/json",
           temperature: 0,
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
       const __apiMs1 = Date.now() - __t1;
@@ -654,7 +655,7 @@ IMPORTANT RULES:
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
-        config: { responseMimeType: "application/json" },
+        config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
       });
       const __apiMs2 = Date.now() - __t2;
       console.log(`[GEMINI] analyze-product-text END ${__apiMs2}ms`);
@@ -732,7 +733,7 @@ Only include products you have confident ingredient knowledge of. Skip uncertain
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: { responseMimeType: "application/json" },
+        config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
       });
       const __apiMs3 = Date.now() - __t3;
       console.log(`[GEMINI] products/search-ai END ${__apiMs3}ms`);
@@ -819,7 +820,7 @@ Return ONLY a valid JSON object or the literal null:
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: { responseMimeType: "application/json" },
+        config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
       });
       const __apiMs4 = Date.now() - __t4;
       console.log(`[GEMINI] barcode-guess END ${__apiMs4}ms`);
@@ -977,27 +978,25 @@ ${GUT_HEALTH_KNOWLEDGE_BASE}
 Recommend exactly 3 specific, real, commercially available food products that would measurably benefit this user based on their exact profile above.
 
 RULES:
-- Use real brand + product names (e.g. "Siggi's 0% Plain Icelandic Skyr", "GT's Synergy Trilogy Kombucha 16 fl oz", "Fage Total 0% Plain Greek Yogurt")
-- NEVER recommend generic category names like "yogurt" — always brand + product
+- Use real brand + product names (e.g. "Siggi's 0% Plain Icelandic Skyr", "Fage Total 0% Plain Greek Yogurt") — never generic categories
 - Avoid ingredients the user is allergic/intolerant to
-- Score 80-100 only (recommendations must be gut-positive)
-- 2-4 positives and any relevant negatives/warnings
-- 2-3 validated scientific citations per product
+- Score 80-100 only
+- Exactly 2 positives, 0-1 negatives, exactly 1 citation per product
 
 Return ONLY a valid JSON array, no markdown:
 [
   {
-    "productName": "Exact Brand + Full Product Name",
+    "productName": "Exact Brand + Product Name",
     "brand": "Brand only",
-    "category": "Short category (e.g. Probiotic Yogurt)",
+    "category": "Short category",
     "score": <integer 80-100>,
     "grade": "A",
-    "reason": "One sentence why this specifically helps this user's conditions",
-    "ingredients": "Representative ingredients",
-    "positives": [{ "title": "Short title", "description": "Science-backed 1-2 sentences", "type": "<fiber|protein|probiotics|vitamins|sugar|fat|sodium|calories|additives|default>" }],
-    "negatives": [{ "title": "Concern if any", "description": "Brief explanation", "type": "default" }],
-    "citations": [{ "source": "Institution", "text": "Specific relevant finding", "url": "https://url" }],
-    "alternatives": [{ "name": "Real brand alternative", "score": <integer> }]
+    "reason": "ONE short sentence (max ~20 words) why this helps THIS user",
+    "ingredients": "Top 6-10 main ingredients, comma-separated",
+    "positives": [{ "title": "Short title", "description": "ONE sentence (max ~15 words)", "type": "<fiber|protein|probiotics|vitamins|sugar|fat|sodium|calories|additives|default>" }],
+    "negatives": [{ "title": "Concern if any", "description": "Short phrase", "type": "default" }],
+    "citations": [{ "source": "Institution", "text": "Short finding (max ~15 words)", "url": "Real source URL or empty string if unknown" }],
+    "alternatives": []
   }
 ]`;
 
@@ -1006,7 +1005,7 @@ Return ONLY a valid JSON array, no markdown:
       const result = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: { responseMimeType: "application/json" },
+        config: { responseMimeType: "application/json", thinkingConfig: { thinkingBudget: 0 } },
       });
       const __apiMs5 = Date.now() - __t5;
       console.log(`[GEMINI] recommendations (For You) END ${__apiMs5}ms`);
@@ -1104,6 +1103,7 @@ Respond to the user's message now:
         ],
         config: {
           responseModalities: [Modality.TEXT],
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
       const __apiMs6 = Date.now() - __t6;
