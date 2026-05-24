@@ -95,34 +95,34 @@ export default function Landing() {
   return (
     <div className="relative isolate min-h-screen bg-[#FFFDF9] text-[#2D2D2D] selection:bg-teal-100 overflow-x-clip">
       {/* Scattered ambient gradient blobs — edges + interior, with white gaps in between */}
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/65 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/50 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/50 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[32rem] h-[32rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-32 w-[30rem] h-[30rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[8%] left-[35%] w-[22rem] h-[22rem] bg-coral-200/50 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[18%] -left-40 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[22%] right-[20%] w-[24rem] h-[24rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[34%] left-[42%] w-[26rem] h-[26rem] bg-teal-300/50 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-24 w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[48%] right-[10%] w-[26rem] h-[26rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[56%] left-[30%] w-[24rem] h-[24rem] bg-coral-300/50 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[62%] -right-24 w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[72%] left-[12%] w-[26rem] h-[26rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[80%] right-[35%] w-[24rem] h-[24rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 top-[88%] -left-20 w-[28rem] h-[28rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[15%] w-[28rem] h-[28rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
 
       {/* Mobile-friendly center blobs */}
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[15%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[40%] left-[40%] w-[22rem] h-[22rem] bg-teal-300/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[65%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-300/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[88%] left-[45%] w-[18rem] h-[18rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[15%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[40%] left-[40%] w-[22rem] h-[22rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[65%] left-1/2 -translate-x-1/2 w-[20rem] h-[20rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="md:hidden pointer-events-none absolute -z-10 top-[88%] left-[45%] w-[18rem] h-[18rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
 
       {/* Desktop-only center blobs */}
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[12%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-[45%] w-[30rem] h-[30rem] bg-teal-300/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[44%] left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-coral-300/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[58%] left-[40%] w-[30rem] h-[30rem] bg-teal-200/60 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[72%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/70 rounded-full blur-3xl transform-gpu" />
-      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[86%] left-[48%] w-[28rem] h-[28rem] bg-teal-300/60 rounded-full blur-3xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[12%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[28%] left-[45%] w-[30rem] h-[30rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[44%] left-1/2 -translate-x-1/2 w-[34rem] h-[34rem] bg-coral-300/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[58%] left-[40%] w-[30rem] h-[30rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[72%] left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-coral-200/70 rounded-full blur-2xl transform-gpu" />
+      <div aria-hidden className="hidden md:block pointer-events-none absolute -z-10 top-[86%] left-[48%] w-[28rem] h-[28rem] bg-teal-300/45 rounded-full blur-2xl transform-gpu" />
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#FFFDF9]/60 backdrop-blur-xl border-b border-white/40">
@@ -146,8 +146,8 @@ export default function Landing() {
       {/* Hero Section */}
       <header className="px-6 pt-6 sm:pt-12 pb-20 max-w-7xl mx-auto text-center relative">
         {/* Decorative blobs */}
-        <div className="absolute top-8 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-3xl transform-gpu opacity-40 -z-10" />
-        <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-3xl transform-gpu opacity-30 -z-10" />
+        <div className="absolute top-8 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-2xl transform-gpu opacity-40 -z-10" />
+        <div className="absolute bottom-0 right-1/4 w-56 h-56 bg-coral-100 rounded-full blur-2xl transform-gpu opacity-30 -z-10" />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
@@ -191,7 +191,7 @@ export default function Landing() {
       </header>
 
       {/* How it works */}
-      <section className="py-14 px-6">
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="inline-block bg-teal-50 text-teal-700 text-sm font-semibold px-4 py-1.5 rounded-full mb-3">Simple as 1-2-3</span>
@@ -230,7 +230,7 @@ export default function Landing() {
       </section>
 
       {/* Features with Screenshots Section */}
-      <section className="py-16 px-6 overflow-hidden">
+      <section className="py-24 px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl font-display font-bold mb-4">Precision for your unique gut.</h2>
@@ -263,7 +263,7 @@ export default function Landing() {
               </ul>
             </motion.div>
             <div className="relative">
-              <div className="absolute inset-0 bg-teal-100 rounded-full blur-3xl transform-gpu opacity-30 -z-10 animate-pulse" />
+              <div className="absolute inset-0 bg-teal-100 rounded-full blur-2xl transform-gpu opacity-30 -z-10 animate-pulse" />
               <div className="bg-white rounded-[2.5rem] p-0 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
                 <img src={scanResultImg} alt="Scan result example" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
               </div>
@@ -272,7 +272,7 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-2 gap-16 items-center flex-row-reverse">
             <div className="relative order-2 md:order-1">
-              <div className="absolute inset-0 bg-coral-100 rounded-full blur-3xl transform-gpu opacity-30 -z-10" />
+              <div className="absolute inset-0 bg-coral-100 rounded-full blur-2xl transform-gpu opacity-30 -z-10" />
               <div className="bg-white rounded-[2.5rem] p-0 shadow-2xl border-8 border-white aspect-[9/16] max-w-[300px] mx-auto overflow-hidden">
                 <img src={oreoResultsImg} alt="Oreo scan result with better alternatives" className="w-full h-full object-cover object-top rounded-[1.5rem]" />
               </div>
@@ -306,7 +306,7 @@ export default function Landing() {
       </section>
 
       {/* Benefits Grid */}
-      <section className="py-14 px-6">
+      <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-display font-bold mb-4">Everything your gut needs</h2>
@@ -324,7 +324,7 @@ export default function Landing() {
       </section>
 
       {/* Comparisons Section */}
-      <section className="py-16 px-6">
+      <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-4xl font-display font-bold text-center mb-16">Compare what works for you.</h2>
           <div className="grid sm:grid-cols-2 gap-8">
@@ -375,9 +375,9 @@ export default function Landing() {
       </section>
 
       {/* About the Founder Section */}
-      <section className="py-14 px-6 bg-teal-700 text-white relative overflow-hidden">
+      <section className="py-28 px-6 bg-teal-700 text-white relative overflow-hidden">
         {/* Glow blobs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-teal-600 rounded-full blur-3xl transform-gpu opacity-30 -translate-x-1/2 -translate-y-1/2 z-0" />
+        <div className="absolute top-0 left-0 w-96 h-96 bg-teal-600 rounded-full blur-2xl transform-gpu opacity-30 -translate-x-1/2 -translate-y-1/2 z-0" />
         {/* Wave top */}
         <div className="absolute top-0 left-0 w-full leading-none z-10">
           <svg viewBox="0 0 1440 80" preserveAspectRatio="none" className="w-full h-24 block">
@@ -392,8 +392,8 @@ export default function Landing() {
         </div>
         <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_2fr] gap-16 items-center relative z-10">
           <div className="relative">
-            <div className="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl rotate-3">
-              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_top] scale-125" />
+            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
+              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-top" />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-coral-500 p-3.5 rounded-xl shadow-xl -rotate-3">
               <p className="font-display font-bold text-base">Fiona Surja</p>
@@ -509,10 +509,10 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-16 px-6">
+      <section className="py-24 px-6">
         <div className="max-w-4xl mx-auto bg-teal-600 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-3xl transform-gpu -translate-y-1/2 translate-x-1/2 opacity-50" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-700 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 opacity-50" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500 rounded-full blur-2xl transform-gpu -translate-y-1/2 translate-x-1/2 opacity-50" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-700 rounded-full blur-2xl translate-y-1/2 -translate-x-1/4 opacity-50" />
           {/* Floating condition pills inside CTA */}
           <div className="flex flex-wrap justify-center gap-2 mb-8 opacity-60 relative z-10">
             {["🌿 IBS", "🌾 Celiac", "🥛 Lactose", "🔥 Crohn's"].map((p, i) => (
