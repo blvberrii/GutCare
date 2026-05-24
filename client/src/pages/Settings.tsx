@@ -179,6 +179,7 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <Label className="font-bold text-sm pl-1">Display Name</Label>
               <Input
+                key={`fn-${profile?.id ?? "loading"}`}
                 defaultValue={profile?.firstName || user.firstName || ""}
                 className="rounded-2xl h-12 bg-muted/30 border-none font-bold"
                 placeholder="Your name"
@@ -191,6 +192,7 @@ export default function SettingsPage() {
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">@</span>
                 <Input
+                  key={`un-${profile?.id ?? "loading"}`}
                   defaultValue={(profile as any)?.username || ""}
                   placeholder="your_username"
                   className="rounded-2xl h-12 bg-muted/30 border-none font-bold pl-8"

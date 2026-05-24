@@ -60,6 +60,8 @@ export default function Onboarding() {
   const [otherAllergy, setOtherAllergy] = useState("");
   const [otherCondition, setOtherCondition] = useState("");
   const [otherSymptom, setOtherSymptom] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   if (profile && profile.conditions && profile.conditions.length > 0) {
     return <Redirect to="/" />;
@@ -78,6 +80,33 @@ export default function Onboarding() {
               className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold" 
               placeholder="e.g. Alex" 
             />
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "Pick a username",
+      subtitle: "This is how friends will find you.",
+      content: (
+        <div className="space-y-6 flex flex-col items-center">
+          <div className="space-y-2 w-full">
+            <Label>Username</Label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-lg">@</span>
+              <Input
+                value={username}
+                onChange={(e) => {
+                  const cleaned = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+                  setUsername(cleaned);
+                  if (usernameError) setUsernameError("");
+                }}
+                placeholder="your_username"
+                className="rounded-2xl h-14 bg-white border-2 border-primary/10 focus:border-primary transition-all text-lg font-bold pl-10"
+                data-testid="input-onboarding-username"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground pl-1">Lowercase letters, numbers, and underscores. 3-24 characters.</p>
+            {usernameError && <p className="text-xs text-red-500 pl-1 font-medium">{usernameError}</p>}
           </div>
         </div>
       )
@@ -255,6 +284,12 @@ export default function Onboarding() {
   ];
 
   const handleNext = async () => {
+    if (step === 1) {
+      if (username.length < 3 || username.length > 24) {
+        setUsernameError("Username must be 3-24 characters.");
+        return;
+      }
+    }
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
@@ -283,6 +318,7 @@ export default function Onboarding() {
         await updateProfile.mutateAsync({
           userId: user?.id,
           firstName: values.firstName || "",
+          username: username || null,
           dob: values.dob ? new Date(values.dob) : null,
           gender: values.gender,
           conditions,
@@ -299,6 +335,7 @@ export default function Onboarding() {
 
   const stepMeta = [
     { emoji: null, bg: "", label: "" },
+    { emoji: "✨", bg: "bg-gradient-to-br from-teal-100 to-cyan-100", label: "Username" },
     { emoji: "🎂", bg: "bg-gradient-to-br from-pink-100 to-purple-100", label: "Your profile" },
     { emoji: "🫀", bg: "bg-gradient-to-br from-teal-100 to-emerald-100", label: "Gut conditions" },
     { emoji: "💨", bg: "bg-gradient-to-br from-blue-100 to-cyan-100", label: "Symptoms" },
@@ -396,7 +433,7 @@ export default function Onboarding() {
           
           <Button 
             onClick={handleNext} 
-            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && (!form.watch("dob") || !form.watch("gender")))}
+            disabled={updateProfile.isPending || (step === 0 && !form.watch("firstName")) || (step === 1 && username.length < 3) || (step === 2 && (!form.watch("dob") || !form.watch("gender")))}
             className={`${step === 0 ? "w-full" : "flex-1"} bg-primary text-white rounded-full h-16 font-black text-xl shadow-2xl shadow-primary/30 hover:shadow-primary/40 transition-all active:scale-95`}
           >
             {step === steps.length - 1 ? (updateProfile.isPending ? "Saving..." : "Finish") : "Next"}
