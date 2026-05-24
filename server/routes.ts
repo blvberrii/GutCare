@@ -10,6 +10,33 @@ import { ai } from "./replit_integrations/image/client";
 import { Modality } from "@google/genai";
 
 // ============================================================
+// GEMINI PERF INSTRUMENTATION
+// Logs: prompt chars, input tokens, output tokens, API ms,
+// parse ms, tokens/sec — so we can see exactly which part is slow.
+// ============================================================
+function logGeminiPerf(label: string, opts: {
+  apiMs: number;
+  parseMs?: number;
+  promptChars: number;
+  responseText?: string;
+  usage?: any;
+}) {
+  const { apiMs, parseMs = 0, promptChars, responseText = "", usage } = opts;
+  const inTok = usage?.promptTokenCount ?? "?";
+  const outTok = usage?.candidatesTokenCount ?? "?";
+  const totalTok = usage?.totalTokenCount ?? "?";
+  const respChars = responseText.length;
+  const tps = typeof outTok === "number" && outTok > 0 && apiMs > 0
+    ? Math.round((outTok / apiMs) * 1000)
+    : "?";
+  console.log(
+    `[PERF] ${label} | api=${apiMs}ms parse=${parseMs}ms ` +
+    `| in=${inTok}tok (${promptChars}ch) out=${outTok}tok (${respChars}ch) total=${totalTok}tok ` +
+    `| ${tps}tok/s`
+  );
+}
+
+// ============================================================
 // EVIDENCE-BASED GUT HEALTH KNOWLEDGE BASE
 // Sources: Harvard School of Public Health, Johns Hopkins Medicine,
 // Cleveland Clinic, Mayo Clinic, NIH, CHOP, UK NHS,
@@ -392,10 +419,17 @@ IMPORTANT RULES:
           temperature: 0,
         },
       });
-      console.log(`[GEMINI] analyze-product (image) END ${Date.now() - __t1}ms`);
+      const __apiMs1 = Date.now() - __t1;
+      console.log(`[GEMINI] analyze-product (image) END ${__apiMs1}ms`);
 
       const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!analysisText) throw new Error("Failed to get analysis from AI");
+      logGeminiPerf("analyze-product (image)", {
+        apiMs: __apiMs1,
+        promptChars: systemPrompt.length,
+        responseText: analysisText,
+        usage: (response as any).usageMetadata,
+      });
 
       const analysis = JSON.parse(analysisText);
 
@@ -545,12 +579,21 @@ IMPORTANT RULES:
         contents: [{ role: "user", parts: [{ text: systemPrompt }] }],
         config: { responseMimeType: "application/json" },
       });
-      console.log(`[GEMINI] analyze-product-text END ${Date.now() - __t2}ms`);
+      const __apiMs2 = Date.now() - __t2;
+      console.log(`[GEMINI] analyze-product-text END ${__apiMs2}ms`);
 
       const analysisText = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!analysisText) throw new Error("Failed to get analysis from AI");
 
+      const __p2 = Date.now();
       const analysis = JSON.parse(analysisText);
+      logGeminiPerf("analyze-product-text", {
+        apiMs: __apiMs2,
+        parseMs: Date.now() - __p2,
+        promptChars: systemPrompt.length,
+        responseText: analysisText,
+        usage: (response as any).usageMetadata,
+      });
       res.json({
         ...analysis,
         imageUrl: null,
@@ -613,12 +656,21 @@ Rules:
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
-      console.log(`[GEMINI] products/search-ai END ${Date.now() - __t3}ms`);
+      const __apiMs3 = Date.now() - __t3;
+      console.log(`[GEMINI] products/search-ai END ${__apiMs3}ms`);
 
       const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!text) return res.json([]);
 
+      const __p3 = Date.now();
       const products = JSON.parse(text);
+      logGeminiPerf("products/search-ai", {
+        apiMs: __apiMs3,
+        parseMs: Date.now() - __p3,
+        promptChars: prompt.length,
+        responseText: text,
+        usage: (response as any).usageMetadata,
+      });
       if (!Array.isArray(products)) return res.json([]);
 
       // Assign temp string IDs so frontend can track them
@@ -685,10 +737,27 @@ Return ONLY a valid JSON object or the literal null:
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
-      console.log(`[GEMINI] barcode-guess END ${Date.now() - __t4}ms`);
+      const __apiMs4 = Date.now() - __t4;
+      console.log(`[GEMINI] barcode-guess END ${__apiMs4}ms`);
       const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text || text.trim() === "null") return null;
+      if (!text || text.trim() === "null") {
+        logGeminiPerf("barcode-guess", {
+          apiMs: __apiMs4,
+          promptChars: prompt.length,
+          responseText: text || "",
+          usage: (response as any).usageMetadata,
+        });
+        return null;
+      }
+      const __p4 = Date.now();
       const guess = JSON.parse(text);
+      logGeminiPerf("barcode-guess", {
+        apiMs: __apiMs4,
+        parseMs: Date.now() - __p4,
+        promptChars: prompt.length,
+        responseText: text,
+        usage: (response as any).usageMetadata,
+      });
       if (!guess || !guess.productName) return null;
       return {
         productName: String(guess.productName).slice(0, 200),
@@ -846,13 +915,22 @@ Return ONLY a valid JSON array, no markdown:
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         config: { responseMimeType: "application/json" },
       });
-      console.log(`[GEMINI] recommendations (For You) END ${Date.now() - __t5}ms`);
+      const __apiMs5 = Date.now() - __t5;
+      console.log(`[GEMINI] recommendations (For You) END ${__apiMs5}ms`);
 
+      const __p5 = Date.now();
       let recs: any[] = [];
       try {
         recs = JSON.parse(result.text || "[]");
         if (!Array.isArray(recs)) recs = [];
       } catch { recs = []; }
+      logGeminiPerf("recommendations", {
+        apiMs: __apiMs5,
+        parseMs: Date.now() - __p5,
+        promptChars: prompt.length,
+        responseText: result.text || "",
+        usage: (result as any).usageMetadata,
+      });
 
       res.json(recs);
     } catch (err) {
@@ -931,10 +1009,17 @@ Respond to the user's message now:
           responseModalities: [Modality.TEXT],
         },
       });
-      console.log(`[GEMINI] chat (Toto) END ${Date.now() - __t6}ms`);
+      const __apiMs6 = Date.now() - __t6;
+      console.log(`[GEMINI] chat (Toto) END ${__apiMs6}ms`);
 
       const reply = response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!reply) throw new Error("No response from Toto");
+      logGeminiPerf("chat (Toto)", {
+        apiMs: __apiMs6,
+        promptChars: systemPrompt.length,
+        responseText: reply,
+        usage: (response as any).usageMetadata,
+      });
 
       res.json({ message: reply });
 
