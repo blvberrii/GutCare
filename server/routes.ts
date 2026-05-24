@@ -14,6 +14,57 @@ import { Modality } from "@google/genai";
 // Logs: prompt chars, input tokens, output tokens, API ms,
 // parse ms, tokens/sec — so we can see exactly which part is slow.
 // ============================================================
+// ============================================================
+// IN-MEMORY TTL CACHE
+// Cheap process-local cache for slow Gemini responses. Cleared
+// on server restart, which is fine — costs nothing to rebuild.
+// ============================================================
+type CacheEntry<T> = { value: T; expiresAt: number };
+class TTLCache<T> {
+  private store = new Map<string, CacheEntry<T>>();
+  constructor(private maxEntries = 500) {}
+  get(key: string): T | undefined {
+    const hit = this.store.get(key);
+    if (!hit) return undefined;
+    if (Date.now() > hit.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
+    // touch — move to most-recent position (LRU-ish)
+    this.store.delete(key);
+    this.store.set(key, hit);
+    return hit.value;
+  }
+  set(key: string, value: T, ttlMs: number) {
+    if (this.store.size >= this.maxEntries) {
+      const oldest = this.store.keys().next().value;
+      if (oldest) this.store.delete(oldest);
+    }
+    this.store.set(key, { value, expiresAt: Date.now() + ttlMs });
+  }
+  delete(key: string) { this.store.delete(key); }
+  deleteByPrefix(prefix: string) {
+    for (const k of this.store.keys()) if (k.startsWith(prefix)) this.store.delete(k);
+  }
+}
+
+// Cache for /api/recommendations — per user, keyed by profile signature.
+// 12 hours: recommendations don't need to change between page loads.
+const recommendationsCache = new TTLCache<any[]>(1000);
+const RECOMMENDATIONS_TTL_MS = 12 * 60 * 60 * 1000;
+
+// Cache for /api/products/search-ai — shared across users, keyed by query.
+// 24 hours: search results for "oreo" are the same for everyone.
+const searchAiCache = new TTLCache<any[]>(2000);
+const SEARCH_AI_TTL_MS = 24 * 60 * 60 * 1000;
+
+function profileSignature(profile: any): string {
+  const conds = (profile?.conditions || []).slice().sort().join("|");
+  const symps = (profile?.symptoms || []).slice().sort().join("|");
+  const allgs = (profile?.allergies || []).slice().sort().join("|");
+  return `${conds}::${symps}::${allgs}`;
+}
+
 function logGeminiPerf(label: string, opts: {
   apiMs: number;
   parseMs?: number;
@@ -145,6 +196,9 @@ export async function registerRoutes(
       } else {
         profile = await storage.createProfile({ ...input, userId } as any);
       }
+      // Profile changed — invalidate this user's recommendations cache so
+      // the next /api/recommendations call reflects new conditions/allergies
+      recommendationsCache.deleteByPrefix(`${userId}::`);
       res.json(profile);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -624,6 +678,14 @@ IMPORTANT RULES:
       const q = String(req.query.q || "").trim();
       if (!q || q.length < 2) return res.json([]);
 
+      // Search results are the same for every user — cache by lowercased query
+      const cacheKey = q.toLowerCase();
+      const cached = searchAiCache.get(cacheKey);
+      if (cached) {
+        console.log(`[CACHE HIT] search-ai q="${q}" (${cached.length} results)`);
+        return res.json(cached);
+      }
+
       const prompt = `The user is searching for food products matching: "${q}"
 
 List 5 real food/grocery products that best match this search term. Focus on:
@@ -674,14 +736,20 @@ Rules:
       if (!Array.isArray(products)) return res.json([]);
 
       // Assign temp string IDs so frontend can track them
-      res.json(products.slice(0, 5).map((p: any, i: number) => ({
+      const shaped = products.slice(0, 5).map((p: any, i: number) => ({
         productName: p.productName || "",
         brand: p.brand || "",
         category: p.category || "",
         ingredients: p.ingredients || "",
         _aiGenerated: true,
         _aiKey: `ai-${i}-${q}`,
-      })));
+      }));
+
+      // Cache for 24h (only if we got results)
+      if (shaped.length > 0) {
+        searchAiCache.set(cacheKey, shaped, SEARCH_AI_TTL_MS);
+      }
+      res.json(shaped);
     } catch (err) {
       console.error("AI product search error:", err);
       res.json([]); // Silent fail — UI gracefully handles empty
@@ -867,6 +935,15 @@ Return ONLY a valid JSON object or the literal null:
       const userId = req.user.claims.sub;
       const profile = await storage.getProfile(userId);
 
+      // Cache lookup — key includes user + signature so profile edits bust it
+      const sig = profileSignature(profile);
+      const cacheKey = `${userId}::${sig}`;
+      const cached = recommendationsCache.get(cacheKey);
+      if (cached) {
+        console.log(`[CACHE HIT] recommendations user=${userId.slice(0,8)} (${cached.length} recs)`);
+        return res.json(cached);
+      }
+
       const conditions = profile?.conditions?.join(", ") || "general gut health";
       const symptoms = profile?.symptoms?.join(", ") || "none";
       const allergies = (profile?.allergies || []).filter((a: string) => a !== "None").join(", ") || "none";
@@ -932,6 +1009,10 @@ Return ONLY a valid JSON array, no markdown:
         usage: (result as any).usageMetadata,
       });
 
+      // Cache fresh recs for 12h (only if we got useful results)
+      if (recs.length > 0) {
+        recommendationsCache.set(cacheKey, recs, RECOMMENDATIONS_TTL_MS);
+      }
       res.json(recs);
     } catch (err) {
       console.error("Recommendations error:", err);
