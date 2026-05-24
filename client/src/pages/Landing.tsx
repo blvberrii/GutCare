@@ -390,10 +390,10 @@ export default function Landing() {
             <path d="M0,25 C240,55 480,5 720,30 C960,55 1200,10 1440,30 L1440,80 L0,80 Z" fill="#FFFDF9" />
           </svg>
         </div>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-[3fr_2fr] gap-16 items-center relative z-10">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-[1fr_2fr] gap-16 items-center relative z-10">
           <div className="relative">
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl rotate-3">
-              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_top] scale-110" />
+            <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3">
+              <img src={founderImg} alt="Fiona Surja" className="w-full h-full object-cover object-[center_top] scale-150" />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-coral-500 p-3.5 rounded-xl shadow-xl -rotate-3">
               <p className="font-display font-bold text-base">Fiona Surja</p>
