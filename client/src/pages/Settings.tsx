@@ -95,14 +95,8 @@ export default function SettingsPage() {
   };
 
   const handleLogout = async () => {
-    try {
-      await apiRequest("DELETE", "/api/profile");
-      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
-      logout();
-    } catch (e) {
-      console.error("Failed to reset profile", e);
-      logout();
-    }
+    queryClient.removeQueries({ queryKey: ["/api/profile"] });
+    logout();
   };
 
   const toggleArray = (field: "conditions" | "allergies" | "symptoms", item: string) => {
