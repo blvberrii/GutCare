@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Settings, Edit2, ChevronRight, Bookmark, Star, User, Heart } from "lucide-react";
 import { Redirect, Link } from "wouter";
 import { motion } from "framer-motion";
+import { AmbientWash } from "@/components/AmbientWash";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -32,15 +33,7 @@ export default function Profile() {
 
   return (
     <div className="relative isolate min-h-screen pb-32 overflow-x-clip bg-[#FFFDF9]">
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-teal-200/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-32 w-[24rem] h-[24rem] bg-coral-200/50 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] right-[10%] w-[20rem] h-[20rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] -left-20 w-[22rem] h-[22rem] bg-coral-300/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[20%] w-[24rem] h-[24rem] bg-coral-200/40 rounded-full blur-2xl transform-gpu" />
-
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-40 left-1/3 w-[28rem] h-[28rem] bg-coral-100/50 rounded-full blur-2xl transform-gpu" />
+      <AmbientWash />
 
       {/* Header */}
       <div className="bg-primary text-white pt-16 pb-20 px-6 relative overflow-hidden rounded-b-[3.5rem] shadow-2xl shadow-primary/20">

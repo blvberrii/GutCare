@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useProductImage } from "@/hooks/use-product-image";
 import type { Scan as ScanType } from "@shared/schema";
+import { AmbientWash } from "@/components/AmbientWash";
 
 type DBProduct = {
   id: number;
@@ -136,13 +137,7 @@ export default function SearchPage() {
 
   return (
     <div className="relative isolate min-h-screen flex flex-col overflow-x-clip bg-[#FFFDF9]">
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-32 -left-24 w-[26rem] h-[26rem] bg-teal-300/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -top-20 -right-24 w-[24rem] h-[24rem] bg-coral-300/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[28%] -right-32 w-[22rem] h-[22rem] bg-teal-200/40 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[42%] -left-32 w-[24rem] h-[24rem] bg-coral-200/50 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[60%] right-[10%] w-[20rem] h-[20rem] bg-teal-200/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 top-[78%] -left-20 w-[22rem] h-[22rem] bg-coral-300/45 rounded-full blur-2xl transform-gpu" />
-      <div aria-hidden className="pointer-events-none absolute -z-10 -bottom-24 right-[20%] w-[24rem] h-[24rem] bg-coral-200/40 rounded-full blur-2xl transform-gpu" />
+      <AmbientWash />
 
       {/* Search Header */}
       <div className="sticky top-0 z-20 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-black/5 px-4 pt-4 pb-3">
