@@ -901,12 +901,14 @@ Return ONLY a valid JSON object or the literal null:
       if (cached) return res.json(cached);
 
       // 2) Open Food Facts (real, free, ~3M products)
-      let found = await fetchFromOpenFoodFacts(barcode);
+      const found = await fetchFromOpenFoodFacts(barcode);
 
-      // 3) Gemini fallback (best-effort, lower confidence)
-      if (!found) found = await fetchFromGemini(barcode);
+      // NOTE: Gemini barcode-guess fallback intentionally removed. LLMs
+      // do not actually know arbitrary GTIN->product mappings and tend
+      // to hallucinate well-known brands (e.g. Nutella) for unknown
+      // codes, which then get cached and poison future scans.
 
-      if (!found) return res.status(404).json({ message: "Barcode not found" });
+      if (!found) return res.status(404).json({ message: "Barcode not found. Try Label mode to photograph the ingredients." });
 
       // Cache into our DB for future scans
       try {
